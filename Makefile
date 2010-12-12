@@ -1,10 +1,12 @@
 
 CXXFLAGS=-Wall \
 		-Werror \
-		`pkg-config --cflags sdl`
+		`pkg-config --cflags sdl` \
+		-g -ggdb
 
 LDFLAGS= \
-		`pkg-config --libs sdl`
+		`pkg-config --libs sdl` \
+		-g -ggdb
 
 SRCS= \
 	  surface.cpp \
