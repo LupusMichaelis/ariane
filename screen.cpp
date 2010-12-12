@@ -41,7 +41,7 @@ Screen::Impl::Impl(VideoMode const & videomode)
 }
 
 Screen::Impl::Impl(int width, int height, int depth)
-	: m_videomode(videomode(width, height, depth))
+	: m_videomode(create_videomode(width, height, depth))
 {
 	init() ;
 }

@@ -17,8 +17,8 @@ class Size
 		int m_width, m_height ;
 } ;
 
-VideoMode const videomode(int width, int height, int depth) ;
-Size const size(int width, int height) ;
+VideoMode const create_videomode(int width, int height, int depth) ;
+Size const create_size(int width, int height) ;
 
 class VideoMode
 {
@@ -37,14 +37,14 @@ class VideoMode
 		int m_depth ;
 } ;
 
-Size const size(int width, int height)
+inline Size const create_size(int width, int height)
 {
 	return Size(width, height) ;
 }
 
-VideoMode const videomode(int width, int height, int depth)
+inline VideoMode const create_videomode(int width, int height, int depth)
 {
-	return VideoMode(size(width, height), depth) ;
+	return VideoMode(create_size(width, height), depth) ;
 }
 
 #endif // define HPP_VIDEOMODE_SDL_QUEST
