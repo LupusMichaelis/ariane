@@ -22,7 +22,8 @@ void Surface::Impl::init()
 {
 	mp_surface = SDL_CreateRGBSurface(SDL_SWSURFACE
 			, m_videomode.width(), m_videomode.height(), m_videomode.depth()
-			, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000) ;
+			//, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000) ;
+			, 0, 0, 0, 0) ;
 	if(!mp_surface)
 		throw SDL_GetError() ;
 }
@@ -46,10 +47,10 @@ int Surface::depth() const { return mp_impl->m_videomode.depth() ; }
 
 void Surface::set_background(unsigned color)
 {
-	Uint32 mapped_color = SDL_MapRGB(mp_impl->mp_surface->format, color & 0x000000ff, color & 0x0000ff00, color & 0x00ff0000) ;
+	Uint32 mapped_color = SDL_MapRGB(mp_impl->mp_surface->format, color >> 16, color >> 8, color) ;
+	//Uint32 mapped_color = SDL_MapRGB(mp_impl->mp_surface->format, color & 0x000000ff, color & 0x0000ff00, color & 0x00ff0000) ;
 	int ret = SDL_FillRect(mp_impl->mp_surface, 0, mapped_color) ;
 	if(ret == -1)
 		throw SDL_GetError() ;
-	SDL_UpdateRect(mp_impl->mp_surface, 0, 0, width(), height()) ;
 }
 

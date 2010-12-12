@@ -19,8 +19,10 @@ int main(int argc, char **argv)
 
 	Surface s ;
 	screen.create(s, create_videomode(20, 20, 16)) ;
-	s.set_background(0x00ff0000) ;
+	s.set_background(0xffff) ;
 	screen.draw(s) ;
 
-	sleep(10) ;
+	screen.update() ;
+
+	sleep(1) ;
 }
