@@ -17,8 +17,10 @@ int main(int argc, char **argv)
 		% screen.depth()
 		<< std::endl ;
 
+	/*
 	Surface s ;
 	screen.create(s, 20, 20) ;
+	*/
 
 	sleep(10) ;
 }

@@ -4,13 +4,17 @@
 
 #	include <memory>
 
+
 class Surface ;
+class VideoMode ;
 
 class Screen
 {
 	class Impl ;
 	public:
 		Screen(int width, int height, int depth) ;
+		explicit Screen(VideoMode const & videomode) ;
+			
 		int width() const ;
 		int height() const ;
 		int depth() const ;
