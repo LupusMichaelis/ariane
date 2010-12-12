@@ -17,10 +17,10 @@ int main(int argc, char **argv)
 		% screen.depth()
 		<< std::endl ;
 
-	/*
 	Surface s ;
-	screen.create(s, 20, 20) ;
-	*/
+	screen.create(s, create_videomode(20, 20, 16)) ;
+	s.set_background(0x00ff0000) ;
+	screen.draw(s) ;
 
 	sleep(10) ;
 }

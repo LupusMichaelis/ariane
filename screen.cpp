@@ -17,7 +17,7 @@ struct Screen::Impl
 
 		VideoMode m_videomode ;
 
-		SDL_Surface * p_surface ;
+		SDL_Surface * mp_surface ;
 } ;
 
 Screen::Screen(VideoMode const & videomode)
@@ -36,6 +36,16 @@ void Screen::create(Surface & target, VideoMode const & videomode)
 {
 	Surface new_surface(*this, videomode) ;
 	std::swap(new_surface, target) ;
+}
+
+void Screen::draw(Surface const & motif)
+{
+	SDL_Surface * raw = reinterpret_cast<SDL_Surface *>(motif.get()) ;
+	int ret = SDL_BlitSurface(raw, 0, mp_impl->mp_surface, 0) ;
+	if(ret == -1)
+		throw SDL_GetError() ;
+	else if(ret == -2)
+		throw "Must reload resources" ;
 }
 
 Screen::Impl::Impl(VideoMode const & videomode)
@@ -66,8 +76,8 @@ void Screen::Impl::init()
 	if(SDL_Init(SDL_INIT_VIDEO) == -1)
 		throw SDL_GetError() ;
 
-	p_surface = SDL_SetVideoMode(m_videomode.width(), m_videomode.height(), m_videomode.depth(), SDL_DOUBLEBUF) ;
-	if(!p_surface)
+	mp_surface = SDL_SetVideoMode(m_videomode.width(), m_videomode.height(), m_videomode.depth(), SDL_DOUBLEBUF) ;
+	if(!mp_surface)
 		throw SDL_GetError() ;
 }
 

@@ -21,6 +21,7 @@ class Screen
 		int depth() const ;
 
 		void create(Surface & target, VideoMode const & videomode) ;
+		void draw(Surface const & motif) ;
 
 	private:
 		std::auto_ptr<Impl> mp_impl ;
