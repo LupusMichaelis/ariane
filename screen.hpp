@@ -7,6 +7,7 @@
 
 class Surface ;
 class VideoMode ;
+class Size ;
 
 class Screen
 {
