@@ -18,8 +18,13 @@ int main(int argc, char **argv)
 		<< std::endl ;
 
 	Surface s ;
-	screen.create(s, create_videomode(20, 20, 16)) ;
-	s.set_background(0xffff) ;
+
+	screen.create(s, create_videomode(50, 50, 16)) ;
+	s.set_background(0x00ff00) ;
+	screen.draw(s) ;
+
+	screen.create(s, create_videomode(30, 30, 16)) ;
+	s.set_background(0xffff00) ;
 	screen.draw(s) ;
 
 	screen.update() ;
