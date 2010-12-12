@@ -48,6 +48,11 @@ void Screen::draw(Surface const & motif)
 		throw "Must reload resources" ;
 }
 
+void Screen::update() const
+{
+	SDL_UpdateRect(mp_impl->mp_surface, 0, 0, 0, 0) ;
+}
+
 Screen::Impl::Impl(VideoMode const & videomode)
 	: m_videomode(videomode)
 {

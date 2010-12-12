@@ -23,6 +23,8 @@ class Screen
 		void create(Surface & target, VideoMode const & videomode) ;
 		void draw(Surface const & motif) ;
 
+		void update() const ;
+
 	private:
 		std::auto_ptr<Impl> mp_impl ;
 } ;
