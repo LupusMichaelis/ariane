@@ -20,7 +20,7 @@ class Screen
 		int height() const ;
 		int depth() const ;
 
-		void create(Surface & target, int height, int width) ;
+		void create(Surface & target, VideoMode const & videomode) ;
 
 	private:
 		std::auto_ptr<Impl> mp_impl ;

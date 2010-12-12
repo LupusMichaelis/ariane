@@ -1,5 +1,6 @@
 
 #include "screen.hpp"
+#include "surface.hpp"
 #include "videomode.hpp"
 
 #include <SDL/SDL.h>
@@ -8,7 +9,11 @@ struct Screen::Impl
 {
 		explicit Impl(VideoMode const & videomode) ;
 		Impl(int width, int height, int depth) ;
+
+		~Impl() ;
+
 		void init() ;
+		void release() throw() ;
 
 		VideoMode m_videomode ;
 
@@ -27,23 +32,33 @@ int Screen::height() const { return mp_impl->m_videomode.height() ; }
 int Screen::width() const { return mp_impl->m_videomode.width() ; }
 int Screen::depth() const { return mp_impl->m_videomode.depth() ; }
 
-/*
-void Screen::create(Surface & target, int height, int width)
+void Screen::create(Surface & target, VideoMode const & videomode)
 {
-	Surface new_surface(*this, height, width) ;
+	Surface new_surface(*this, videomode) ;
 	std::swap(new_surface, target) ;
 }
-*/
+
 Screen::Impl::Impl(VideoMode const & videomode)
 	: m_videomode(videomode)
 {
 	init() ;
 }
 
+Screen::Impl::~Impl()
+{
+	release() ;
+}
+
 Screen::Impl::Impl(int width, int height, int depth)
 	: m_videomode(create_videomode(width, height, depth))
 {
 	init() ;
+}
+
+void Screen::Impl::release()
+	throw()
+{
+	SDL_Quit() ;
 }
 
 void Screen::Impl::init()

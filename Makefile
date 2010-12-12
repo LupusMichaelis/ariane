@@ -7,9 +7,9 @@ LDFLAGS= \
 		`pkg-config --libs sdl`
 
 SRCS= \
+	  surface.cpp \
 	  screen.cpp \
 	  test_screen.cpp \
-#	  surface.cpp \
 
 OBJS=$(SRCS:.cpp=.o)
 

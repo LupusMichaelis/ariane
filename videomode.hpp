@@ -2,6 +2,12 @@
 #ifndef HPP_VIDEOMODE_SDL_QUEST
 #	define HPP_VIDEOMODE_SDL_QUEST
 
+class Size ;
+class VideoMode ;
+
+VideoMode const create_videomode(int width, int height, int depth) ;
+Size const create_size(int width, int height) ;
+
 class Size
 {
 	public:
@@ -16,9 +22,6 @@ class Size
 	private:
 		int m_width, m_height ;
 } ;
-
-VideoMode const create_videomode(int width, int height, int depth) ;
-Size const create_size(int width, int height) ;
 
 class VideoMode
 {
