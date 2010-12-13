@@ -3,6 +3,7 @@
 #include "surface.hpp"
 #include "videomode.hpp"
 
+
 #include <SDL/SDL.h>
 
 struct Screen::Impl
@@ -38,10 +39,15 @@ void Screen::create(Surface & target, VideoMode const & videomode)
 	std::swap(new_surface, target) ;
 }
 
-void Screen::draw(Surface const & motif)
+void Screen::draw(Surface const & motif, Position const & at)
 {
 	SDL_Surface * raw = reinterpret_cast<SDL_Surface *>(motif.get()) ;
-	int ret = SDL_BlitSurface(raw, 0, mp_impl->mp_surface, 0) ;
+	SDL_Rect dst ;
+	dst.x = at.width() ;
+	dst.y = at.height() ;
+	
+	int ret = SDL_BlitSurface(raw, 0, mp_impl->mp_surface, &dst) ;
+	
 	if(ret == -1)
 		throw SDL_GetError() ;
 	else if(ret == -2)

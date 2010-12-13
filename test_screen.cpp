@@ -21,11 +21,11 @@ int main(int argc, char **argv)
 
 	screen.create(s, create_videomode(50, 50, 16)) ;
 	s.set_background(0x00ff00) ;
-	screen.draw(s) ;
+	screen.draw(s, Position(0, 0)) ;
 
 	screen.create(s, create_videomode(30, 30, 16)) ;
 	s.set_background(0xffff00) ;
-	screen.draw(s) ;
+	screen.draw(s, Position(10, 10)) ;
 
 	screen.update() ;
 
