@@ -6,14 +6,12 @@
 
 #	include <memory>
 
-class Screen ;
-
 class Surface
 {
 		class Impl ;
 	public:
 		Surface() ;
-		Surface(Screen const & screen, VideoMode const & videomode) ;
+		explicit Surface(VideoMode const & videomode) ;
 
 		/** Provide the raw surface resource, depends of graphical backend
 		 */

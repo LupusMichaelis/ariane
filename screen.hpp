@@ -2,15 +2,16 @@
 #ifndef HPP_SCREEN_SDL_QUEST
 #	define HPP_SCREEN_SDL_QUEST
 
+#	include "surface.hpp"
+
 #	include <memory>
 
-
-class Surface ;
 class VideoMode ;
 class Size ;
 typedef Size Position ;
 
 class Screen
+	: protected Surface
 {
 	class Impl ;
 	public:

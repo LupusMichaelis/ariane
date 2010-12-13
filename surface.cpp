@@ -5,8 +5,9 @@
 
 struct Surface::Impl
 {
-		Impl(Screen const & screen, VideoMode const & videomode)
-		: m_screen(screen), m_videomode(videomode)
+		Impl(VideoMode const & videomode)
+		: m_videomode(videomode)
+		, mp_surface(0)
 		{
 			init() ;
 		}
@@ -15,9 +16,7 @@ struct Surface::Impl
 		
 		void init() ;
 
-		Screen const & m_screen ;
 		VideoMode m_videomode ;
-
 		SDL_Surface * mp_surface ;
 } ;
 
@@ -36,8 +35,8 @@ void Surface::Impl::init()
 		throw SDL_GetError() ;
 }
 
-Surface::Surface(Screen const & screen, VideoMode const & videomode)
-	: mp_impl(new Surface::Impl(screen, videomode))
+Surface::Surface(VideoMode const & videomode)
+	: mp_impl(new Surface::Impl(videomode))
 { }
 
 Surface::Surface()

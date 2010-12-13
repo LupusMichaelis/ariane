@@ -17,16 +17,17 @@ struct Screen::Impl
 		void release() throw() ;
 
 		VideoMode m_videomode ;
-
 		SDL_Surface * mp_surface ;
 } ;
 
 Screen::Screen(VideoMode const & videomode)
-	: mp_impl(new Screen::Impl(videomode))
+	: Surface(videomode)
+	, mp_impl(new Screen::Impl(videomode))
 { }
 
 Screen::Screen(int width, int height, int depth)
-	: mp_impl(new Screen::Impl(width, height, depth))
+	: Surface(create_videomode(width, height, depth))
+	, mp_impl(new Screen::Impl(width, height, depth))
 { }
 
 int Screen::height() const { return mp_impl->m_videomode.height() ; }
@@ -35,7 +36,7 @@ int Screen::depth() const { return mp_impl->m_videomode.depth() ; }
 
 void Screen::create(Surface & target, VideoMode const & videomode)
 {
-	Surface new_surface(*this, videomode) ;
+	Surface new_surface(videomode) ;
 	std::swap(new_surface, target) ;
 }
 
