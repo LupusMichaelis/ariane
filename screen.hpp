@@ -22,6 +22,7 @@ class Screen
 		int depth() const ;
 
 		void create(Surface & target, VideoMode const & videomode) ;
+		void draw(Surface const & motif) ;
 		void draw(Surface const & motif, Position const & at) ;
 
 		void update() const ;

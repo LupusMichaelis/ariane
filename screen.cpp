@@ -39,6 +39,11 @@ void Screen::create(Surface & target, VideoMode const & videomode)
 	std::swap(new_surface, target) ;
 }
 
+void Screen::draw(Surface const & motif)
+{
+	draw(motif, Position(0, 0)) ;
+}
+
 void Screen::draw(Surface const & motif, Position const & at)
 {
 	SDL_Surface * raw = reinterpret_cast<SDL_Surface *>(motif.get()) ;
