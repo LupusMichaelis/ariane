@@ -10,6 +10,9 @@ struct Surface::Impl
 		{
 			init() ;
 		}
+
+		~Impl() ;
+		
 		void init() ;
 
 		Screen const & m_screen ;
@@ -17,6 +20,11 @@ struct Surface::Impl
 
 		SDL_Surface * mp_surface ;
 } ;
+
+Surface::Impl::~Impl()
+{
+	SDL_FreeSurface(mp_surface) ;
+}
 
 void Surface::Impl::init()
 {

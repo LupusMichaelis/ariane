@@ -2,8 +2,9 @@
 #ifndef HPP_SURFACE_SDL_QUEST
 #	define HPP_SURFACE_SDL_QUEST
 
-#	include <memory>
 #	include "videomode.hpp"
+
+#	include <memory>
 
 class Screen ;
 
@@ -14,6 +15,8 @@ class Surface
 		Surface() ;
 		Surface(Screen const & screen, VideoMode const & videomode) ;
 
+		/** Provide the raw surface resource, depends of graphical backend
+		 */
 		void * get() const ;
 
 		void set_background(unsigned color) ;
