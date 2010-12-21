@@ -25,9 +25,7 @@ class Surface
 		void * get() const ;
 		void set(void *) ;
 
-		int width() const ;
-		int height() const ;
-		int depth() const ;
+		VideoMode const & videomode() const ;
 
 		virtual
 		void init() ;
@@ -45,12 +43,16 @@ class Surface
 		void update() const ;
 
 		virtual
-		void set_background(unsigned color) ;
+		void fill(unsigned color) ;
 
 	protected:
 		std::auto_ptr<Impl> mp_impl ;
 		VideoMode m_videomode ;
-
 } ;
+
+inline
+VideoMode const & Surface::videomode() const
+{ return m_videomode ; }
+
 
 #endif // define HPP_SURFACE_SDL_QUEST

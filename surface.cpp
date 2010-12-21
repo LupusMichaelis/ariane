@@ -25,7 +25,7 @@ struct Surface::Impl
 void Surface::release()
 	throw()
 {
-	SDL_FreeSurface(mp_impl->mp_surface) ;
+	//SDL_FreeSurface(mp_impl->mp_surface) ;
 }
 
 void Surface::init()
@@ -64,11 +64,7 @@ void Surface::set(void * raw)
 	mp_impl->mp_surface = reinterpret_cast<SDL_Surface *>(raw) ;
 }
 
-int Surface::width() const { return m_videomode.width() ; }
-int Surface::height() const { return m_videomode.height() ; }
-int Surface::depth() const { return m_videomode.depth() ; }
-
-void Surface::set_background(unsigned color)
+void Surface::fill(unsigned color)
 {
 	SDL_Surface * raw = reinterpret_cast<SDL_Surface *>(get()) ;
 	Uint32 mapped_color = SDL_MapRGB(raw->format, color >> 16, color >> 8, color) ;
