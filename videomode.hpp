@@ -41,13 +41,21 @@ class VideoMode
 } ;
 
 inline Size const create_size(int width, int height)
-{
-	return Size(width, height) ;
-}
+{ return Size(width, height) ; }
 
 inline VideoMode const create_videomode(int width, int height, int depth)
-{
-	return VideoMode(create_size(width, height), depth) ;
-}
+{ return VideoMode(create_size(width, height), depth) ; }
+
+template<typename T>
+int width(T const & thing)
+{ return thing.videomode().width() ; }
+
+template<typename T>
+int height(T const & thing)
+{ return thing.videomode().height() ; }
+
+template<typename T>
+int depth(T const & thing)
+{ return thing.videomode().depth() ; }
 
 #endif // define HPP_VIDEOMODE_SDL_QUEST

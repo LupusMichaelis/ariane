@@ -10,6 +10,7 @@ LDFLAGS= \
 
 SRCS= \
 	  surface.cpp \
+	  canvas.cpp \
 	  screen.cpp \
 	  test_screen.cpp \
 

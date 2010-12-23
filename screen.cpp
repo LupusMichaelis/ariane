@@ -26,7 +26,7 @@ void Screen::init()
 	if(SDL_Init(SDL_INIT_VIDEO) == -1)
 		throw SDL_GetError() ;
 
-	SDL_Surface * raw = SDL_SetVideoMode(m_videomode.width(), m_videomode.height(), m_videomode.depth(), SDL_DOUBLEBUF) ;
+	SDL_Surface * raw = SDL_SetVideoMode(width(*this), height(*this), depth(*this), SDL_DOUBLEBUF) ;
 	if(!raw)
 		throw SDL_GetError() ;
 
