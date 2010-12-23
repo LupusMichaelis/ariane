@@ -11,12 +11,16 @@ class VideoMode ;
 class Screen
 	: public Surface
 {
-	public:
-		Screen(int width, int height, int depth) ;
-		explicit Screen(VideoMode const & videomode) ;
+	friend
+	void create<Screen>(std::auto_ptr<Screen> & p_surface, VideoMode const & videomode) ;
 
+	public:
 		virtual
 		~Screen() ;
+
+	protected:
+		Screen(int width, int height, int depth) ;
+		explicit Screen(VideoMode const & videomode) ;
 
 		virtual
 		void init() ;

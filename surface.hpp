@@ -9,11 +9,21 @@
 class Size ;
 typedef Size Position ;
 
+template <typename SurfaceT>
+void create(std::auto_ptr<SurfaceT> & p_surface, VideoMode const & videomode)
+{
+	std::auto_ptr<SurfaceT> p_new_surface(new SurfaceT(videomode)) ;
+	p_new_surface->init() ;
+	std::swap(p_surface, p_new_surface) ;
+}
+
+
 class Surface
 {
+	friend
+	void create<Surface>(std::auto_ptr<Surface> & p_surface, VideoMode const & videomode) ;
+
 	public:
-		//Surface() ;
-		explicit Surface(VideoMode const & videomode) ;
 
 		virtual
 		~Surface() ;
@@ -22,21 +32,19 @@ class Surface
 		 */
 		VideoMode const & videomode() const ;
 
+		void draw(Surface const & motif) ;
+		void draw(Surface const & motif, Position const & at) ;
+		void update() const ;
+		void fill(unsigned color) ;
+
+	private:
 		virtual
 		void init() = 0 ;
 		virtual
 		void release() throw() = 0 ;
 
-		virtual
-		void draw(Surface const & motif) ;
-		virtual
-		void draw(Surface const & motif, Position const & at) ;
-		virtual
-		void update() const ;
-		virtual
-		void fill(unsigned color) ;
-
 	protected:
+		explicit Surface(VideoMode const & videomode) ;
 		void set(void * raw) ;
 		void * get() const ;
 
