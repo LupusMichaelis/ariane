@@ -37,6 +37,8 @@ class Surface
 		void draw(Surface const & motif, Position const & at) ;
 		void update() const ;
 		void fill(RGBColor const & color) ;
+		void fill(Surface const & pattern) ;
+		void fill(Surface const & pattern, Position const & from, Position const & to) ;
 
 	protected:
 		explicit Surface(VideoMode const & videomode) ;

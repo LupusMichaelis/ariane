@@ -37,6 +37,12 @@ int main(int argc, char **argv)
 	p_s3->fill(create_color(0xffff00)) ;
 	p_screen->draw(*p_s3, Position(10, 10)) ;
 
+	std::auto_ptr<Canvas> p_s4;
+	create(p_s4, create_videomode(60, 60, 16)) ;
+	p_s4->draw(*p_screen) ;
+	//p_screen->draw(*p_s4, Position(100, 100)) ;
+	p_screen->fill(*p_s4, Position(60, 60), Position(150, 150)) ;
+
 	p_screen->update() ;
 
 	sleep(5) ;

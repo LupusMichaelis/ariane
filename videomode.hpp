@@ -16,8 +16,36 @@ class Size
 			, m_height(height)
 		{ }
 
+		Size(Size const & copied)
+			: m_width(copied.m_width)
+			, m_height(copied.m_height)
+		{ }
+
+		void translate(int distance, int angle = 0)
+		{
+			switch(angle)
+			{
+				case 0:
+					m_width += distance ;
+					break ;
+				default:
+					throw "todo" ;
+			}
+		}
+
+		void width(int new_width) { m_width = new_width ; }
+		void height(int new_height) { m_height = new_height ; }
+
 		int width() const { return m_width ; }
 		int height() const { return m_height ; }
+
+		Size const operator-(Size const & rhs) const
+		{
+			Size new_value(*this) ;
+			new_value.m_width -= rhs.width() ;
+			new_value.m_height -= rhs.height() ;
+			return new_value ;
+		}
 
 	private:
 		int m_width, m_height ;
@@ -43,8 +71,11 @@ class VideoMode
 inline Size const create_size(int width, int height)
 { return Size(width, height) ; }
 
+inline VideoMode const create_videomode(Size const & size, int depth)
+{ return VideoMode(size, depth) ; }
+
 inline VideoMode const create_videomode(int width, int height, int depth)
-{ return VideoMode(create_size(width, height), depth) ; }
+{ return create_videomode(create_size(width, height), depth) ; }
 
 template<typename T>
 int width(T const & thing)

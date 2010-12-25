@@ -36,6 +36,29 @@ void Surface::fill(RGBColor const & color)
 		throw SDL_GetError() ;
 }
 
+#include "canvas.hpp"
+
+void Surface::fill(Surface const & pattern, Position const & from, Position const & to)
+{
+	Position size(to) ;
+	std::auto_ptr<Canvas> p_buffer ;
+	create(p_buffer, create_videomode(to - from, depth(*this))) ;
+	Position next(0, 0) ;
+	do
+	{
+		p_buffer->draw(pattern, next) ;
+
+		next.width(next.width() + width(pattern)) ;
+		if(next.width() > to.width())
+		{
+			next.height(next.height() + height(pattern)) ;
+			next.width(0) ;
+		}
+	} while(next.height() < to.height()) ;
+
+	draw(*p_buffer, from) ;
+}
+
 void Surface::draw(Surface const & motif)
 {
 	draw(motif, Position(0, 0)) ;
