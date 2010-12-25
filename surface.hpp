@@ -3,6 +3,7 @@
 #	define HPP_SURFACE_SDL_QUEST
 
 #	include "videomode.hpp"
+#	include "color.hpp"
 
 #	include <memory>
 
@@ -35,18 +36,18 @@ class Surface
 		void draw(Surface const & motif) ;
 		void draw(Surface const & motif, Position const & at) ;
 		void update() const ;
-		void fill(unsigned color) ;
+		void fill(RGBColor const & color) ;
+
+	protected:
+		explicit Surface(VideoMode const & videomode) ;
+		void set(void * raw) ;
+		void * get() const ;
 
 	private:
 		virtual
 		void init() = 0 ;
 		virtual
 		void release() throw() = 0 ;
-
-	protected:
-		explicit Surface(VideoMode const & videomode) ;
-		void set(void * raw) ;
-		void * get() const ;
 
 	private:
 		VideoMode m_videomode ;

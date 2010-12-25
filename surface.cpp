@@ -27,11 +27,10 @@ void Surface::set(void * raw)
 	mp_raw = raw ;
 }
 
-void Surface::fill(unsigned color)
+void Surface::fill(RGBColor const & color)
 {
 	SDL_Surface * p_raw = reinterpret_cast<SDL_Surface *>(get()) ;
-	Uint32 mapped_color = SDL_MapRGB(p_raw->format, color >> 16, color >> 8, color) ;
-	//Uint32 mapped_color = SDL_MapRGB(mp_raw->format, color & 0x000000ff, color & 0x0000ff00, color & 0x00ff0000) ;
+	Uint32 mapped_color = SDL_MapRGB(p_raw->format, color.red(), color.green(), color.blue()) ;
 	int ret = SDL_FillRect(p_raw, 0, mapped_color) ;
 	if(ret == -1)
 		throw SDL_GetError() ;

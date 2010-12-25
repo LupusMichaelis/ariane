@@ -9,6 +9,7 @@ LDFLAGS= \
 		-g -ggdb
 
 SRCS= \
+	  color.cpp \
 	  surface.cpp \
 	  canvas.cpp \
 	  screen.cpp \
