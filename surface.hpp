@@ -28,6 +28,8 @@ class Surface
 		void fill(Surface const & pattern) ;
 		void fill(Surface const & pattern, Position const & from, Position const & to) ;
 
+		void dump(std::string const & filename) ;
+
 	protected:
 		explicit Surface(VideoMode const & videomode) ;
 		void set(void * raw) ;

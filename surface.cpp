@@ -86,3 +86,11 @@ void Surface::update() const
 	SDL_UpdateRect(p_to, 0, 0, 0, 0) ;
 }
 
+void Surface::dump(std::string const & filename)
+{
+	SDL_Surface * p = reinterpret_cast<SDL_Surface *>(mp_raw) ;
+	int r = SDL_SaveBMP(p, filename.c_str()) ;
+	if(r < 0)
+		throw SDL_GetError() ;
+}
+

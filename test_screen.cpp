@@ -45,5 +45,7 @@ int main(int argc, char **argv)
 
 	p_screen->update() ;
 
+	p_screen->dump(std::string(".test_screen.bmp")) ;
+
 	sleep(5) ;
 }
