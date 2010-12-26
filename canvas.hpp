@@ -6,19 +6,24 @@
 class Canvas
 	: public Surface
 {
-	friend
-	void create<Canvas>(std::auto_ptr<Canvas> & p_surface, VideoMode const & videomode) ;
-
 	public:
 		virtual
 		~Canvas() ;
+
+		static
+		void create(std::auto_ptr<Canvas> & p_surface, VideoMode const & videomode)
+		{
+			std::auto_ptr<Canvas> p_new_surface(new Canvas(videomode)) ;
+			p_new_surface->init() ;
+			std::swap(p_surface, p_new_surface) ;
+		}
 
 	private:
 		Canvas() ;
 		explicit Canvas(VideoMode const & videomode) ;
 
-		virtual
 		void init() ;
+
 		virtual
 		void release() throw() ;
 } ;

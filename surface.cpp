@@ -42,7 +42,7 @@ void Surface::fill(Surface const & pattern, Position const & from, Position cons
 {
 	Position size(to) ;
 	std::auto_ptr<Canvas> p_buffer ;
-	create(p_buffer, create_videomode(to - from, depth(*this))) ;
+	Canvas::create(p_buffer, create_videomode(to - from, depth(*this))) ;
 	Position next(0, 0) ;
 	do
 	{
@@ -85,3 +85,4 @@ void Surface::update() const
 	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(mp_raw) ;
 	SDL_UpdateRect(p_to, 0, 0, 0, 0) ;
 }
+
