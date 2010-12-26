@@ -3,17 +3,18 @@
 #include "canvas.hpp"
 
 #include <unistd.h>
-#include <iostream>
-#include <boost/format.hpp>
 
 #include <cassert>
 
+void test_base() ;
+
 int main(int argc, char **argv)
 {
-	using std::cout ;
-	using std::endl ;
-	using boost::format ;
+	test_base() ;
+}
 
+void test_base()
+{
 	std::auto_ptr<Screen> p_screen ;
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
 	p_screen->fill(create_color(0xaaff00)) ;
