@@ -6,6 +6,8 @@
 #include <iostream>
 #include <boost/format.hpp>
 
+#include <cassert>
+
 int main(int argc, char **argv)
 {
 	using std::cout ;
@@ -16,11 +18,9 @@ int main(int argc, char **argv)
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
 	p_screen->fill(create_color(0xaaff00)) ;
 
-	cout << format("height (%d) width(%d) depth(%d)")
-		% height(*p_screen)
-		% width(*p_screen)
-		% depth(*p_screen)
-		<< endl ;
+	assert(width(*p_screen) == 320) ;
+	assert(height(*p_screen) == 280) ;
+	assert(depth(*p_screen) == 16) ;
 
 	std::auto_ptr<Canvas> p_s1 ;
 	Canvas::create(p_s1, create_videomode(320, 280, 16)) ;
