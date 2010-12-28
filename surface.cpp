@@ -85,13 +85,17 @@ void Surface::draw(Surface const & motif, Position const & at)
 
 // XXX Big trouble here. We have to destroy the SDL_Surface before we can resize the
 // screen. This means if we can't recover, the object is in inconsistent state.
+// XXX Bud: when the surface is a screen, it isn't resized
 void Surface::resize(Size const & new_size)
 {
-	//SDL_Surface * p_orig = reinterpret_cast<SDL_Surface *>(mp_raw) ;
-	release() ;
+	SDL_Surface * p_orig = reinterpret_cast<SDL_Surface *>(mp_raw) ;
 	m_videomode = create_videomode(new_size, m_videomode.depth()) ;
 	init() ;
-
+	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(mp_raw) ;
+	int ret = SDL_BlitSurface(p_orig, 0, p_to, 0) ;
+	if(ret < 0)
+		throw SDL_GetError() ;
+	SDL_FreeSurface(p_orig) ;
 }
 
 
