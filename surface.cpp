@@ -17,6 +17,9 @@ Surface::~Surface()
 VideoMode const & Surface::videomode() const
 { return m_videomode ; }
 
+void Surface::videomode(VideoMode const & new_videomode)
+{ m_videomode = new_videomode ; }
+
 void * Surface::get() const
 {
 	return mp_raw ;

@@ -35,6 +35,8 @@ class Surface
 		void set(void * raw) ;
 		void * get() const ;
 
+		void videomode(VideoMode const & new_videomode) ;
+
 	private:
 		virtual
 		void release() throw() = 0 ;
