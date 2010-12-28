@@ -16,7 +16,7 @@ void Image::init()
 	if(!p_raw)
 		throw SDL_GetError() ;
 
-	videomode(create_videomode(p_raw->w, p_raw->h, 0)) ;
+	videomode(create_videomode(p_raw->w, p_raw->h, p_raw->format->BitsPerPixel)) ;
 
 	set(p_raw) ;
 }
