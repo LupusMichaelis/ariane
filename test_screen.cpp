@@ -102,6 +102,9 @@ void test_resize()
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
 	p_screen->fill(create_color(0xaaaaaa)) ;
 
+	sleep(5) ;
+	p_screen->resize(create_size(480, 320)) ;
+
 	std::auto_ptr<Canvas> p_s1 ;
 	Canvas::create(p_s1, create_videomode(20, 20, 16)) ;
 	p_s1->fill(create_color(0xaa)) ;
