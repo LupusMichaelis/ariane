@@ -17,9 +17,17 @@ void test_compose() ;
 
 int main(int argc, char **argv)
 {
-	//test_base() ;
-	test_resize() ;
-	//test_compose() ;
+	try
+	{
+		test_base() ;
+		test_resize() ;
+		test_compose() ;
+	}
+	catch(char * raw)
+	{
+		cout << format("Exception '%s'\n") % raw ;
+		throw ;
+	}
 }
 
 void test_base()
@@ -83,12 +91,10 @@ void test_compose()
 	assert(height(*p_images) == 480) ;
 	assert(depth(*p_images) == 24) ;
 
-	/*
-	p_screen->resize(p_images) ;
+	p_screen->resize(p_images->videomode().size()) ;
 
 	assert(width(*p_images) == width(*p_screen)) ;
 	assert(height(*p_images) == height(*p_screen)) ;
-	*/
 
 	p_screen->draw(*p_images) ;
 	p_screen->update() ;
@@ -101,8 +107,9 @@ void test_resize()
 	std::auto_ptr<Screen> p_screen ;
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
 	p_screen->fill(create_color(0xaaaaaa)) ;
+	p_screen->update() ;
 
-	sleep(5) ;
+	sleep(2) ;
 	p_screen->resize(create_size(480, 320)) ;
 
 	std::auto_ptr<Canvas> p_s1 ;
@@ -116,5 +123,5 @@ void test_resize()
 	p_screen->draw(*p_s1, create_size(50, 50)) ;
 	p_screen->update() ;
 
-	sleep(5) ;
+	sleep(2) ;
 }
