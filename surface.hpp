@@ -27,6 +27,7 @@ class Surface
 		void fill(RGBColor const & color) ;
 		void fill(Surface const & pattern) ;
 		void fill(Surface const & pattern, Position const & from, Position const & to) ;
+		void resize(Size const & new_size) ;
 
 		void dump(std::string const & filename) ;
 
@@ -38,6 +39,8 @@ class Surface
 		void videomode(VideoMode const & new_videomode) ;
 
 	private:
+		virtual
+		void init() = 0 ;
 		virtual
 		void release() throw() = 0 ;
 

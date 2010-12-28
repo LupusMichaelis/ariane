@@ -83,6 +83,18 @@ void Surface::draw(Surface const & motif, Position const & at)
 		throw "Must reload resources" ;
 }
 
+// XXX Big trouble here. We have to destroy the SDL_Surface before we can resize the
+// screen. This means if we can't recover, the object is in inconsistent state.
+void Surface::resize(Size const & new_size)
+{
+	//SDL_Surface * p_orig = reinterpret_cast<SDL_Surface *>(mp_raw) ;
+	release() ;
+	m_videomode = create_videomode(new_size, m_videomode.depth()) ;
+	init() ;
+
+}
+
+
 void Surface::update() const
 {
 	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(mp_raw) ;

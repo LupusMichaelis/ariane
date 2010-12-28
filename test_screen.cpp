@@ -12,12 +12,14 @@ using std::endl ;
 using boost::format ;
 
 void test_base() ;
+void test_resize() ;
 void test_compose() ;
 
 int main(int argc, char **argv)
 {
 	//test_base() ;
-	test_compose() ;
+	test_resize() ;
+	//test_compose() ;
 }
 
 void test_base()
@@ -94,3 +96,22 @@ void test_compose()
 	sleep(5) ;
 }
 
+void test_resize()
+{
+	std::auto_ptr<Screen> p_screen ;
+	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
+	p_screen->fill(create_color(0xaaaaaa)) ;
+
+	std::auto_ptr<Canvas> p_s1 ;
+	Canvas::create(p_s1, create_videomode(20, 20, 16)) ;
+	p_s1->fill(create_color(0xaa)) ;
+
+	p_screen->draw(*p_s1) ;
+	p_screen->update() ;
+
+	p_s1->resize(create_size(50, 50)) ;
+	p_screen->draw(*p_s1, create_size(50, 50)) ;
+	p_screen->update() ;
+
+	sleep(5) ;
+}
