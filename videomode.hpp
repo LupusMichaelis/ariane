@@ -62,6 +62,7 @@ class VideoMode
 		int width() const { return m_size.width() ; }
 		int height() const { return m_size.height() ; }
 		int depth() const { return m_depth ; }
+		Size const & size() const { return m_size ; }
 
 	private:
 		Size m_size ;
