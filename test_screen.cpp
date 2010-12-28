@@ -3,14 +3,21 @@
 #include "canvas.hpp"
 
 #include <unistd.h>
-
 #include <cassert>
 
+#include <iostream>
+#include <boost/format.hpp>
+using std::cout ;
+using std::endl ;
+using boost::format ;
+
 void test_base() ;
+void test_compose() ;
 
 int main(int argc, char **argv)
 {
-	test_base() ;
+	//test_base() ;
+	test_compose() ;
 }
 
 void test_base()
@@ -50,3 +57,40 @@ void test_base()
 
 	sleep(5) ;
 }
+
+#include "image.hpp"
+
+void test_compose()
+{
+	std::auto_ptr<Screen> p_screen ;
+	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
+
+	std::auto_ptr<Image> p_images ;
+	std::string filename("gfx/kraland_shapes.bmp") ;
+	Image::create(p_images, filename) ;
+
+	/*
+	cout << format("width(%d) height(%d) depth(%d)")
+		% width(*p_images)
+		% height(*p_images)
+		% depth(*p_images)
+		<< endl ;
+	*/
+
+	assert(width(*p_images) == 672) ;
+	assert(height(*p_images) == 480) ;
+	assert(depth(*p_images) == 24) ;
+
+	/*
+	p_screen->resize(p_images) ;
+
+	assert(width(*p_images) == width(*p_screen)) ;
+	assert(height(*p_images) == height(*p_screen)) ;
+	*/
+
+	p_screen->draw(*p_images) ;
+	p_screen->update() ;
+
+	sleep(5) ;
+}
+
