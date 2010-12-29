@@ -83,16 +83,22 @@ void Surface::draw(Surface const & motif, Position const & at)
 		throw "Must reload resources" ;
 }
 
+#include <cstring>
 // XXX Big trouble here. We have to destroy the SDL_Surface before we can resize the
 // screen. This means if we can't recover, the object is in inconsistent state.
-// XXX Bud: when the surface is a screen, it isn't resized
+// XXX I copy the surface structure before I destroy it. My guess is its undefined
+// behaviour. Should look if they are a better (and efficient) way to copy the content of the surface.
 void Surface::resize(Size const & new_size)
 {
 	SDL_Surface * p_orig = reinterpret_cast<SDL_Surface *>(mp_raw) ;
+	SDL_Surface raw_copy ;
+	std::memcpy(&raw_copy, p_orig, sizeof raw_copy) ;
+
 	m_videomode = create_videomode(new_size, m_videomode.depth()) ;
+	//release() ;
 	init() ;
 	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(mp_raw) ;
-	int ret = SDL_BlitSurface(p_orig, 0, p_to, 0) ;
+	int ret = SDL_BlitSurface(&raw_copy, 0, p_to, 0) ;
 	if(ret < 0)
 		throw SDL_GetError() ;
 	SDL_FreeSurface(p_orig) ;
