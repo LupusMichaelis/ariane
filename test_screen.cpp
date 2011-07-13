@@ -22,6 +22,7 @@ int main(int argc, char **argv)
 		test_base() ;
 		test_resize() ;
 		test_compose() ;
+		// test_image_editor() ;
 	}
 	catch(char * raw)
 	{
@@ -32,7 +33,7 @@ int main(int argc, char **argv)
 
 void test_base()
 {
-	std::auto_ptr<Screen> p_screen ;
+	std::shared_ptr<Screen> p_screen ;
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
 	p_screen->fill(create_color(0xaaff00)) ;
 
@@ -40,22 +41,22 @@ void test_base()
 	assert(height(*p_screen) == 280) ;
 	assert(depth(*p_screen) == 16) ;
 
-	std::auto_ptr<Canvas> p_s1 ;
+	std::shared_ptr<Canvas> p_s1 ;
 	Canvas::create(p_s1, create_videomode(320, 280, 16)) ;
 	p_s1->fill(create_color(0x00ff00)) ;
 	p_screen->draw(*p_s1) ;
 
-	std::auto_ptr<Canvas> p_s2;
+	std::shared_ptr<Canvas> p_s2;
 	Canvas::create(p_s2, create_videomode(40, 40, 16)) ;
 	p_s2->fill(create_color(0xaa)) ;
 	p_screen->draw(*p_s2, Position(20, 20)) ;
 
-	std::auto_ptr<Canvas> p_s3;
+	std::shared_ptr<Canvas> p_s3;
 	Canvas::create(p_s3, create_videomode(30, 30, 16)) ;
 	p_s3->fill(create_color(0xffff00)) ;
 	p_screen->draw(*p_s3, Position(10, 10)) ;
 
-	std::auto_ptr<Canvas> p_s4;
+	std::shared_ptr<Canvas> p_s4;
 	Canvas::create(p_s4, create_videomode(60, 60, 16)) ;
 	p_s4->draw(*p_screen) ;
 	//p_screen->draw(*p_s4, Position(100, 100)) ;
@@ -72,10 +73,10 @@ void test_base()
 
 void test_compose()
 {
-	std::auto_ptr<Screen> p_screen ;
+	std::shared_ptr<Screen> p_screen ;
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
 
-	std::auto_ptr<Image> p_images ;
+	std::shared_ptr<Image> p_images ;
 	std::string filename("gfx/kraland_shapes.bmp") ;
 	Image::create(p_images, filename) ;
 
@@ -104,7 +105,7 @@ void test_compose()
 
 void test_resize()
 {
-	std::auto_ptr<Screen> p_screen ;
+	std::shared_ptr<Screen> p_screen ;
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
 	p_screen->fill(create_color(0xaaaaaa)) ;
 	p_screen->update() ;
@@ -112,7 +113,7 @@ void test_resize()
 	sleep(2) ;
 	p_screen->resize(create_size(480, 320)) ;
 
-	std::auto_ptr<Canvas> p_s1 ;
+	std::shared_ptr<Canvas> p_s1 ;
 	Canvas::create(p_s1, create_videomode(20, 20, 16)) ;
 	p_s1->fill(create_color(0xaa)) ;
 
@@ -125,3 +126,4 @@ void test_resize()
 
 	sleep(2) ;
 }
+

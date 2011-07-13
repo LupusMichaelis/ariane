@@ -2,6 +2,7 @@
 CXXFLAGS=-Wall \
 		-Werror \
 		`pkg-config --cflags sdl` \
+		-std=c++0x \
 		-g -ggdb
 
 LDFLAGS= \

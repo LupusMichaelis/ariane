@@ -44,7 +44,7 @@ void Surface::fill(RGBColor const & color)
 void Surface::fill(Surface const & pattern, Position const & from, Position const & to)
 {
 	Position size(to) ;
-	std::auto_ptr<Canvas> p_buffer ;
+	std::shared_ptr<Canvas> p_buffer ;
 	Canvas::create(p_buffer, create_videomode(to - from, depth(*this))) ;
 	Position next(0, 0) ;
 	do

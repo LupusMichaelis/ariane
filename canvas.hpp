@@ -11,9 +11,9 @@ class Canvas
 		~Canvas() ;
 
 		static
-		void create(std::auto_ptr<Canvas> & p_surface, VideoMode const & videomode)
+		void create(std::shared_ptr<Canvas> & p_surface, VideoMode const & videomode)
 		{
-			std::auto_ptr<Canvas> p_new_surface(new Canvas(videomode)) ;
+			std::shared_ptr<Canvas> p_new_surface(new Canvas(videomode)) ;
 			p_new_surface->init() ;
 			std::swap(p_surface, p_new_surface) ;
 		}

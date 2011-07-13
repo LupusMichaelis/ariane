@@ -11,9 +11,9 @@ class Image
 		~Image() ;
 
 		static
-		void create(std::auto_ptr<Image> & p_surface, std::string const & filename)
+		void create(std::shared_ptr<Image> & p_surface, std::string const & filename)
 		{
-			std::auto_ptr<Image> p_new_surface(new Image(filename)) ;
+			std::shared_ptr<Image> p_new_surface(new Image(filename)) ;
 			p_new_surface->init() ;
 			std::swap(p_surface, p_new_surface) ;
 		}
