@@ -20,16 +20,20 @@ test const tests[] = {
 } ;
 int const tests_size = sizeof tests / sizeof (test) ;
 
+#include <cstring>
+
 int main(int argc, char **argv)
 {
 	using std::cout ;
 	using std::endl ;
 	using boost::format ;
 
-	test current_test ;
 	for(int n=0 ; n<tests_size ; ++n)
 	{
-		current_test = tests[n] ;
+		test current_test = tests[n] ;
+		if(argc > 1 && 0 != std::strcmp(*(argv+1), current_test.name + std::strlen("test_")))
+			continue ;
+
 		cout << format("Running test '%s'\n")
 			% current_test.name ;
 		try { (current_test.fn)() ; }
