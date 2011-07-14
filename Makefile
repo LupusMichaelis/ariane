@@ -11,10 +11,11 @@ LDFLAGS= \
 
 SRCS= \
 	  color.cpp \
-	  image.cpp \
 	  surface.cpp \
-	  canvas.cpp \
 	  screen.cpp \
+	  canvas.cpp \
+	  image.cpp \
+	  sprite_resource.cpp \
 	  test_screen.cpp \
 	  dotests.cpp \
 

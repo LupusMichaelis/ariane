@@ -95,6 +95,8 @@ void test_resize()
 	sleep(2) ;
 }
 
+#include "sprite_resource.hpp"
+
 void test_load_sprite()
 {
 	std::shared_ptr<Screen> p_screen ;
@@ -104,25 +106,16 @@ void test_load_sprite()
 	std::string filename("gfx/kraland_shapes.bmp") ;
 	Image::create(p_patchwork, filename) ;
 
-	std::vector<std::shared_ptr<Canvas> > sprites ;
-	sprites.reserve(20) ;
+	SpriteResource sprites(p_patchwork, Size(32,32)) ;
 
-	for(int i=0 ; i < 20 ; ++i)
+	for(int i=0 ; i < 10 ; ++i)
 	{
-		std::shared_ptr<Canvas> p_sprite ;
-		Canvas::create(p_sprite, create_videomode(32, 32, 16)) ;
+		std::shared_ptr<Surface> p_sprite ;
+		sprites.extract(p_sprite, i) ;
 
-		std::shared_ptr<Surface> p_surface(std::static_pointer_cast<Surface>(p_sprite)) ;
-		Size position(32 * i, 32) ;
-		p_patchwork->crop(*p_surface, position, p_sprite->videomode().size()) ;
-
-		sprites.push_back(p_sprite) ;
-	}
-
-	for(int i=0 ; i < 20 ; ++i)
-	{
-		p_screen->draw(*sprites.at(i)) ;
+		p_screen->draw(*p_sprite) ;
 		p_screen->update() ;
+
 		usleep(100000) ;
 	}
 
