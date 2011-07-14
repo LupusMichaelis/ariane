@@ -47,12 +47,12 @@ void test_base()
 
 	p_screen->dump(std::string(".test_screen.bmp")) ;
 
-	sleep(5) ;
+	sleep(2) ;
 }
 
 #include "image.hpp"
 
-void test_compose()
+void test_load_image()
 {
 	std::shared_ptr<Screen> p_screen ;
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
@@ -61,27 +61,14 @@ void test_compose()
 	std::string filename("gfx/kraland_shapes.bmp") ;
 	Image::create(p_images, filename) ;
 
-	/*
-	cout << format("width(%d) height(%d) depth(%d)")
-		% width(*p_images)
-		% height(*p_images)
-		% depth(*p_images)
-		<< endl ;
-	*/
-
 	assert(width(*p_images) == 672) ;
 	assert(height(*p_images) == 480) ;
 	assert(depth(*p_images) == 24) ;
 
-	p_screen->resize(p_images->videomode().size()) ;
-
-	assert(width(*p_images) == width(*p_screen)) ;
-	assert(height(*p_images) == height(*p_screen)) ;
-
 	p_screen->draw(*p_images) ;
 	p_screen->update() ;
 
-	sleep(5) ;
+	sleep(2) ;
 }
 
 void test_resize()
@@ -108,7 +95,7 @@ void test_resize()
 	sleep(2) ;
 }
 
-void test_image_editor()
+void test_load_sprite()
 {
 	std::shared_ptr<Screen> p_screen ;
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;

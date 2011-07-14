@@ -8,15 +8,15 @@
 
 void test_base() ;
 void test_resize() ;
-void test_compose() ;
-void test_image_editor() ;
+void test_load_image() ;
+void test_load_sprite() ;
 
 struct test { char const * name ; void (*fn)() ; } ;
 test const tests[] = {
 	{"test_base", test_base},
 	{"test_resize", test_resize},
-	{"test_compose", test_compose},
-	{"test_image_editor", test_image_editor},
+	{"test_load_image", test_load_image},
+	{"test_load_sprite", test_load_sprite},
 } ;
 int const tests_size = sizeof tests / sizeof (test) ;
 
@@ -36,10 +36,21 @@ int main(int argc, char **argv)
 
 		cout << format("Running test '%s'\n")
 			% current_test.name ;
-		try { (current_test.fn)() ; }
+		try
+		{
+			(current_test.fn)() ;
+		}
+		catch(std::exception const & e)
+		{
+			cout << format("Exception '%s'\n") % e.what() ;
+		}
 		catch(char * raw)
 		{
 			cout << format("Exception '%s'\n") % raw ;
+		}
+		catch(...)
+		{
+			cout << format("Strange exception raised\n") ;
 		}
 	}
 }
