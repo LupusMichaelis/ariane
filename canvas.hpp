@@ -10,6 +10,7 @@ class Canvas
 		virtual
 		~Canvas() ;
 
+		Canvas(Canvas const & copied) ;
 		static
 		void create(std::shared_ptr<Canvas> & p_surface, VideoMode const & videomode)
 		{
@@ -18,12 +19,16 @@ class Canvas
 			std::swap(p_surface, p_new_surface) ;
 		}
 
+		virtual
+		void resize(Size const & new_size) ;
+
 	private:
 		Canvas() ;
 		explicit Canvas(VideoMode const & videomode) ;
 
 		void init() ;
 
+		void clone(std::shared_ptr<Canvas> & p_target) ;
 		virtual
 		void release() throw() ;
 } ;

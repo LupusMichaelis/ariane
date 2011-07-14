@@ -35,3 +35,20 @@ Canvas::Canvas(VideoMode const & videomode)
 Canvas::~Canvas()
 { }
 
+void Canvas::resize(Size const & new_size)
+{
+	std::shared_ptr<Canvas> p_original ;
+	clone(p_original) ;
+	Surface::resize(new_size) ;
+	draw(*p_original) ;
+	p_original->release() ;
+}
+
+void Canvas::clone(std::shared_ptr<Canvas> & p_target)
+{
+	std::shared_ptr<Canvas> p_new_canvas(new Canvas(videomode())) ;
+	p_new_canvas->init() ;
+	p_new_canvas->draw(*this) ;
+	std::swap(p_target, p_new_canvas) ;
+}
+

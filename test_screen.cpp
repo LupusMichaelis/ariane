@@ -21,9 +21,9 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		// test_base() ;
-		// test_resize() ;
-		// test_compose() ;
+		test_base() ;
+		test_resize() ;
+		test_compose() ;
 		test_image_editor() ;
 	}
 	catch(char * raw)

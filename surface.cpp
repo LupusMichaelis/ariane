@@ -90,18 +90,9 @@ void Surface::draw(Surface const & motif, Size const & at)
 // behaviour. Should look if they are a better (and efficient) way to copy the content of the surface.
 void Surface::resize(Size const & new_size)
 {
-	SDL_Surface * p_orig = reinterpret_cast<SDL_Surface *>(mp_raw) ;
-	SDL_Surface raw_copy ;
-	std::memcpy(&raw_copy, p_orig, sizeof raw_copy) ;
-
+	release() ;
 	m_videomode = create_videomode(new_size, m_videomode.depth()) ;
-	//release() ;
 	init() ;
-	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(mp_raw) ;
-	int ret = SDL_BlitSurface(&raw_copy, 0, p_to, 0) ;
-	if(ret < 0)
-		throw SDL_GetError() ;
-	SDL_FreeSurface(p_orig) ;
 }
 
 
@@ -122,8 +113,11 @@ void Surface::dump(std::string const & filename)
 void Surface::crop(Surface & target, Size const & origin, Size const & size) const
 {
 	SDL_Rect orig ;
+
 	orig.x = origin.width() ;
 	orig.y = origin.height() ;
+	orig.w = size.width() ;
+	orig.h = size.height() ;
 
 	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(target.get()) ;
 	SDL_Surface * p_from = reinterpret_cast<SDL_Surface *>(mp_raw) ;
