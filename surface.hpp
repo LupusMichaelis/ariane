@@ -7,8 +7,11 @@
 
 #	include <memory>
 
+#	include <boost/utility.hpp>
+
 
 class Surface
+	: boost::noncopyable
 {
 	public:
 		virtual
