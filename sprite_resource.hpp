@@ -12,6 +12,8 @@ class SpriteResource
 		void extract(std::shared_ptr<Surface> & p_target, int index) const ;
 
 	private:
+		Size const compute_position(int index) const ;
+
 		std::shared_ptr<Surface>	mp_matrix ;
 		Size						m_sprite_size ;
 } ;

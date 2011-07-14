@@ -108,7 +108,7 @@ void test_load_sprite()
 
 	SpriteResource sprites(p_patchwork, Size(32,32)) ;
 
-	for(int i=0 ; i < 10 ; ++i)
+	for(int i=0 ; i < 300 ; ++i)
 	{
 		std::shared_ptr<Surface> p_sprite ;
 		sprites.extract(p_sprite, i) ;
@@ -116,7 +116,7 @@ void test_load_sprite()
 		p_screen->draw(*p_sprite) ;
 		p_screen->update() ;
 
-		usleep(100000) ;
+		usleep(500000) ;
 	}
 
 	sleep(2) ;
