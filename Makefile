@@ -16,15 +16,16 @@ SRCS= \
 	  canvas.cpp \
 	  screen.cpp \
 	  test_screen.cpp \
+	  dotests.cpp \
 
 OBJS=$(SRCS:.cpp=.o)
 
-TARGET=test_screen
+TARGET=dotests
 
 %.o: %.cpp
 	$(CXX) -c $< $(CXXFLAGS)
 
-test_screen: $(OBJS)
+dotests: $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
 
 clean:

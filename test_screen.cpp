@@ -1,37 +1,16 @@
-
-#include "screen.hpp"
-#include "canvas.hpp"
-
 #include <unistd.h>
 #include <cassert>
 
 #include <memory>
 #include <iostream>
 #include <boost/format.hpp>
+
+#include "screen.hpp"
+#include "canvas.hpp"
+
 using std::cout ;
 using std::endl ;
 using boost::format ;
-
-void test_base() ;
-void test_resize() ;
-void test_compose() ;
-void test_image_editor() ;
-
-int main(int argc, char **argv)
-{
-	try
-	{
-		test_base() ;
-		test_resize() ;
-		test_compose() ;
-		test_image_editor() ;
-	}
-	catch(char * raw)
-	{
-		cout << format("Exception '%s'\n") % raw ;
-		throw ;
-	}
-}
 
 void test_base()
 {
