@@ -7,9 +7,6 @@
 
 #	include <memory>
 
-class Size ;
-typedef Size Position ;
-
 
 class Surface
 {
@@ -22,14 +19,16 @@ class Surface
 		VideoMode const & videomode() const ;
 
 		void draw(Surface const & motif) ;
-		void draw(Surface const & motif, Position const & at) ;
+		void draw(Surface const & motif, Size const & at) ;
 		void update() const ;
 		void fill(RGBColor const & color) ;
 		void fill(Surface const & pattern) ;
-		void fill(Surface const & pattern, Position const & from, Position const & to) ;
+		void fill(Surface const & pattern, Size const & from, Size const & to) ;
 		void resize(Size const & new_size) ;
 
 		void dump(std::string const & filename) ;
+
+		void crop(Surface & target, Size const & origin, Size const & size) const ;
 
 	protected:
 		explicit Surface(VideoMode const & videomode) ;

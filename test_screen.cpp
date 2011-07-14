@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <cassert>
 
+#include <memory>
 #include <iostream>
 #include <boost/format.hpp>
 using std::cout ;
@@ -14,15 +15,16 @@ using boost::format ;
 void test_base() ;
 void test_resize() ;
 void test_compose() ;
+void test_image_editor() ;
 
 int main(int argc, char **argv)
 {
 	try
 	{
-		test_base() ;
-		test_resize() ;
-		test_compose() ;
-		// test_image_editor() ;
+		// test_base() ;
+		// test_resize() ;
+		// test_compose() ;
+		test_image_editor() ;
 	}
 	catch(char * raw)
 	{
@@ -49,18 +51,18 @@ void test_base()
 	std::shared_ptr<Canvas> p_s2;
 	Canvas::create(p_s2, create_videomode(40, 40, 16)) ;
 	p_s2->fill(create_color(0xaa)) ;
-	p_screen->draw(*p_s2, Position(20, 20)) ;
+	p_screen->draw(*p_s2, Size(20, 20)) ;
 
 	std::shared_ptr<Canvas> p_s3;
 	Canvas::create(p_s3, create_videomode(30, 30, 16)) ;
 	p_s3->fill(create_color(0xffff00)) ;
-	p_screen->draw(*p_s3, Position(10, 10)) ;
+	p_screen->draw(*p_s3, Size(10, 10)) ;
 
 	std::shared_ptr<Canvas> p_s4;
 	Canvas::create(p_s4, create_videomode(60, 60, 16)) ;
 	p_s4->draw(*p_screen) ;
-	//p_screen->draw(*p_s4, Position(100, 100)) ;
-	p_screen->fill(*p_s4, Position(60, 60), Position(150, 150)) ;
+	//p_screen->draw(*p_s4, Size(100, 100)) ;
+	p_screen->fill(*p_s4, Size(60, 60), Size(150, 150)) ;
 
 	p_screen->update() ;
 
@@ -126,4 +128,39 @@ void test_resize()
 
 	sleep(2) ;
 }
+
+void test_image_editor()
+{
+	std::shared_ptr<Screen> p_screen ;
+	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
+
+	std::shared_ptr<Image> p_patchwork ;
+	std::string filename("gfx/kraland_shapes.bmp") ;
+	Image::create(p_patchwork, filename) ;
+
+	std::vector<std::shared_ptr<Canvas> > sprites ;
+	sprites.reserve(20) ;
+
+	for(int i=0 ; i < 20 ; ++i)
+	{
+		std::shared_ptr<Canvas> p_sprite ;
+		Canvas::create(p_sprite, create_videomode(32, 32, 16)) ;
+
+		std::shared_ptr<Surface> p_surface(std::static_pointer_cast<Surface>(p_sprite)) ;
+		Size position(32 * i, 32) ;
+		p_patchwork->crop(*p_surface, position, p_sprite->videomode().size()) ;
+
+		sprites.push_back(p_sprite) ;
+	}
+
+	for(int i=0 ; i < 20 ; ++i)
+	{
+		p_screen->draw(*sprites.at(i)) ;
+		p_screen->update() ;
+		usleep(100000) ;
+	}
+
+	sleep(2) ;
+}
+
 

@@ -41,12 +41,12 @@ void Surface::fill(RGBColor const & color)
 
 #include "canvas.hpp"
 
-void Surface::fill(Surface const & pattern, Position const & from, Position const & to)
+void Surface::fill(Surface const & pattern, Size const & from, Size const & to)
 {
-	Position size(to) ;
+	Size size(to) ;
 	std::shared_ptr<Canvas> p_buffer ;
 	Canvas::create(p_buffer, create_videomode(to - from, depth(*this))) ;
-	Position next(0, 0) ;
+	Size next(0, 0) ;
 	do
 	{
 		p_buffer->draw(pattern, next) ;
@@ -64,10 +64,10 @@ void Surface::fill(Surface const & pattern, Position const & from, Position cons
 
 void Surface::draw(Surface const & motif)
 {
-	draw(motif, Position(0, 0)) ;
+	draw(motif, Size(0, 0)) ;
 }
 
-void Surface::draw(Surface const & motif, Position const & at)
+void Surface::draw(Surface const & motif, Size const & at)
 {
 	SDL_Rect dst ;
 	dst.x = at.width() ;
@@ -118,4 +118,21 @@ void Surface::dump(std::string const & filename)
 	if(r < 0)
 		throw SDL_GetError() ;
 }
+
+void Surface::crop(Surface & target, Size const & origin, Size const & size) const
+{
+	SDL_Rect orig ;
+	orig.x = origin.width() ;
+	orig.y = origin.height() ;
+
+	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(target.get()) ;
+	SDL_Surface * p_from = reinterpret_cast<SDL_Surface *>(mp_raw) ;
+	int ret = SDL_BlitSurface(p_from, &orig, p_to, 0) ;
+
+	if(ret == -1)
+		throw SDL_GetError() ;
+	else if(ret == -2)
+		throw "Must reload resources" ;
+}
+
 
