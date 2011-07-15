@@ -95,7 +95,7 @@ void test_resize()
 	sleep(2) ;
 }
 
-#include "sprite_resource.hpp"
+#include "grid.hpp"
 
 void test_load_sprite()
 {
@@ -106,7 +106,7 @@ void test_load_sprite()
 	std::string filename("gfx/kraland_shapes.bmp") ;
 	Image::create(p_patchwork, filename) ;
 
-	SpriteResource sprites(p_patchwork, Size(32,32)) ;
+	Grid sprites(p_patchwork, Size(32,32)) ;
 
 	for(int i=0 ; i < 300 ; ++i)
 	{
@@ -121,5 +121,4 @@ void test_load_sprite()
 
 	sleep(2) ;
 }
-
 

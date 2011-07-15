@@ -15,7 +15,7 @@ SRCS= \
 	  screen.cpp \
 	  canvas.cpp \
 	  image.cpp \
-	  sprite_resource.cpp \
+	  grid.cpp \
 	  test_screen.cpp \
 	  dotests.cpp \
 
