@@ -122,3 +122,38 @@ void test_load_sprite()
 	sleep(2) ;
 }
 
+void test_grid()
+{
+	std::shared_ptr<Screen> p_screen ;
+	Screen::create(p_screen, create_videomode(672, 480, 24)) ;
+
+	std::shared_ptr<Image> p_patchwork ;
+	std::string filename("gfx/kraland_shapes.bmp") ;
+	Image::create(p_patchwork, filename) ;
+
+	Grid sprites(p_patchwork, Size(32,32)) ;
+
+	int sprite_per_row = 672 / 32 ;
+	//int sprite_per_col = 480 / 32 ;
+
+	std::shared_ptr<Canvas> p_target ;
+	Canvas::create(p_target, create_videomode(5 * 32, 2 * sprite_per_row * 32, 24)) ;
+	for(int k=0 ; k < 2 ; ++k)
+		for(int j=0 ; j < sprite_per_row ; ++j)
+			for(int i=0 ; i < 5 ; ++i)
+			{
+				std::shared_ptr<Surface> p_sprite ;
+				sprites.extract(p_sprite, (i + 5*k) * sprite_per_row + j) ;
+				p_target->draw(*p_sprite, Size(i*32, (j+k*sprite_per_row)*32)) ;
+			}
+
+	p_target->update() ;
+	p_screen->draw(*p_target) ;
+	p_screen->update() ;
+	p_target->dump(std::string("gfx/building.bmp")) ;
+
+	sleep(2) ;
+}
+
+
+
