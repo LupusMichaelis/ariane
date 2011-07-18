@@ -137,7 +137,7 @@ void test_grid()
 	//int sprite_per_col = 480 / 32 ;
 
 	std::shared_ptr<Canvas> p_target ;
-	Canvas::create(p_target, create_videomode(5 * 32, 2 * sprite_per_row * 32, 24)) ;
+	Canvas::create(p_target, create_videomode(5 * 32, 2 * (sprite_per_row + 10) * 32, 24)) ;
 	for(int k=0 ; k < 2 ; ++k)
 		for(int j=0 ; j < sprite_per_row ; ++j)
 			for(int i=0 ; i < 5 ; ++i)
@@ -147,12 +147,45 @@ void test_grid()
 				p_target->draw(*p_sprite, Size(i*32, (j+k*sprite_per_row)*32)) ;
 			}
 
+	// Grounds
+	for(int j=0 ; j < 2 ; ++j)
+		for(int i=0 ; i < 5 ; ++i)
+		{
+			std::shared_ptr<Surface> p_sprite ;
+			sprites.extract(p_sprite, j + (i + 10) * sprite_per_row) ;
+			p_target->draw(*p_sprite, Size(i*32, (j+2*sprite_per_row)*32)) ;
+		}
+
+	// Roads
+	for(int j=0 ; j < 2 ; ++j)
+		for(int i=0 ; i < 4 ; ++i)
+		{
+			std::shared_ptr<Surface> p_sprite ;
+			sprites.extract(p_sprite, 2 + j + (i + 10) * sprite_per_row) ;
+			p_target->draw(*p_sprite, Size(i*32, (j+2+2*sprite_per_row)*32)) ;
+		}
+
+	// Trees
+	for(int i=0 ; i < 4 ; ++i)
+	{
+		std::shared_ptr<Surface> p_sprite ;
+		sprites.extract(p_sprite, 2 + i + 14 * sprite_per_row) ;
+		p_target->draw(*p_sprite, Size(i*32, (4+2*sprite_per_row)*32)) ;
+	}
+
+	// Flowers
+	{
+		std::shared_ptr<Surface> p_sprite ;
+		sprites.extract(p_sprite, 2 + 3 + 13 * sprite_per_row) ;
+		p_target->draw(*p_sprite, Size(4*32, (4+2*sprite_per_row)*32)) ;
+	}
+
 	p_target->update() ;
 	p_screen->draw(*p_target) ;
 	p_screen->update() ;
 	p_target->dump(std::string("gfx/building.bmp")) ;
 
-	sleep(2) ;
+//	sleep(2) ;
 }
 
 
