@@ -188,5 +188,40 @@ void test_grid()
 //	sleep(2) ;
 }
 
+#include <SDL/SDL.h>
 
+void test_event()
+{
+	std::shared_ptr<Screen> p_screen ;
+	Screen::create(p_screen, create_videomode(320, 240, 24)) ;
+
+	SDL_Event ev ;
+	bool running = true ;
+	do
+	{
+		SDL_WaitEvent(&ev) ;
+		switch(ev.type)
+		{
+			case SDL_KEYUP:
+				switch(ev.key.keysym.sym)
+				{
+					case SDLK_LEFT: std::cout << "left\n" ; break ;
+					case SDLK_RIGHT: std::cout << "right\n" ; break ;
+					case SDLK_UP: std::cout << "up\n" ; break ;
+					case SDLK_DOWN: std::cout << "down\n" ; break ;
+					default: std::cout << "other\n" ;
+				}
+
+				break ;
+
+			case SDL_QUIT:
+				running = false ;
+				break ;
+
+			default:
+				break ;
+		}
+	}
+	while(running) ;
+}
 

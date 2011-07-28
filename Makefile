@@ -19,15 +19,22 @@ SRCS= \
 	  test_screen.cpp \
 	  dotests.cpp \
 
+#	  quest.cpp \
+
 OBJS=$(SRCS:.cpp=.o)
 
 TARGET=dotests
 
-%.o: %.cpp
-	$(CXX) -c $< $(CXXFLAGS)
+target: $(TARGET)
+
+quest: $(OBJS)
+	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
 
 dotests: $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
+
+%.o: %.cpp
+	$(CXX) -c $< $(CXXFLAGS)
 
 clean:
 	-rm -rf $(OBJS) $(TARGET)
