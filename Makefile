@@ -7,6 +7,7 @@ CXXFLAGS=-Wall \
 
 LDFLAGS= \
 		`pkg-config --libs sdl` \
+		-lboost_signals \
 		-g -ggdb
 
 SRCS= \
@@ -16,6 +17,7 @@ SRCS= \
 	  canvas.cpp \
 	  image.cpp \
 	  grid.cpp \
+	  event.cpp \
 	  test_screen.cpp \
 	  dotests.cpp \
 
