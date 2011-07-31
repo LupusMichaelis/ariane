@@ -193,7 +193,12 @@ void test_grid()
 
 void print_key_event(KeyEvent const & ev)
 {
-	std::cout << boost::format("hop '%c'\n") % ev.key() ;
+	std::cout << boost::format("key event '%c'\n") % ev.key() ;
+}
+
+void print_mouse_event(MouseEvent const & ev)
+{
+	std::cout << boost::format("mouse event (%d,%d)\n") % ev.position().width() % ev.position().height() ;
 }
 
 void test_event()
@@ -203,7 +208,8 @@ void test_event()
 
 	EventLoop ev_loop ;
 
-	ev_loop.attach_event("onkeypress", print_key_event) ;
+	ev_loop.attach_event("onkeyup", EventLoop::keyboard_event_type::slot_function_type(print_key_event)) ;
+	ev_loop.attach_event("onmouseup", EventLoop::mouse_event_type::slot_function_type(print_mouse_event)) ;
 	ev_loop() ;
 }
 
