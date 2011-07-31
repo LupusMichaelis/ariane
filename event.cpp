@@ -10,14 +10,15 @@ void EventLoop::operator() () const
 	do
 	{
 		SDL_WaitEvent(&ev) ;
+		KeyEvent ke(ev.key.keysym.sym) ;
 		switch(ev.type)
 		{
 			case SDL_KEYDOWN:
-				m_onkeydown() ;
+				m_onkeydown(ke) ;
 				break ;
 
 			case SDL_KEYUP:
-				m_onkeyup() ;
+				m_onkeyup(ke) ;
 				/*
 				switch(ev.key.keysym.sym)
 				{
@@ -41,7 +42,7 @@ void EventLoop::operator() () const
 	while(running) ;
 }
 
-void EventLoop::attach_event(char const * event, event_type::slot_function_type const & fn)
+void EventLoop::attach_event(char const * event, keyboard_event_type::slot_function_type const & fn)
 {
 	m_onkeyup.connect(fn) ;
 }

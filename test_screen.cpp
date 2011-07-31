@@ -191,9 +191,9 @@ void test_grid()
 #include <functional>
 #include "event.hpp"
 
-void print_event()
+void print_key_event(KeyEvent const & ev)
 {
-	std::cout << "hop\n" ;
+	std::cout << boost::format("hop '%c'\n") % ev.key() ;
 }
 
 void test_event()
@@ -203,7 +203,7 @@ void test_event()
 
 	EventLoop ev_loop ;
 
-	ev_loop.attach_event("onkeypress", print_event) ;
+	ev_loop.attach_event("onkeypress", print_key_event) ;
 	ev_loop() ;
 }
 
