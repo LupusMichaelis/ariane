@@ -198,7 +198,13 @@ void print_key_event(KeyEvent const & ev)
 
 void print_mouse_event(MouseEvent const & ev)
 {
-	std::cout << boost::format("mouse event (%d,%d)\n") % ev.position().width() % ev.position().height() ;
+	std::cout << boost::format("mouse event (%d,%d) (%c%c%c)\n")
+		% ev.position().width()
+		% ev.position().height()
+		% (ev.button(0) ? '+' : '-')
+		% (ev.button(1) ? '+' : '-')
+		% (ev.button(2) ? '+' : '-')
+		;
 }
 
 void test_event()
@@ -210,6 +216,7 @@ void test_event()
 
 	ev_loop.attach_event("onkeyup", EventLoop::keyboard_event_type::slot_function_type(print_key_event)) ;
 	ev_loop.attach_event("onmouseup", EventLoop::mouse_event_type::slot_function_type(print_mouse_event)) ;
+	ev_loop.attach_event("onmousemove", EventLoop::mouse_event_type::slot_function_type(print_mouse_event)) ;
 	ev_loop() ;
 }
 

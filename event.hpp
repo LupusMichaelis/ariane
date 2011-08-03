@@ -31,16 +31,25 @@ class MouseEvent
 	: public Event
 {
 	public:
-		MouseEvent(Size const & position)
-			: m_position(position) { }
+		MouseEvent(Size const & position, bool left_button = false, bool middle_button = false, bool right_button = false)
+			: m_position(position)
+			, m_buttons({left_button, middle_button, right_button})
+		{ }
 
 		Size const & position() const
 		{
 			return m_position ;
 		}
 
+		bool const button(const int idx) const
+		{
+			return m_buttons[idx] ;
+		}
+
 	private:
 		const Size m_position ;
+		const bool m_buttons[3] ;
+
 } /* class Event */ ;
 
 class EventLoop

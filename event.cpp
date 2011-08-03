@@ -8,6 +8,7 @@ void EventLoop::operator() () const
 {
 	SDL_Event ev ;
 	std::memset(&ev, 0, sizeof ev) ;
+
 	bool running = true ;
 	do
 	{
@@ -23,11 +24,27 @@ void EventLoop::operator() () const
 		else if(ev.type == SDL_MOUSEBUTTONDOWN
 				or ev.type == SDL_MOUSEBUTTONUP)
 		{
-			MouseEvent me(Size(ev.button.x, ev.button.y)) ;
+			MouseEvent me
+				( Size(ev.button.x, ev.button.y)
+				, ev.button.button == SDL_BUTTON_LEFT ? true : false
+				, ev.button.button == SDL_BUTTON_MIDDLE ? true : false
+				, ev.button.button == SDL_BUTTON_RIGHT ? true : false
+				) ;
 			if(ev.type == SDL_MOUSEBUTTONUP)
 				m_onmouseup(me) ;
 			else
 				m_onmousedown(me) ;
+		}
+		else if(ev.type == SDL_MOUSEMOTION)
+		{
+			MouseEvent me
+				( Size(ev.motion.x, ev.motion.y)
+				, ev.motion.state & SDL_BUTTON(1) ? true : false
+				, ev.motion.state & SDL_BUTTON(2) ? true : false
+				, ev.motion.state & SDL_BUTTON(3) ? true : false
+				) ;
+
+			m_onmouseup(me) ;
 		}
 		else if(ev.type == SDL_QUIT)
 			running = false ;
