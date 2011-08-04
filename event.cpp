@@ -16,35 +16,35 @@ void EventLoop::operator() () const
 		if(ev.type == SDL_KEYDOWN or ev.type == SDL_KEYUP)
 		{
 			KeyEvent ke(ev.key.keysym.sym) ;
-			if(ev.type == SDL_KEYUP)
-				m_onkeyup(ke) ;
-			else
-				m_onkeydown(ke) ;
+			//if(ev.type == SDL_KEYUP)
+			m_onkey(ke) ;
 		}
 		else if(ev.type == SDL_MOUSEBUTTONDOWN
 				or ev.type == SDL_MOUSEBUTTONUP)
 		{
-			MouseEvent me
+			MouseClickEvent me
 				( Size(ev.button.x, ev.button.y)
-				, ev.button.button == SDL_BUTTON_LEFT ? true : false
-				, ev.button.button == SDL_BUTTON_MIDDLE ? true : false
-				, ev.button.button == SDL_BUTTON_RIGHT ? true : false
+				//, ev.type == SDL_MOUSEBUTTONUP ? true : false
+				, (ev.button.button == SDL_BUTTON_LEFT) ? true : false << 0 |
+				  (ev.button.button == SDL_BUTTON_MIDDLE) ? true : false << 1 |
+				  (ev.button.button == SDL_BUTTON_RIGHT) ? true : false << 2
 				) ;
-			if(ev.type == SDL_MOUSEBUTTONUP)
-				m_onmouseup(me) ;
-			else
-				m_onmousedown(me) ;
+
+			m_onmouseclick(me) ;
 		}
 		else if(ev.type == SDL_MOUSEMOTION)
 		{
-			MouseEvent me
+			MouseMoveEvent me
 				( Size(ev.motion.x, ev.motion.y)
-				, ev.motion.state & SDL_BUTTON(1) ? true : false
-				, ev.motion.state & SDL_BUTTON(2) ? true : false
-				, ev.motion.state & SDL_BUTTON(3) ? true : false
+				, (ev.motion.state & SDL_BUTTON(1) ? true : false << 0) |
+				  (ev.motion.state & SDL_BUTTON(2) ? true : false << 1) |
+				  (ev.motion.state & SDL_BUTTON(3) ? true : false << 2)
 				) ;
 
-			m_onmouseup(me) ;
+			m_onmousemove(me) ;
+		}
+		else if(ev.type == SDL_MOUSEMOTION)
+		{
 		}
 		else if(ev.type == SDL_QUIT)
 			running = false ;
@@ -52,12 +52,17 @@ void EventLoop::operator() () const
 	while(running) ;
 }
 
-void EventLoop::attach_event(char const * event, keyboard_event_type::slot_function_type const & fn)
+void EventLoop::attach_event(keyboard_event_type::slot_function_type const & fn)
 {
-	m_onkeyup.connect(fn) ;
+	m_onkey.connect(fn) ;
 }
 
-void EventLoop::attach_event(char const * event, mouse_event_type::slot_function_type const & fn)
+void EventLoop::attach_event(mouseclick_event_type::slot_function_type const & fn)
 {
-	m_onmouseup.connect(fn) ;
+	m_onmouseclick.connect(fn) ;
+}
+
+void EventLoop::attach_event(mousemove_event_type::slot_function_type const & fn)
+{
+	m_onmousemove.connect(fn) ;
 }

@@ -214,9 +214,9 @@ void test_event()
 
 	EventLoop ev_loop ;
 
-	ev_loop.attach_event("onkeyup", EventLoop::keyboard_event_type::slot_function_type(print_key_event)) ;
-	ev_loop.attach_event("onmouseup", EventLoop::mouse_event_type::slot_function_type(print_mouse_event)) ;
-	ev_loop.attach_event("onmousemove", EventLoop::mouse_event_type::slot_function_type(print_mouse_event)) ;
+	ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(print_key_event)) ;
+	ev_loop.attach_event(EventLoop::mouseclick_event_type::slot_function_type(print_mouse_event)) ;
+	ev_loop.attach_event(EventLoop::mousemove_event_type::slot_function_type(print_mouse_event)) ;
 	ev_loop() ;
 }
 

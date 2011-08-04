@@ -25,15 +25,17 @@ class KeyEvent
 
 	private:
 		const char m_key ;
-} /* class Event */ ;
+} /* class KeyEvent */ ;
+
+#include <bitset>
 
 class MouseEvent
 	: public Event
 {
 	public:
-		MouseEvent(Size const & position, bool left_button = false, bool middle_button = false, bool right_button = false)
+		MouseEvent(Size const & position, std::bitset<3> const & buttons = 0x0)
 			: m_position(position)
-			, m_buttons({left_button, middle_button, right_button})
+			, m_buttons(buttons)
 		{ }
 
 		Size const & position() const
@@ -47,29 +49,49 @@ class MouseEvent
 		}
 
 	private:
-		const Size m_position ;
-		const bool m_buttons[3] ;
+		Size const m_position ;
+		std::bitset<3> const m_buttons ;
 
-} /* class Event */ ;
+} /* class MouseEvent */ ;
+
+class MouseMoveEvent
+	: public MouseEvent
+{
+	public:
+		MouseMoveEvent(Size const & position, std::bitset<3> const buttons = 0x0)
+			: MouseEvent(position, buttons)
+		{ }
+
+} /* class MouseMoveEvent */ ;
+
+class MouseClickEvent
+	: public MouseEvent
+{
+	public:
+		MouseClickEvent(Size const & position, std::bitset<3> const buttons = 0x0)
+			: MouseEvent(position, buttons)
+		{ }
+
+} /* class MouseClickEvent */ ;
 
 class EventLoop
 {
 	public:
 		typedef boost::signal<void (KeyEvent const &)> keyboard_event_type ;
-		typedef boost::signal<void (MouseEvent const &)> mouse_event_type ;
+		typedef boost::signal<void (MouseMoveEvent const &)> mousemove_event_type ;
+		typedef boost::signal<void (MouseClickEvent const &)> mouseclick_event_type ;
 
 		void operator() () const ;
 
-		void attach_event(char const * event, keyboard_event_type::slot_function_type const & fn) ;
-		void attach_event(char const * event, mouse_event_type::slot_function_type const & fn) ;
+		void attach_event(keyboard_event_type::slot_function_type const & fn) ;
+		void attach_event(mousemove_event_type::slot_function_type const & fn) ;
+		void attach_event(mouseclick_event_type::slot_function_type const & fn) ;
 
 	private:
-		mouse_event_type m_onmouseup ;
-		mouse_event_type m_onmousedown ;
-		mouse_event_type m_onmousemove ;
+		keyboard_event_type m_onkey ;
 
-		keyboard_event_type m_onkeyup ;
-		keyboard_event_type m_onkeydown ;
+		mouseclick_event_type m_onmouseclick ;
+		mousemove_event_type m_onmousemove ;
 
 } /* class EventLoop */ ;
 
