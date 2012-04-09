@@ -9,6 +9,7 @@
 class Event
 {
 	public:
+		virtual ~Event() { }
 } /* class Event */ ;
 
 class KeyEvent
@@ -29,11 +30,18 @@ class KeyEvent
 
 #include <bitset>
 
+class WindowEvent
+	: public Event
+{
+} /* class WindowEvent */ ;
+
 class MouseEvent
 	: public Event
 {
 	public:
-		MouseEvent(Size const & position, std::bitset<3> const & buttons = 0x0)
+		typedef std::bitset<5> buttons_mask_type ;
+
+		MouseEvent(Size const & position, buttons_mask_type const & buttons)
 			: m_position(position)
 			, m_buttons(buttons)
 		{ }
@@ -43,55 +51,61 @@ class MouseEvent
 			return m_position ;
 		}
 
-		bool const button(const int idx) const
+		buttons_mask_type const & buttons() const
 		{
-			return m_buttons[idx] ;
+			return m_buttons ;
 		}
 
 	private:
 		Size const m_position ;
-		std::bitset<3> const m_buttons ;
+		buttons_mask_type const m_buttons ;
 
 } /* class MouseEvent */ ;
 
-class MouseMoveEvent
+class MouseMotionEvent
 	: public MouseEvent
 {
 	public:
-		MouseMoveEvent(Size const & position, std::bitset<3> const buttons = 0x0)
+		MouseMotionEvent(Size const & position, MouseEvent::buttons_mask_type const buttons)
 			: MouseEvent(position, buttons)
 		{ }
 
-} /* class MouseMoveEvent */ ;
+} /* class MouseMotionEvent */ ;
 
-class MouseClickEvent
+class MouseButtonEvent
 	: public MouseEvent
 {
 	public:
-		MouseClickEvent(Size const & position, std::bitset<3> const buttons = 0x0)
+		MouseButtonEvent(Size const & position, MouseEvent::buttons_mask_type const buttons, bool down)
 			: MouseEvent(position, buttons)
+			, m_down(down)
 		{ }
 
-} /* class MouseClickEvent */ ;
+		bool const down() const { return m_down ; }
+
+	private:
+		bool const m_down ;
+
+} /* class MouseButtonEvent */ ;
 
 class EventLoop
 {
 	public:
 		typedef boost::signal<void (KeyEvent const &)> keyboard_event_type ;
-		typedef boost::signal<void (MouseMoveEvent const &)> mousemove_event_type ;
-		typedef boost::signal<void (MouseClickEvent const &)> mouseclick_event_type ;
+		typedef boost::signal<void (MouseMotionEvent const &)> mouse_motion_event_type ;
+		typedef boost::signal<void (MouseButtonEvent const &)> mouse_button_event_type ;
 
 		void operator() () const ;
 
 		void attach_event(keyboard_event_type::slot_function_type const & fn) ;
-		void attach_event(mousemove_event_type::slot_function_type const & fn) ;
-		void attach_event(mouseclick_event_type::slot_function_type const & fn) ;
+		void attach_event(mouse_motion_event_type::slot_function_type const & fn) ;
+		void attach_event(mouse_button_event_type::slot_function_type const & fn) ;
 
 	private:
-		keyboard_event_type m_onkey ;
+		keyboard_event_type m_onkeypress ;
 
-		mouseclick_event_type m_onmouseclick ;
-		mousemove_event_type m_onmousemove ;
+		mouse_button_event_type m_onmousebutton ;
+		mouse_motion_event_type m_onmousemotion ;
 
 } /* class EventLoop */ ;
 

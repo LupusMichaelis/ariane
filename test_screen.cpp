@@ -198,12 +198,14 @@ void print_key_event(KeyEvent const & ev)
 
 void print_mouse_event(MouseEvent const & ev)
 {
-	std::cout << boost::format("mouse event (%d,%d) (%c%c%c)\n")
+	std::cout << boost::format("mouse event (%d,%d) (%c%c%c%c%c)\n")
 		% ev.position().width()
 		% ev.position().height()
-		% (ev.button(0) ? '+' : '-')
-		% (ev.button(1) ? '+' : '-')
-		% (ev.button(2) ? '+' : '-')
+		% (ev.buttons()[0] ? '+' : '-')
+		% (ev.buttons()[1] ? '+' : '-')
+		% (ev.buttons()[2] ? '+' : '-')
+		% (ev.buttons()[3] ? '+' : '-')
+		% (ev.buttons()[4] ? '+' : '-')
 		;
 }
 
@@ -215,8 +217,8 @@ void test_event()
 	EventLoop ev_loop ;
 
 	ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(print_key_event)) ;
-	ev_loop.attach_event(EventLoop::mouseclick_event_type::slot_function_type(print_mouse_event)) ;
-	ev_loop.attach_event(EventLoop::mousemove_event_type::slot_function_type(print_mouse_event)) ;
+	ev_loop.attach_event(EventLoop::mouse_button_event_type::slot_function_type(print_mouse_event)) ;
+	ev_loop.attach_event(EventLoop::mouse_motion_event_type::slot_function_type(print_mouse_event)) ;
 	ev_loop() ;
 }
 
