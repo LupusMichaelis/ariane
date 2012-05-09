@@ -193,7 +193,7 @@ void test_grid()
 
 void print_key_event(KeyEvent const & ev)
 {
-	std::cout << boost::format("key event '%c'\n") % ev.key() ;
+	std::cout << boost::format("key event '%d'\n") % ev.key().value() ;
 }
 
 void print_mouse_event(MouseEvent const & ev)
