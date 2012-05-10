@@ -1,3 +1,7 @@
+#include "screen.hpp"
+#include "canvas.hpp"
+#include "event.hpp"
+
 #include <unistd.h>
 #include <cassert>
 
@@ -5,12 +9,43 @@
 #include <iostream>
 #include <boost/format.hpp>
 
-#include "screen.hpp"
-#include "canvas.hpp"
+#include <functional>
 
 using std::cout ;
 using std::endl ;
 using boost::format ;
+
+void print_key_event(EventLoop &, KeyEvent const & ev)
+{
+	std::cout << boost::format("key event '%d'\n") % ev.key().value() ;
+}
+
+void print_mouse_event(EventLoop &, MouseEvent const & ev)
+{
+	std::cout << boost::format("mouse event (%d,%d) (%c%c%c%c%c)\n")
+		% ev.position().width()
+		% ev.position().height()
+		% (ev.buttons()[0] ? '+' : '-')
+		% (ev.buttons()[1] ? '+' : '-')
+		% (ev.buttons()[2] ? '+' : '-')
+		% (ev.buttons()[3] ? '+' : '-')
+		% (ev.buttons()[4] ? '+' : '-')
+		;
+}
+
+template <int K>
+void on_key_stop(EventLoop & ev_loop, KeyEvent const & ev)
+{
+	print_key_event(ev_loop, ev) ;
+	ev_loop.stop() ;
+}
+
+void wait()
+{
+	EventLoop ev_loop ;
+	ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(on_key_stop<'q'>)) ;
+	ev_loop() ;
+}
 
 void test_base()
 {
@@ -47,7 +82,7 @@ void test_base()
 
 	p_screen->dump(std::string(".test_screen.bmp")) ;
 
-	sleep(2) ;
+	wait() ;
 }
 
 #include "image.hpp"
@@ -68,7 +103,7 @@ void test_load_image()
 	p_screen->draw(*p_images) ;
 	p_screen->update() ;
 
-	sleep(2) ;
+	wait() ;
 }
 
 void test_resize()
@@ -78,7 +113,7 @@ void test_resize()
 	p_screen->fill(create_color(0xaaaaaa)) ;
 	p_screen->update() ;
 
-	sleep(2) ;
+	wait() ;
 	p_screen->resize(create_size(480, 320)) ;
 
 	std::shared_ptr<Canvas> p_s1 ;
@@ -92,7 +127,7 @@ void test_resize()
 	p_screen->draw(*p_s1, create_size(50, 50)) ;
 	p_screen->update() ;
 
-	sleep(2) ;
+	wait() ;
 }
 
 #include "grid.hpp"
@@ -119,7 +154,7 @@ void test_load_sprite()
 		usleep(500000) ;
 	}
 
-	sleep(2) ;
+	wait() ;
 }
 
 void test_grid()
@@ -181,32 +216,12 @@ void test_grid()
 	}
 
 	p_target->update() ;
+	p_screen->resize(p_target->videomode().size()) ;
 	p_screen->draw(*p_target) ;
 	p_screen->update() ;
 	p_target->dump(std::string("gfx/building.bmp")) ;
 
-//	sleep(2) ;
-}
-
-#include <functional>
-#include "event.hpp"
-
-void print_key_event(KeyEvent const & ev)
-{
-	std::cout << boost::format("key event '%d'\n") % ev.key().value() ;
-}
-
-void print_mouse_event(MouseEvent const & ev)
-{
-	std::cout << boost::format("mouse event (%d,%d) (%c%c%c%c%c)\n")
-		% ev.position().width()
-		% ev.position().height()
-		% (ev.buttons()[0] ? '+' : '-')
-		% (ev.buttons()[1] ? '+' : '-')
-		% (ev.buttons()[2] ? '+' : '-')
-		% (ev.buttons()[3] ? '+' : '-')
-		% (ev.buttons()[4] ? '+' : '-')
-		;
+	wait() ;
 }
 
 void test_event()
