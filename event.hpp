@@ -37,6 +37,8 @@ class KeyBoard
 		Key const & right_shift() ;
 		Key const & left_shift() ;
 
+		Key const & q() ;
+
 } /* class KeyBoard */ ;
 
 class Key
@@ -97,7 +99,6 @@ class KeyEvent
 		void right_ctrl(bool const new_right_ctrl)		{ m_right_ctrl = new_right_ctrl ; }
 		void right_meta(bool const new_right_meta)		{ m_right_meta = new_right_meta ; }
 		void right_shift(bool const new_right_shift)	{ m_right_shift = new_right_shift ; }
-
 
 	private:
 		Key			m_key ;
@@ -177,17 +178,20 @@ class MouseButtonEvent
 class EventLoop
 {
 	public:
-		typedef boost::signal<void (KeyEvent const &)> keyboard_event_type ;
-		typedef boost::signal<void (MouseMotionEvent const &)> mouse_motion_event_type ;
-		typedef boost::signal<void (MouseButtonEvent const &)> mouse_button_event_type ;
+		typedef boost::signal<void (EventLoop &, KeyEvent const &)> keyboard_event_type ;
+		typedef boost::signal<void (EventLoop &, MouseMotionEvent const &)> mouse_motion_event_type ;
+		typedef boost::signal<void (EventLoop &, MouseButtonEvent const &)> mouse_button_event_type ;
 
-		void operator() () const ;
+		void operator() () ;
 
 		void attach_event(keyboard_event_type::slot_function_type const & fn) ;
 		void attach_event(mouse_motion_event_type::slot_function_type const & fn) ;
 		void attach_event(mouse_button_event_type::slot_function_type const & fn) ;
 
+		void stop() ;
+
 	private:
+		bool				m_running ;
 		keyboard_event_type m_onkeypress ;
 
 		mouse_button_event_type m_onmousebutton ;

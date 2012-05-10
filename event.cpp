@@ -4,10 +4,22 @@
 #include <SDL/SDL.h>
 #include <cstring>
 #include <map>
+#include <boost/format.hpp>
 
 class KeyBoard::KBImpl
 {
-		std::map<unsigned, Key> m_keys ;
+		typedef std::map<unsigned, Key>		key_type ;
+		key_type m_keys ;
+
+		Key const & get(unsigned id) const
+		{
+			key_type::const_iterator found(m_keys.find(id)) ;
+
+			if(found == m_keys.end())
+				throw std::logic_error((boost::format("Key id '%d' not found.") % id).str()) ;
+
+			return found->second ;
+		}
 
 	public:
 		KBImpl()
@@ -26,22 +38,27 @@ class KeyBoard::KBImpl
 			m_keys[SDLK_LSHIFT] = Key(SDLK_LSHIFT) ;
 			m_keys[SDLK_RMETA] = Key(SDLK_RMETA) ;
 			m_keys[SDLK_LMETA] = Key(SDLK_LMETA) ;
+
+			m_keys[SDLK_k] = Key(SDLK_k) ;
+			m_keys[SDLK_q] = Key(SDLK_q) ;
 		}
 
-		Key const & up() const			{ return m_keys.find(SDLK_UP)->second ; }
-		Key const & down() const		{ return m_keys.find(SDLK_DOWN)->second ; }
-		Key const & right() const		{ return m_keys.find(SDLK_RIGHT)->second ; }
-		Key const & left() const		{ return m_keys.find(SDLK_LEFT)->second ; }
+		Key const & up() const			{ return get(SDLK_UP) ; }
+		Key const & down() const		{ return get(SDLK_DOWN) ; }
+		Key const & right() const		{ return get(SDLK_RIGHT) ; }
+		Key const & left() const		{ return get(SDLK_LEFT) ; }
 
-		Key const & enter() const		{ return m_keys.find(SDLK_RETURN)->second ; }
-		Key const & right_ctrl() const	{ return m_keys.find(SDLK_RCTRL)->second ; }
-		Key const & left_ctrl() const	{ return m_keys.find(SDLK_LCTRL)->second ; }
-		Key const & right_alt() const	{ return m_keys.find(SDLK_RALT)->second ; }
-		Key const & left_alt() const	{ return m_keys.find(SDLK_LALT)->second ; }
-		Key const & right_shift() const	{ return m_keys.find(SDLK_RSHIFT)->second ; }
-		Key const & left_shift() const	{ return m_keys.find(SDLK_LSHIFT)->second ; }
-		Key const & right_meta() const	{ return m_keys.find(SDLK_RMETA)->second ; }
-		Key const & left_meta() const	{ return m_keys.find(SDLK_LMETA)->second ; }
+		Key const & enter() const		{ return get(SDLK_RETURN) ; }
+		Key const & right_ctrl() const	{ return get(SDLK_RCTRL) ; }
+		Key const & left_ctrl() const	{ return get(SDLK_LCTRL) ; }
+		Key const & right_alt() const	{ return get(SDLK_RALT) ; }
+		Key const & left_alt() const	{ return get(SDLK_LALT) ; }
+		Key const & right_shift() const	{ return get(SDLK_RSHIFT) ; }
+		Key const & left_shift() const	{ return get(SDLK_LSHIFT) ; }
+		Key const & right_meta() const	{ return get(SDLK_RMETA) ; }
+		Key const & left_meta() const	{ return get(SDLK_LMETA) ; }
+
+		Key const & q() const			{ return get(SDLK_q) ; }
 
 } /* class KeyBoard::KBImpl */ ;
 
@@ -62,6 +79,8 @@ Key const & KeyBoard::right_alt()	{ return mp_impl->right_alt() ; }
 Key const & KeyBoard::left_alt()	{ return mp_impl->left_alt() ; }
 Key const & KeyBoard::right_shift()	{ return mp_impl->right_shift() ; }
 Key const & KeyBoard::left_shift()	{ return mp_impl->left_shift() ; }
+
+Key const & KeyBoard::q()			{ return mp_impl->q() ; }
 
 static
 KeyEvent const KeyEvent_from_sdl(SDL_KeyboardEvent const & kev)
@@ -85,6 +104,8 @@ KeyEvent const KeyEvent_from_sdl(SDL_KeyboardEvent const & kev)
 		pk = &kb.left_alt() ;
 	else if(kev.keysym.sym == SDLK_RALT)
 		pk = &kb.right_alt() ;
+	else if(kev.keysym.sym == SDLK_q)
+		pk = &kb.q() ;
 	else if(kev.keysym.sym == SDLK_RETURN)
 		pk = &kb.enter() ;
 	else
@@ -93,19 +114,19 @@ KeyEvent const KeyEvent_from_sdl(SDL_KeyboardEvent const & kev)
 	return KeyEvent (*pk) ;
 }
 
-void EventLoop::operator() () const
+void EventLoop::operator() ()
 {
 	SDL_Event ev ;
 	std::memset(&ev, 0, sizeof ev) ;
 
-	bool running = true ;
+	m_running = true ;
 	do
 	{
 		SDL_WaitEvent(&ev) ;
 		if(ev.type == SDL_KEYDOWN or ev.type == SDL_KEYUP)
 		{
 			KeyEvent ke(KeyEvent_from_sdl(ev.key)) ;
-			m_onkeypress(ke) ;
+			m_onkeypress(*this, ke) ;
 		}
 		else if(ev.type == SDL_MOUSEBUTTONDOWN
 				or ev.type == SDL_MOUSEBUTTONUP)
@@ -121,7 +142,7 @@ void EventLoop::operator() () const
 
 			MouseButtonEvent me(Size(ev.button.x, ev.button.y), bs, down) ;
 
-			m_onmousebutton(me) ;
+			m_onmousebutton(*this, me) ;
 		}
 		else if(ev.type == SDL_MOUSEMOTION)
 		{
@@ -135,7 +156,7 @@ void EventLoop::operator() () const
 
 			MouseMotionEvent me(Size(ev.motion.x, ev.motion.y), bs) ;
 
-			m_onmousemotion(me) ;
+			m_onmousemotion(*this, me) ;
 		}
 		else if(ev.type == SDL_ACTIVEEVENT)
 		{
@@ -151,9 +172,14 @@ void EventLoop::operator() () const
 			// redraw surface
 		}
 		else if(ev.type == SDL_QUIT)
-			running = false ;
+			stop() ;
 	}
-	while(running) ;
+	while(m_running) ;
+}
+
+void EventLoop::stop()
+{
+	m_running = false ;
 }
 
 void EventLoop::attach_event(keyboard_event_type::slot_function_type const & fn)
