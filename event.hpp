@@ -60,6 +60,8 @@ class Key
 
 } /* class Key */ ;
 
+inline bool const operator ==(Key const & lhs, Key const & rhs) { return lhs.value() == rhs.value() ; }
+
 class KeyEvent
 	: public Event
 {
@@ -178,7 +180,7 @@ class MouseButtonEvent
 class EventLoop
 {
 	public:
-		typedef boost::signal<void (EventLoop &, KeyEvent const &)> keyboard_event_type ;
+		typedef boost::signal<void (EventLoop &, KeyEvent const &)>			keyboard_event_type ;
 		typedef boost::signal<void (EventLoop &, MouseMotionEvent const &)> mouse_motion_event_type ;
 		typedef boost::signal<void (EventLoop &, MouseButtonEvent const &)> mouse_button_event_type ;
 

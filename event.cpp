@@ -196,3 +196,6 @@ void EventLoop::attach_event(mouse_motion_event_type::slot_function_type const &
 {
 	m_onmousemotion.connect(fn) ;
 }
+
+
+
