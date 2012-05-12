@@ -3,6 +3,15 @@
 
 #include <SDL.h>
 
+void clone(std::shared_ptr<Canvas> & p_target, Surface const & source)
+{
+	std::shared_ptr<Canvas> p_new_canvas ;
+	Canvas::create(p_new_canvas, source.videomode()) ;
+	p_new_canvas->draw(source) ;
+	std::swap(p_target, p_new_canvas) ;
+}
+
+
 void Canvas::release()
 	throw()
 {

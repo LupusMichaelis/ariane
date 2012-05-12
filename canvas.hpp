@@ -3,6 +3,10 @@
 
 #	include "surface.hpp"
 
+class Canvas ;
+
+void clone(std::shared_ptr<Canvas> & p_target, Surface const & source) ;
+
 class Canvas
 	: public Surface
 {
