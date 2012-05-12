@@ -67,6 +67,7 @@ void Engine::run()
 	void (Engine::*opb)(EventLoop &, MouseEvent const &) = &Engine::move ;
 	auto wrapped_opb = boost::bind(opb, this, _1, _2) ;
 	m_ev_loop.attach_event(EventLoop::mouse_button_event_type::slot_function_type(wrapped_opb)) ;
+	m_ev_loop.attach_event(EventLoop::mouse_motion_event_type::slot_function_type(wrapped_opb)) ;
 
 	m_ev_loop() ;
 }
