@@ -39,6 +39,14 @@ class Size
 		int width() const { return m_width ; }
 		int height() const { return m_height ; }
 
+		Size const operator+(Size const & rhs) const
+		{
+			Size new_value(*this) ;
+			new_value.m_width += rhs.width() ;
+			new_value.m_height += rhs.height() ;
+			return new_value ;
+		}
+
 		Size const operator-(Size const & rhs) const
 		{
 			Size new_value(*this) ;
@@ -47,9 +55,17 @@ class Size
 			return new_value ;
 		}
 
+		Size & operator-= (Size const & rhs)
+		{
+			m_width -= rhs.width() ;
+			m_height -= rhs.height() ;
+			return *this ;
+		}
+
 	private:
 		int m_width, m_height ;
 } ;
+
 
 class VideoMode
 {
