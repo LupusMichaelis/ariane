@@ -18,22 +18,23 @@ SRCS= \
 	  image.cpp \
 	  grid.cpp \
 	  event.cpp \
-	  test_screen.cpp \
-	  dotests.cpp \
 
 #	  quest.cpp \
 
 OBJS=$(SRCS:.cpp=.o)
 
-TARGET=dotests
+TARGET=dotests tortoise
 
 target: $(TARGET)
 
 quest: $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
 
-dotests: $(OBJS)
-	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
+tortoise: tortoise.o $(OBJS)
+	$(CXX) -o $@ tortoise.o $(OBJS) $(LDFLAGS)
+
+dotests: dotests.o test_screen.o $(OBJS)
+	$(CXX) -o $@ dotests.o test_screen.o $(OBJS) $(LDFLAGS)
 
 %.o: %.cpp
 	$(CXX) -c $< $(CXXFLAGS)
