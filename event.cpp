@@ -111,7 +111,7 @@ KeyEvent const KeyEvent_from_sdl(SDL_KeyboardEvent const & kev)
 	else
 		throw std::logic_error("Unknown key stroke") ;
 
-	return KeyEvent (*pk) ;
+	return KeyEvent (*pk, kev.type == SDL_KEYDOWN ? true : false) ;
 }
 
 void EventLoop::operator() ()
@@ -138,9 +138,9 @@ void EventLoop::operator() ()
 			bs[3] = ev.button.button == SDL_BUTTON_WHEELUP ? true : false ;
 			bs[4] = ev.button.button == SDL_BUTTON_WHEELDOWN ? true : false ;
 
-			bool down = ev.type == SDL_MOUSEBUTTONDOWN ? true : false ;
+			bool press = ev.type == SDL_MOUSEBUTTONDOWN ? true : false ;
 
-			MouseButtonEvent me(Size(ev.button.x, ev.button.y), bs, down) ;
+			MouseButtonEvent me(Size(ev.button.x, ev.button.y), bs, press) ;
 
 			m_onmousebutton(*this, me) ;
 		}

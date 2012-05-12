@@ -23,6 +23,7 @@ class Engine
 
 		void move(EventLoop &, KeyEvent const & ke) ;
 		void move(EventLoop &, MouseEvent const & me) ;
+		void move(EventLoop &, MouseButtonEvent const & me) ;
 
 		void run() ;
 
@@ -64,12 +65,30 @@ void Engine::run()
 	auto wrapped_oks = boost::bind(oks, this, _1, _2) ;
 	m_ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(wrapped_oks)) ;
 
-	void (Engine::*opb)(EventLoop &, MouseEvent const &) = &Engine::move ;
+	void (Engine::*omb)(EventLoop &, MouseEvent const &) = &Engine::move ;
+	auto wrapped_omb = boost::bind(omb, this, _1, _2) ;
+	m_ev_loop.attach_event(EventLoop::mouse_motion_event_type::slot_function_type(wrapped_omb)) ;
+
+	/*
+	void (Engine::*opb)(EventLoop &, MouseButtonEvent const &) = &Engine::move ;
 	auto wrapped_opb = boost::bind(opb, this, _1, _2) ;
 	m_ev_loop.attach_event(EventLoop::mouse_button_event_type::slot_function_type(wrapped_opb)) ;
-	m_ev_loop.attach_event(EventLoop::mouse_motion_event_type::slot_function_type(wrapped_opb)) ;
+	*/
 
 	m_ev_loop() ;
+}
+
+void Engine::move(EventLoop &, MouseButtonEvent const & me)
+{
+	if(me.pressing())
+		return ;
+
+	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
+	mp_screen->draw(*mp_bg_sprite, m_position) ;
+
+	m_position = me.position() ;
+	mp_screen->draw(*mp_sprite, m_position) ;
+	mp_screen->update() ;
 }
 
 void Engine::move(EventLoop &, MouseEvent const & me)
@@ -86,6 +105,9 @@ void Engine::move(EventLoop &, KeyEvent const & ke)
 {
 	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
 	mp_screen->draw(*mp_bg_sprite, m_position) ;
+
+	if(ke.pressing())
+		return ;
 
 	if(ke.key() == m_kb.up())
 		move_up() ;

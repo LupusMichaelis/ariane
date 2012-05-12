@@ -66,8 +66,10 @@ class KeyEvent
 	: public Event
 {
 	public:
-		explicit KeyEvent(Key const & key)
+		explicit KeyEvent(Key const & key, bool press = false)
 			: m_key(key)
+
+			, m_press(press)
 
 			, m_left_alt(false)
 			, m_left_ctrl(false)
@@ -81,8 +83,10 @@ class KeyEvent
 		{ }
 
 		Key const & key() const			{ return m_key ; }
-
 		void key(Key const & key)		{ m_key = key ; }
+
+		bool const pressing() const		{ return m_press ; }
+		bool const release() const		{ return !m_press ; }
 
 		bool const left_alt() const		{ return m_left_alt ; }
 		bool const left_ctrl() const	{ return m_left_ctrl ; }
@@ -103,17 +107,19 @@ class KeyEvent
 		void right_shift(bool const new_right_shift)	{ m_right_shift = new_right_shift ; }
 
 	private:
-		Key			m_key ;
+		Key		m_key ;
 
-		unsigned	m_left_alt ;
-		unsigned	m_left_ctrl ;
-		unsigned	m_left_meta ;
-		unsigned	m_left_shift ;
+		bool	m_press ;
 
-		unsigned	m_right_alt ;
-		unsigned	m_right_ctrl ;
-		unsigned	m_right_meta ;
-		unsigned	m_right_shift ;
+		bool	m_left_alt ;
+		bool	m_left_ctrl ;
+		bool	m_left_meta ;
+		bool	m_left_shift ;
+
+		bool	m_right_alt ;
+		bool	m_right_ctrl ;
+		bool	m_right_meta ;
+		bool	m_right_shift ;
 
 } /* class KeyEvent */ ;
 
@@ -165,15 +171,16 @@ class MouseButtonEvent
 	: public MouseEvent
 {
 	public:
-		MouseButtonEvent(Size const & position, MouseEvent::buttons_mask_type const buttons, bool down)
+		MouseButtonEvent(Size const & position, MouseEvent::buttons_mask_type const buttons, bool press)
 			: MouseEvent(position, buttons)
-			, m_down(down)
+			, m_press(press)
 		{ }
 
-		bool const down() const { return m_down ; }
+		bool const pressing() const		{ return m_press ; }
+		bool const release() const		{ return !m_press ; }
 
 	private:
-		bool const m_down ;
+		bool const m_press ;
 
 } /* class MouseButtonEvent */ ;
 
