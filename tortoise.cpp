@@ -13,44 +13,79 @@
 #include <boost/format.hpp>
 #include <boost/bind.hpp>
 
-class Engine
+class Engine ;
+
+class Interface
 {
 	public:
-		Engine()
-			: m_position(50, 50)
-		{
-		}
+		explicit Interface(Engine & engine)
+			: m_engine(engine)
+			, m_position(50, 50)
+		{ }
+
+		virtual ~Interface() { unlisten_events() ; }
 
 		void move(EventLoop &, KeyEvent const & ke) ;
 		void move(EventLoop &, MouseEvent const & me) ;
 		void move(EventLoop &, MouseButtonEvent const & me) ;
-
-		void run() ;
 
 		void move_left() ;
 		void move_right() ;
 		void move_up() ;
 		void move_down() ;
 
-	private:
-		EventLoop					m_ev_loop ;
-		KeyBoard					m_kb ;
+		void display() ;
 
-		Size						m_position ;
-		std::shared_ptr<Screen>		mp_screen ;
+	private:
+		Engine &					m_engine ;
+
 		std::shared_ptr<Canvas>		mp_background ;
 		std::shared_ptr<Canvas>		mp_bg_sprite ;
 		std::shared_ptr<Canvas>		mp_sprite ;
 
+		Size						m_position ;
+
+		void listen_events() ;
+		void unlisten_events() ;
+
+		// Managed connection, to avoid dandling events if this is deleted
+		std::vector<boost::signals::connection>
+								m_cons ;
+
+} /* class Interface */ ;
+
+class Engine
+{
+	public:
+		Engine()
+		{
+		}
+
+		void run() ;
+
+		EventLoop & event_loop()			{ return m_ev_loop ; }
+		Screen & screen()					{ return *mp_screen ; }
+		KeyBoard const & keyboard()	const	{ return m_kb ; }
+
+	private:
+		void init_title_screen() ;
+
+		std::shared_ptr<Interface>	mp_interface ;
+
+		EventLoop					m_ev_loop ;
+		KeyBoard					m_kb ;
+
+		std::shared_ptr<Screen>		mp_screen ;
+
 } /* class Engine */ ;
 
-void Engine::run()
+void Interface::display()
 {
-	Screen::create(mp_screen, create_videomode(320, 240, 16)) ;
-	mp_screen->fill(create_color(0xaaaa00)) ;
+	Screen & screen = m_engine.screen() ;
+	screen.fill(create_color(0xaaaa00)) ;
 
-	auto p_screen_surface = std::dynamic_pointer_cast<Surface>(mp_screen) ;
-	clone(mp_background, *p_screen_surface) ;
+	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
+	clone(mp_background, screen_surface) ;
 
 	Canvas::create(mp_sprite, create_videomode(20, 20, 16)) ;
 	mp_sprite->fill(create_color(0x00aa)) ;
@@ -58,95 +93,134 @@ void Engine::run()
 	Canvas::create(mp_bg_sprite, create_videomode(20, 20, 16)) ;
 	mp_bg_sprite->fill(create_color(0x00)) ;
 
-	mp_screen->draw(*mp_sprite, m_position) ;
-	mp_screen->update() ;
+	screen.draw(*mp_sprite, m_position) ;
+	screen.update() ;
 
-	void (Engine::*oks)(EventLoop &, KeyEvent const &) = &Engine::move ;
-	auto wrapped_oks = boost::bind(oks, this, _1, _2) ;
-	m_ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(wrapped_oks)) ;
-
-	void (Engine::*omb)(EventLoop &, MouseEvent const &) = &Engine::move ;
-	auto wrapped_omb = boost::bind(omb, this, _1, _2) ;
-	m_ev_loop.attach_event(EventLoop::mouse_motion_event_type::slot_function_type(wrapped_omb)) ;
-
-	/*
-	void (Engine::*opb)(EventLoop &, MouseButtonEvent const &) = &Engine::move ;
-	auto wrapped_opb = boost::bind(opb, this, _1, _2) ;
-	m_ev_loop.attach_event(EventLoop::mouse_button_event_type::slot_function_type(wrapped_opb)) ;
-	*/
-
-	m_ev_loop() ;
+	listen_events() ;
 }
 
-void Engine::move(EventLoop &, MouseButtonEvent const & me)
+void Interface::listen_events()
+{
+	EventLoop & ev_loop = m_engine.event_loop() ;
+	boost::signals::connection con ;
+
+	void (Interface::*oks)(EventLoop &, KeyEvent const &) = &Interface::move ;
+	auto wrapped_oks = boost::bind(oks, this, _1, _2) ;
+	con = ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(wrapped_oks)) ;
+	m_cons.push_back(con) ;
+
+	void (Interface::*omb)(EventLoop &, MouseEvent const &) = &Interface::move ;
+	auto wrapped_omb = boost::bind(omb, this, _1, _2) ;
+	con = ev_loop.attach_event(EventLoop::mouse_motion_event_type::slot_function_type(wrapped_omb)) ;
+	m_cons.push_back(con) ;
+
+	void (Interface::*opb)(EventLoop &, MouseButtonEvent const &) = &Interface::move ;
+	auto wrapped_opb = boost::bind(opb, this, _1, _2) ;
+	con = ev_loop.attach_event(EventLoop::mouse_button_event_type::slot_function_type(wrapped_opb)) ;
+	m_cons.push_back(con) ;
+}
+
+void Interface::unlisten_events()
+{
+	std::for_each(m_cons.begin(), m_cons.end(), std::mem_fun_ref(&boost::signals::connection::disconnect)) ;
+}
+
+void Interface::move(EventLoop &, MouseButtonEvent const & me)
 {
 	if(me.pressing())
 		return ;
 
+	Screen & screen = m_engine.screen() ;
+
 	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
-	mp_screen->draw(*mp_bg_sprite, m_position) ;
+	screen.draw(*mp_bg_sprite, m_position) ;
 
 	m_position = me.position() ;
-	mp_screen->draw(*mp_sprite, m_position) ;
-	mp_screen->update() ;
+	screen.draw(*mp_sprite, m_position) ;
+	screen.update() ;
 }
 
-void Engine::move(EventLoop &, MouseEvent const & me)
+void Interface::move(EventLoop &, MouseEvent const & me)
 {
 	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
-	mp_screen->draw(*mp_bg_sprite, m_position) ;
+
+	Screen & screen = m_engine.screen() ;
+	screen.draw(*mp_bg_sprite, m_position) ;
 
 	m_position = me.position() ;
-	mp_screen->draw(*mp_sprite, m_position) ;
-	mp_screen->update() ;
+	screen.draw(*mp_sprite, m_position) ;
+	screen.update() ;
 }
 
-void Engine::move(EventLoop &, KeyEvent const & ke)
+void Interface::move(EventLoop &, KeyEvent const & ke)
 {
 	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
-	mp_screen->draw(*mp_bg_sprite, m_position) ;
+
+	Screen & screen = m_engine.screen() ;
+	screen.draw(*mp_bg_sprite, m_position) ;
 
 	if(ke.pressing())
 		return ;
 
-	if(ke.key() == m_kb.up())
+	KeyBoard const & kb = m_engine.keyboard() ;
+
+	if(ke.key() == kb.up())
 		move_up() ;
-	else if(ke.key() == m_kb.down())
+	else if(ke.key() == kb.down())
 		move_down() ;
-	else if(ke.key() == m_kb.right())
+	else if(ke.key() == kb.right())
 		move_right() ;
-	else if(ke.key() == m_kb.left())
+	else if(ke.key() == kb.left())
 		move_left() ;
 }
 
-void Engine::move_left()
+void Interface::move_left()
 {
 	m_position = m_position - Size(10, 0) ;
-	mp_screen->draw(*mp_sprite, m_position) ;
-	mp_screen->update() ;
+
+	Screen & screen = m_engine.screen() ;
+	screen.draw(*mp_sprite, m_position) ;
+	screen.update() ;
 }
 
-void Engine::move_right()
+void Interface::move_right()
 {
 	m_position = m_position + Size(10, 0) ;
-	mp_screen->draw(*mp_sprite, m_position) ;
-	mp_screen->update() ;
+
+	Screen & screen = m_engine.screen() ;
+	screen.draw(*mp_sprite, m_position) ;
+	screen.update() ;
 }
 
-void Engine::move_up()
+void Interface::move_up()
 {
 	m_position = m_position - Size(0, 10) ;
-	mp_screen->draw(*mp_sprite, m_position) ;
-	mp_screen->update() ;
+
+	Screen & screen = m_engine.screen() ;
+	screen.draw(*mp_sprite, m_position) ;
+	screen.update() ;
 }
 
-void Engine::move_down()
+void Interface::move_down()
 {
 	m_position = m_position + Size(0, 10) ;
-	mp_screen->draw(*mp_sprite, m_position) ;
-	mp_screen->update() ;
+
+	Screen & screen = m_engine.screen() ;
+	screen.draw(*mp_sprite, m_position) ;
+	screen.update() ;
 }
 
+void Engine::run()
+{
+	Screen::create(mp_screen, create_videomode(320, 240, 16)) ;
+	{
+		std::shared_ptr<Interface>	p_interface(new Interface(*this)) ;
+		mp_interface = p_interface ;
+	}
+	mp_interface->display() ;
+
+	m_ev_loop() ;
+}
 
 int main(int argc, char **argv)
 {
@@ -173,3 +247,4 @@ int main(int argc, char **argv)
 		cout << format("Strange exception raised\n") ;
 	}
 }
+

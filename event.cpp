@@ -67,20 +67,20 @@ KeyBoard::KeyBoard()
 {
 }
 
-Key const & KeyBoard::up()			{ return mp_impl->up() ; }
-Key const & KeyBoard::down()		{ return mp_impl->down() ; }
-Key const & KeyBoard::right()		{ return mp_impl->right() ; }
-Key const & KeyBoard::left()		{ return mp_impl->left() ; }
+Key const & KeyBoard::up() const			{ return mp_impl->up() ; }
+Key const & KeyBoard::down() const			{ return mp_impl->down() ; }
+Key const & KeyBoard::right() const			{ return mp_impl->right() ; }
+Key const & KeyBoard::left() const			{ return mp_impl->left() ; }
 
-Key const & KeyBoard::enter()		{ return mp_impl->enter() ; }
-Key const & KeyBoard::right_ctrl()	{ return mp_impl->right_ctrl() ; }
-Key const & KeyBoard::left_ctrl()	{ return mp_impl->left_ctrl() ; }
-Key const & KeyBoard::right_alt()	{ return mp_impl->right_alt() ; }
-Key const & KeyBoard::left_alt()	{ return mp_impl->left_alt() ; }
-Key const & KeyBoard::right_shift()	{ return mp_impl->right_shift() ; }
-Key const & KeyBoard::left_shift()	{ return mp_impl->left_shift() ; }
+Key const & KeyBoard::enter() const			{ return mp_impl->enter() ; }
+Key const & KeyBoard::right_ctrl() const	{ return mp_impl->right_ctrl() ; }
+Key const & KeyBoard::left_ctrl() const		{ return mp_impl->left_ctrl() ; }
+Key const & KeyBoard::right_alt() const		{ return mp_impl->right_alt() ; }
+Key const & KeyBoard::left_alt() const		{ return mp_impl->left_alt() ; }
+Key const & KeyBoard::right_shift() const	{ return mp_impl->right_shift() ; }
+Key const & KeyBoard::left_shift() const	{ return mp_impl->left_shift() ; }
 
-Key const & KeyBoard::q()			{ return mp_impl->q() ; }
+Key const & KeyBoard::q() const				{ return mp_impl->q() ; }
 
 static
 KeyEvent const KeyEvent_from_sdl(SDL_KeyboardEvent const & kev)
@@ -182,20 +182,19 @@ void EventLoop::stop()
 	m_running = false ;
 }
 
-void EventLoop::attach_event(keyboard_event_type::slot_function_type const & fn)
+boost::signals::connection const EventLoop::attach_event(keyboard_event_type::slot_function_type const & fn)
 {
-	m_onkeypress.connect(fn) ;
+	return m_onkeypress.connect(fn) ;
 }
 
-void EventLoop::attach_event(mouse_button_event_type::slot_function_type const & fn)
+boost::signals::connection const EventLoop::attach_event(mouse_button_event_type::slot_function_type const & fn)
 {
-	m_onmousebutton.connect(fn) ;
+	return m_onmousebutton.connect(fn) ;
 }
 
-void EventLoop::attach_event(mouse_motion_event_type::slot_function_type const & fn)
+boost::signals::connection const EventLoop::attach_event(mouse_motion_event_type::slot_function_type const & fn)
 {
-	m_onmousemotion.connect(fn) ;
+	return m_onmousemotion.connect(fn) ;
 }
-
 
 

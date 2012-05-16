@@ -24,20 +24,20 @@ class KeyBoard
 		KeyBoard(KeyBoard const &) = delete ;
 		KeyBoard const & operator =(KeyBoard const &) = delete ;
 
-		Key const & up() ;
-		Key const & down() ;
-		Key const & right() ;
-		Key const & left() ;
+		Key const & up() const ;
+		Key const & down() const ;
+		Key const & right() const ;
+		Key const & left() const ;
 
-		Key const & enter() ;
-		Key const & right_ctrl() ;
-		Key const & left_ctrl() ;
-		Key const & right_alt() ;
-		Key const & left_alt() ;
-		Key const & right_shift() ;
-		Key const & left_shift() ;
+		Key const & enter() const ;
+		Key const & right_ctrl() const ;
+		Key const & left_ctrl() const ;
+		Key const & right_alt() const ;
+		Key const & left_alt() const ;
+		Key const & right_shift() const ;
+		Key const & left_shift() const ;
 
-		Key const & q() ;
+		Key const & q() const ;
 
 } /* class KeyBoard */ ;
 
@@ -193,16 +193,16 @@ class EventLoop
 
 		void operator() () ;
 
-		void attach_event(keyboard_event_type::slot_function_type const & fn) ;
-		void attach_event(mouse_motion_event_type::slot_function_type const & fn) ;
-		void attach_event(mouse_button_event_type::slot_function_type const & fn) ;
+		boost::signals::connection const attach_event(keyboard_event_type::slot_function_type const & fn) ;
+		boost::signals::connection const attach_event(mouse_motion_event_type::slot_function_type const & fn) ;
+		boost::signals::connection const attach_event(mouse_button_event_type::slot_function_type const & fn) ;
 
 		void stop() ;
 
 	private:
 		bool				m_running ;
-		keyboard_event_type m_onkeypress ;
 
+		keyboard_event_type		m_onkeypress ;
 		mouse_button_event_type m_onmousebutton ;
 		mouse_motion_event_type m_onmousemotion ;
 
