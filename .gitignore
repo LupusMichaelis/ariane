@@ -1,3 +1,7 @@
+tortoise
+quest
+dotests
+
 *.vim
 .*.swp
 *.o
