@@ -9,6 +9,8 @@
 
 #	include <boost/utility.hpp>
 
+void write(std::string const & message) ;
+void write(std::string const & message, Size const & at) ;
 
 class Surface
 	: boost::noncopyable
@@ -32,6 +34,8 @@ class Surface
 		void dump(std::string const & filename) ;
 
 		void crop(Surface & target, Size const & origin, Size const & size) const ;
+
+		void write(std::string const & message, Size const & at/*, Size const & size*/) ;
 
 	protected:
 		explicit Surface(VideoMode const & videomode) ;

@@ -237,3 +237,13 @@ void test_event()
 	ev_loop() ;
 }
 
+void test_write()
+{
+	std::shared_ptr<Screen> p_screen ;
+	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
+	p_screen->write("Rock'n'roll!", Size(50, 50)) ;
+	p_screen->write("Rock'n'roll!", Size(50, 70)) ;
+	p_screen->write("Rock'n'roll!", Size(50, 90)) ;
+	p_screen->update() ;
+	wait() ;
+}

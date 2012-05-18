@@ -129,4 +129,29 @@ void Surface::crop(Surface & target, Size const & origin, Size const & size) con
 		throw "Must reload resources" ;
 }
 
+#include <SDL/SDL_ttf.h>
 
+void Surface::write(std::string const & message, Size const & at/*, Size const & size*/)
+{
+	int ret = TTF_Init() ;
+	if(ret == -1)
+		throw SDL_GetError() ;
+
+	TTF_Font * font = 0 ;
+	font = TTF_OpenFont("/usr/share/fonts/truetype/msttcorefonts/Comic_Sans_MS.ttf", 16) ;
+
+	SDL_Surface * p_text = TTF_RenderText_Solid(font, message.c_str(), {0xff, 0xff, 0xff, 0, }) ;
+	if(!p_text)
+		throw SDL_GetError() ;
+
+	SDL_Rect dst = { (Sint16) at.width(), (Sint16) at.height(), 0, 0, };
+	//SDL_Rect box = { 0, 0, (Sint16) size.width(), (Sint16) size.height(), } ;
+
+	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(mp_raw) ;
+
+	ret = SDL_BlitSurface(p_text, 0/*&box*/, p_to, &dst) ;
+	if(ret == -1)
+		throw SDL_GetError() ;
+
+	SDL_FreeSurface(p_text) ;
+}

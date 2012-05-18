@@ -12,6 +12,7 @@ void test_load_image() ;
 void test_load_sprite() ;
 void test_grid() ;
 void test_event() ;
+void test_write() ;
 
 struct test { char const * name ; void (*fn)() ; } ;
 test const tests[] = {
@@ -21,6 +22,7 @@ test const tests[] = {
 	{"test_load_sprite", test_load_sprite},
 	{"test_grid", test_grid},
 	{"test_event", test_event},
+	{"test_write", test_write},
 } ;
 int const tests_size = sizeof tests / sizeof (test) ;
 
