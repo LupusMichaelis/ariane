@@ -6,7 +6,7 @@ CXXFLAGS=-Wall \
 		-g -ggdb
 
 LDFLAGS= \
-		`pkg-config --libs sdl` \
+		`pkg-config --libs sdl` -lSDL_ttf \
 		-lboost_signals \
 		-g -ggdb
 
@@ -19,16 +19,14 @@ SRCS= \
 	  grid.cpp \
 	  event.cpp \
 
-#	  quest.cpp \
-
 OBJS=$(SRCS:.cpp=.o)
 
-TARGET=dotests tortoise
+TARGET=dotests tortoise quest
 
 target: $(TARGET)
 
-quest: $(OBJS)
-	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
+quest: quest.o $(OBJS)
+	$(CXX) -o $@ quest.o $(OBJS) $(LDFLAGS)
 
 tortoise: tortoise.o $(OBJS)
 	$(CXX) -o $@ tortoise.o $(OBJS) $(LDFLAGS)
@@ -40,4 +38,4 @@ dotests: dotests.o test_screen.o $(OBJS)
 	$(CXX) -c $< $(CXXFLAGS)
 
 clean:
-	-rm -rf $(OBJS) $(TARGET)
+	-rm -rf $(OBJS) $(TARGET) $(TARGET:=.o)
