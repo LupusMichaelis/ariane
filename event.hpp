@@ -2,7 +2,7 @@
 #	define HPP_EVENT_SDL_QUEST
 
 #	include <functional>
-#	include <boost/signal.hpp>
+#	include <boost/signals2.hpp>
 
 #	include "videomode.hpp"
 
@@ -187,15 +187,15 @@ class MouseButtonEvent
 class EventLoop
 {
 	public:
-		typedef boost::signal<void (EventLoop &, KeyEvent const &)>			keyboard_event_type ;
-		typedef boost::signal<void (EventLoop &, MouseMotionEvent const &)> mouse_motion_event_type ;
-		typedef boost::signal<void (EventLoop &, MouseButtonEvent const &)> mouse_button_event_type ;
+		typedef boost::signals2::signal<void (EventLoop &, KeyEvent const &)>			keyboard_event_type ;
+		typedef boost::signals2::signal<void (EventLoop &, MouseMotionEvent const &)>	mouse_motion_event_type ;
+		typedef boost::signals2::signal<void (EventLoop &, MouseButtonEvent const &)> 	mouse_button_event_type ;
 
 		void operator() () ;
 
-		boost::signals::connection const attach_event(keyboard_event_type::slot_function_type const & fn) ;
-		boost::signals::connection const attach_event(mouse_motion_event_type::slot_function_type const & fn) ;
-		boost::signals::connection const attach_event(mouse_button_event_type::slot_function_type const & fn) ;
+		boost::signals2::connection const attach_event(keyboard_event_type::slot_function_type const & fn) ;
+		boost::signals2::connection const attach_event(mouse_motion_event_type::slot_function_type const & fn) ;
+		boost::signals2::connection const attach_event(mouse_button_event_type::slot_function_type const & fn) ;
 
 		void stop() ;
 

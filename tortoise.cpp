@@ -49,7 +49,7 @@ class Interface
 		void unlisten_events() ;
 
 		// Managed connection, to avoid dandling events if this is deleted
-		std::vector<boost::signals::connection>
+		std::vector<boost::signals2::connection>
 								m_cons ;
 
 } /* class Interface */ ;
@@ -102,7 +102,7 @@ void Interface::display()
 void Interface::listen_events()
 {
 	EventLoop & ev_loop = m_engine.event_loop() ;
-	boost::signals::connection con ;
+	boost::signals2::connection con ;
 
 	void (Interface::*oks)(EventLoop &, KeyEvent const &) = &Interface::move ;
 	auto wrapped_oks = boost::bind(oks, this, _1, _2) ;
@@ -122,7 +122,7 @@ void Interface::listen_events()
 
 void Interface::unlisten_events()
 {
-	std::for_each(m_cons.begin(), m_cons.end(), std::mem_fun_ref(&boost::signals::connection::disconnect)) ;
+	std::for_each(m_cons.begin(), m_cons.end(), std::mem_fun_ref(&boost::signals2::connection::disconnect)) ;
 }
 
 void Interface::move(EventLoop &, MouseButtonEvent const & me)

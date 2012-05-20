@@ -182,17 +182,17 @@ void EventLoop::stop()
 	m_running = false ;
 }
 
-boost::signals::connection const EventLoop::attach_event(keyboard_event_type::slot_function_type const & fn)
+boost::signals2::connection const EventLoop::attach_event(keyboard_event_type::slot_function_type const & fn)
 {
 	return m_onkeypress.connect(fn) ;
 }
 
-boost::signals::connection const EventLoop::attach_event(mouse_button_event_type::slot_function_type const & fn)
+boost::signals2::connection const EventLoop::attach_event(mouse_button_event_type::slot_function_type const & fn)
 {
 	return m_onmousebutton.connect(fn) ;
 }
 
-boost::signals::connection const EventLoop::attach_event(mouse_motion_event_type::slot_function_type const & fn)
+boost::signals2::connection const EventLoop::attach_event(mouse_motion_event_type::slot_function_type const & fn)
 {
 	return m_onmousemotion.connect(fn) ;
 }
