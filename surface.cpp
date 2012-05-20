@@ -139,6 +139,8 @@ void Surface::write(std::string const & message, Size const & at/*, Size const &
 
 	TTF_Font * font = 0 ;
 	font = TTF_OpenFont("/usr/share/fonts/truetype/msttcorefonts/Comic_Sans_MS.ttf", 16) ;
+	if(!font)
+		throw SDL_GetError() ;
 
 	SDL_Surface * p_text = TTF_RenderText_Solid(font, message.c_str(), {0xff, 0xff, 0xff, 0, }) ;
 	if(!p_text)
