@@ -54,7 +54,7 @@ class Interface
 		std::shared_ptr<Canvas>		mp_background ;
 
 		// Managed connection, to avoid dandling events if this is deleted
-		std::vector<boost::signals::connection>
+		std::vector<boost::signals2::connection>
 								m_cons ;
 
 } /* class Interface */ ;
@@ -65,15 +65,16 @@ class MenuInterface
 	public:
 		explicit MenuInterface(Engine & engine)
 			: Interface(engine)
-			, m_position(50, 50)
+			, m_current("first")
+			, m_entries()
+			, m_positions()
 		{ }
 
 		void move(EventLoop &, KeyEvent const & ke) ;
-		void move(EventLoop &, MouseEvent const & me) ;
-		void move(EventLoop &, MouseButtonEvent const & me) ;
 
 		void entry_next() ;
 		void entry_previous() ;
+		void select() ;
 
 	private:
 		virtual
@@ -81,10 +82,52 @@ class MenuInterface
 		virtual
 		void listen_events() ;
 
-		std::shared_ptr<Canvas>		mp_bg_sprite ;
-		std::shared_ptr<Canvas>		mp_sprite ;
+		std::string					m_current ;
+		std::map<std::string, std::shared_ptr<Canvas>>
+									m_entries ;
+		std::map<std::string, std::shared_ptr<Canvas>>
+									m_bg_entries ;
 
-		Size						m_position ;
+		std::map<std::string, Size> m_positions ;
+
+} /* class MenuInterface */ ;
+
+class QuestInterface
+	: public Interface
+{
+	public:
+		explicit QuestInterface(Engine & engine)
+			: Interface(engine)
+			, m_question("To be, or not to be.")
+			, m_current('a')
+			, m_good_answer('b')
+		{
+			m_answers['a'] = "Born" ;
+			m_answers['b'] = "to be" ;
+			m_answers['c'] = "Alive" ;
+		}
+
+		void move(EventLoop &, KeyEvent const & ke) ;
+
+		void answer_next() ;
+		void answer_previous() ;
+		void select() ;
+
+	private:
+		virtual
+		void init_display() ;
+		virtual
+		void listen_events() ;
+
+		std::string					m_question ;
+		char						m_current ;
+		char						m_good_answer ;
+		std::map<char, std::string>	m_answers ;
+		std::map<char, std::shared_ptr<Canvas>>
+									m_sprites ;
+		std::map<char, std::shared_ptr<Canvas>>
+									m_bg_sprites ;
+		std::map<char, Size>		m_positions ;
 
 } /* class MenuInterface */ ;
 
@@ -101,9 +144,11 @@ class Engine
 		Screen & screen()					{ return *mp_screen ; }
 		KeyBoard const & keyboard()	const	{ return m_kb ; }
 
-	private:
-		void init_title_screen() ;
+		void title_screen() ;
+		void game_over() ;
+		void quest(std::string const & quest_name) ;
 
+	private:
 		std::shared_ptr<Interface>	mp_interface ;
 
 		EventLoop					m_ev_loop ;
@@ -118,7 +163,7 @@ void Interface::attach_event(FunPtrT const fun_ptr)
 {
 	auto wrapped_fun_ptr = boost::bind(fun_ptr, static_cast<ClassT * const>(this), _1, _2) ;
 	EventLoop & ev_loop = engine().event_loop() ;
-	boost::signals::connection con ;
+	boost::signals2::connection con ;
 	con = ev_loop.attach_event(SlotFunT(wrapped_fun_ptr)) ;
 	m_cons.push_back(con) ;
 }
@@ -131,26 +176,47 @@ void Interface::display()
 
 void Interface::detach_events()
 {
-	std::for_each(m_cons.begin(), m_cons.end(), std::mem_fun_ref(&boost::signals::connection::disconnect)) ;
+	std::for_each(m_cons.begin(), m_cons.end(), std::mem_fun_ref(&boost::signals2::connection::disconnect)) ;
 }
 
 void MenuInterface::init_display()
 {
 	Screen & screen = engine().screen() ;
-	screen.fill(create_color(0xaaaa00)) ;
+	screen.fill(create_color(0x0)) ;
 
 	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
 	std::shared_ptr<Canvas> new_background ;
+
+	std::shared_ptr<Canvas> p_title ;
+	Canvas::create(p_title, create_videomode(8 * 50, 2 * 50, 32)) ;
+	p_title->fill(create_color(0x111111)) ;
+	p_title->write("Hill quest", Size()) ;
+	screen_surface.draw(*p_title, Size(2 * 50, 1 * 50)) ;
+
 	clone(new_background, screen_surface) ;
 	background(new_background) ;
+	background().fill(create_color(0x00)) ;
 
-	Canvas::create(mp_sprite, create_videomode(20, 20, 16)) ;
-	mp_sprite->fill(create_color(0x00aa)) ;
+	m_positions["first"] = Size(6 * 50, 4 * 50) ;
+	Canvas::create(m_entries["first"], create_videomode(4 * 50, 1 * 50, 32)) ;
+	m_entries["first"]->fill(create_color(0x00aa)) ;
+	m_entries["first"]->write("First quest", Size()) ;
 
-	Canvas::create(mp_bg_sprite, create_videomode(20, 20, 16)) ;
-	mp_bg_sprite->fill(create_color(0x00)) ;
+	Canvas::create(m_bg_entries["first"], create_videomode(4 * 50, 1 * 50, 32)) ;
+	m_bg_entries["first"]->fill(create_color(0x0022)) ;
+	m_bg_entries["first"]->write("First quest", Size()) ;
 
-	screen.draw(*mp_sprite, m_position) ;
+	Canvas::create(m_entries["second"], create_videomode(4 * 50, 1 * 50, 32)) ;
+	m_entries["second"]->fill(create_color(0x00aa)) ;
+	m_positions["second"] = Size(6 * 50, 5 * 50) ;
+	m_entries["second"]->write("Second quest", Size()) ;
+
+	Canvas::create(m_bg_entries["second"], create_videomode(4 * 50, 1 * 50, 32)) ;
+	m_bg_entries["second"]->fill(create_color(0x0022)) ;
+	m_bg_entries["second"]->write("Second quest", Size()) ;
+
+	screen.draw(*m_entries["first"], m_positions["first"]) ;
+	screen.draw(*m_bg_entries["second"], m_positions["second"]) ;
 	screen.update() ;
 }
 
@@ -162,95 +228,193 @@ void MenuInterface::listen_events()
 		, MenuInterface
 		, EventLoop::keyboard_event_type::slot_function_type
 		>(&MenuInterface::move) ;
-	attach_event<void (MenuInterface::*)(EventLoop &, MouseEvent const &)
-		, MenuInterface
-		, EventLoop::mouse_motion_event_type::slot_function_type
-		>(&MenuInterface::move) ;
-	attach_event<void (MenuInterface::*)(EventLoop &, MouseButtonEvent const &)
-		, MenuInterface
-		, EventLoop::mouse_button_event_type::slot_function_type
-		>(&MenuInterface::move) ;
-}
-
-void MenuInterface::move(EventLoop &, MouseButtonEvent const & me)
-{
-	if(me.pressing())
-		return ;
-
-	Screen & screen = engine().screen() ;
-
-	background().crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
-	screen.draw(*mp_bg_sprite, m_position) ;
-
-	m_position = me.position() ;
-	screen.draw(*mp_sprite, m_position) ;
-	screen.update() ;
-}
-
-void MenuInterface::move(EventLoop &, MouseEvent const & me)
-{
-	background().crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
-
-	Screen & screen = engine().screen() ;
-	screen.draw(*mp_bg_sprite, m_position) ;
-
-	m_position = me.position() ;
-	screen.draw(*mp_sprite, m_position) ;
-	screen.update() ;
 }
 
 void MenuInterface::move(EventLoop &, KeyEvent const & ke)
 {
-	background().crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
+	if(ke.pressing())
+		return ;
 
+	// preserve background of destination
 	Screen & screen = engine().screen() ;
-	screen.draw(*mp_bg_sprite, m_position) ;
+	screen.draw(background(), m_positions[m_current]) ;
 
+	KeyBoard const & kb = engine().keyboard() ;
+
+	if(ke.key() == kb.up())
+		entry_previous() ;
+	else if(ke.key() == kb.down())
+		entry_next() ;
+	else if(ke.key() == kb.enter())
+		select() ;
+}
+
+void MenuInterface::entry_next()
+{
+	Screen & screen = engine().screen() ;
+	screen.draw(*m_bg_entries["first"], m_positions[m_current]) ;
+
+	m_current = "second" ;
+
+	screen.draw(*m_entries[m_current], m_positions[m_current]) ;
+	screen.update() ;
+}
+
+void MenuInterface::entry_previous()
+{
+	Screen & screen = engine().screen() ;
+	screen.draw(*m_bg_entries["second"], m_positions[m_current]) ;
+
+	m_current = "first" ;
+
+	screen.draw(*m_entries[m_current], m_positions[m_current]) ;
+	screen.update() ;
+}
+
+void MenuInterface::select()
+{
+	engine().quest(m_current) ;
+}
+
+void QuestInterface::init_display()
+{
+	Screen & screen = engine().screen() ;
+	screen.fill(create_color(0x0)) ;
+
+	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
+	std::shared_ptr<Canvas> new_background ;
+
+	std::shared_ptr<Canvas> title ;
+	Canvas::create(title, create_videomode(8 * 50, 2 * 50, 32)) ;
+	title->fill(create_color(0x111111)) ;
+	title->write(m_question, Size()) ;
+	screen_surface.draw(*title, Size(2 * 50, 1 * 50)) ;
+
+	clone(new_background, screen_surface) ;
+	background(new_background) ;
+	background().fill(create_color(0x00)) ;
+
+	Size position = Size(6 * 50, 4 * 50) ;
+	for(auto it_answer = m_answers.begin() ; it_answer != m_answers.end() ; ++it_answer)
+	{
+		std::shared_ptr<Canvas> p_sprite ;
+
+		Canvas::create(p_sprite, create_videomode(4 * 50, 1 * 50, 32)) ;
+		p_sprite->fill(create_color(0x00aa)) ;
+		p_sprite->write(it_answer->second, Size()) ;
+		m_sprites[it_answer->first] = p_sprite ;
+
+		Canvas::create(p_sprite, create_videomode(4 * 50, 1 * 50, 32)) ;
+		p_sprite->fill(create_color(0x0066)) ;
+		p_sprite->write(it_answer->second, Size()) ;
+		m_bg_sprites[it_answer->first] = p_sprite ;
+
+		screen.draw(*(it_answer->first == m_current ? m_sprites[it_answer->first] : m_bg_sprites[it_answer->first]), position) ;
+		m_positions[it_answer->first] = position ;
+		position.height(position.height() + 1 * 50) ;
+	}
+
+	screen.update() ;
+}
+
+void QuestInterface::listen_events()
+{
+	// This is complex, I should be able to make something simpler (automatic FunPtr
+	// signature, for example)
+	attach_event<void (QuestInterface::*)(EventLoop &, KeyEvent const &)
+		, QuestInterface
+		, EventLoop::keyboard_event_type::slot_function_type
+		>(&QuestInterface::move) ;
+}
+
+void QuestInterface::move(EventLoop &, KeyEvent const & ke)
+{
 	if(ke.pressing())
 		return ;
 
 	KeyBoard const & kb = engine().keyboard() ;
 
 	if(ke.key() == kb.up())
-		entry_next() ;
+		answer_previous() ;
 	else if(ke.key() == kb.down())
-		entry_previous() ;
-	/*
-	else if(ke.key() == kb.right())
-		move_right() ;
-	else if(ke.key() == kb.left())
-		move_left() ;
-	*/
+		answer_next() ;
+	else if(ke.key() == kb.enter())
+		select() ;
 }
 
-void MenuInterface::entry_next()
+void QuestInterface::answer_next()
 {
-	m_position = m_position - Size(0, 10) ;
+	auto it_current = m_sprites.find(m_current) ; 
 
 	Screen & screen = engine().screen() ;
-	screen.draw(*mp_sprite, m_position) ;
+	screen.draw(*m_bg_sprites[it_current->first], m_positions[m_current]) ;
+
+	++it_current ;
+	if(it_current == m_sprites.end())
+		it_current = m_sprites.begin() ;
+
+	m_current = it_current->first ;
+
+	screen.draw(*it_current->second, m_positions[m_current]) ;
 	screen.update() ;
 }
 
-void MenuInterface::entry_previous()
+void QuestInterface::answer_previous()
 {
-	m_position = m_position + Size(0, 10) ;
+	auto it_current = m_sprites.find(m_current) ; 
 
 	Screen & screen = engine().screen() ;
-	screen.draw(*mp_sprite, m_position) ;
+	screen.draw(*m_bg_sprites[it_current->first], m_positions[m_current]) ;
+
+	--it_current ;
+	if(it_current == m_sprites.end())
+		it_current = --m_sprites.end() ;
+
+	m_current = it_current->first ;
+
+	screen.draw(*it_current->second, m_positions[m_current]) ;
 	screen.update() ;
+}
+
+void QuestInterface::select()
+{
+	if(m_current == m_good_answer)
+		engine().title_screen() ;
+	else
+		engine().game_over() ;
 }
 
 void Engine::run()
 {
-	Screen::create(mp_screen, create_videomode(320, 240, 16)) ;
+	Screen::create(mp_screen, create_videomode(12 * 50, 7 * 50, 16)) ;
+	title_screen() ;
+	m_ev_loop() ;
+}
+
+void Engine::game_over()
+{
+	mp_screen->write("Looser!", Size()) ;
+	mp_screen->update() ;
+	sleep(2) ;
+	m_ev_loop.stop() ;
+}
+
+void Engine::quest(std::string const & quest_name)
+{
 	{
-		std::shared_ptr<MenuInterface>	p_interface(new MenuInterface(*this)) ;
+		std::shared_ptr<Interface>	p_interface(new QuestInterface(*this)) ;
 		mp_interface = p_interface ;
 	}
 	mp_interface->display() ;
+}
 
-	m_ev_loop() ;
+void Engine::title_screen()
+{
+	{
+		std::shared_ptr<Interface>	p_interface(new MenuInterface(*this)) ;
+		mp_interface = p_interface ;
+	}
+	mp_interface->display() ;
 }
 
 int main(int argc, char **argv)
@@ -269,7 +433,7 @@ int main(int argc, char **argv)
 	{
 		cout << format("Exception '%s'\n") % e.what() ;
 	}
-	catch(char * raw)
+	catch(char const * raw)
 	{
 		cout << format("Exception '%s'\n") % raw ;
 	}
