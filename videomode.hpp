@@ -11,6 +11,11 @@ Size const create_size(int width, int height) ;
 class Size
 {
 	public:
+		Size()
+			: m_width(0)
+			, m_height(0)
+		{ }
+
 		Size(int width, int height)
 			: m_width(width)
 			, m_height(height)
