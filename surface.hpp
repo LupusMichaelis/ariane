@@ -3,11 +3,15 @@
 #	define HPP_SURFACE_SDL_QUEST
 
 #	include "videomode.hpp"
-#	include "color.hpp"
 
 #	include <memory>
 
 #	include <boost/utility.hpp>
+
+class RGBColor ;
+class Style ;
+class VideoMode ;
+class Size ;
 
 void write(std::string const & message) ;
 void write(std::string const & message, Size const & at) ;
@@ -35,7 +39,7 @@ class Surface
 
 		void crop(Surface & target, Size const & origin, Size const & size) const ;
 
-		void write(std::string const & message, Size const & at/*, Size const & size*/) ;
+		void write(std::string const & message, Size const & at, Style const & style) ;
 
 	protected:
 		explicit Surface(VideoMode const & videomode) ;

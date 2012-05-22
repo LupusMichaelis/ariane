@@ -1,8 +1,13 @@
 
 #include "surface.hpp"
 #include "screen.hpp"
+#include "color.hpp"
+#include "style.hpp"
+
 
 #include <algorithm>
+
+#include <boost/format.hpp>
 
 #include <SDL/SDL.h>
 
@@ -131,14 +136,17 @@ void Surface::crop(Surface & target, Size const & origin, Size const & size) con
 
 #include <SDL/SDL_ttf.h>
 
-void Surface::write(std::string const & message, Size const & at/*, Size const & size*/)
+void Surface::write(std::string const & message, Size const & at, Style const & style)
 {
 	int ret = TTF_Init() ;
 	if(ret == -1)
 		throw SDL_GetError() ;
 
+	std::string font_name = (boost::format("/usr/share/fonts/truetype/msttcorefonts/%s.ttf")
+			% style.font()).str() ;
+
 	TTF_Font * font = 0 ;
-	font = TTF_OpenFont("/usr/share/fonts/truetype/msttcorefonts/Comic_Sans_MS.ttf", 16) ;
+	font = TTF_OpenFont(font_name.c_str(), style.size()) ;
 	if(!font)
 		throw SDL_GetError() ;
 

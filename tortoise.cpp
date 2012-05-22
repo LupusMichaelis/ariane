@@ -1,6 +1,7 @@
 #include "screen.hpp"
 #include "canvas.hpp"
 #include "event.hpp"
+#include "color.hpp"
 
 #include <cassert>
 #include <cstring>

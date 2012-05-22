@@ -1,5 +1,7 @@
 #include "screen.hpp"
 #include "canvas.hpp"
+#include "color.hpp"
+#include "style.hpp"
 #include "event.hpp"
 
 #include <cassert>
@@ -187,10 +189,16 @@ void MenuInterface::init_display()
 	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
 	std::shared_ptr<Canvas> new_background ;
 
+	std::shared_ptr<Style> p_style ;
+	Style::create(p_style, screen) ;
+	p_style->color(create_color(0x0000bb)) ;
+	p_style->font("Comic_Sans_MS") ;
+	p_style->size(16) ;
+
 	std::shared_ptr<Canvas> p_title ;
 	Canvas::create(p_title, create_videomode(8 * 50, 2 * 50, 32)) ;
 	p_title->fill(create_color(0x111111)) ;
-	p_title->write("Hill quest", Size()) ;
+	p_title->write("Hill quest", Size(), *p_style) ;
 	screen_surface.draw(*p_title, Size(2 * 50, 1 * 50)) ;
 
 	clone(new_background, screen_surface) ;
@@ -200,20 +208,20 @@ void MenuInterface::init_display()
 	m_positions["first"] = Size(6 * 50, 4 * 50) ;
 	Canvas::create(m_entries["first"], create_videomode(4 * 50, 1 * 50, 32)) ;
 	m_entries["first"]->fill(create_color(0x00aa)) ;
-	m_entries["first"]->write("First quest", Size()) ;
+	m_entries["first"]->write("First quest", Size(), *p_style) ;
 
 	Canvas::create(m_bg_entries["first"], create_videomode(4 * 50, 1 * 50, 32)) ;
 	m_bg_entries["first"]->fill(create_color(0x0022)) ;
-	m_bg_entries["first"]->write("First quest", Size()) ;
+	m_bg_entries["first"]->write("First quest", Size(), *p_style) ;
 
 	Canvas::create(m_entries["second"], create_videomode(4 * 50, 1 * 50, 32)) ;
 	m_entries["second"]->fill(create_color(0x00aa)) ;
 	m_positions["second"] = Size(6 * 50, 5 * 50) ;
-	m_entries["second"]->write("Second quest", Size()) ;
+	m_entries["second"]->write("Second quest", Size(), *p_style) ;
 
 	Canvas::create(m_bg_entries["second"], create_videomode(4 * 50, 1 * 50, 32)) ;
 	m_bg_entries["second"]->fill(create_color(0x0022)) ;
-	m_bg_entries["second"]->write("Second quest", Size()) ;
+	m_bg_entries["second"]->write("Second quest", Size(), *p_style) ;
 
 	screen.draw(*m_entries["first"], m_positions["first"]) ;
 	screen.draw(*m_bg_entries["second"], m_positions["second"]) ;
@@ -282,14 +290,20 @@ void QuestInterface::init_display()
 	screen.fill(create_color(0x0)) ;
 
 	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
-	std::shared_ptr<Canvas> new_background ;
+
+	std::shared_ptr<Style> p_style ;
+	Style::create(p_style, screen) ;
+	p_style->color(create_color(0xffffff)) ;
+	p_style->font("Comic_Sans_MS") ;
+	p_style->size(16) ;
 
 	std::shared_ptr<Canvas> title ;
 	Canvas::create(title, create_videomode(8 * 50, 2 * 50, 32)) ;
 	title->fill(create_color(0x111111)) ;
-	title->write(m_question, Size()) ;
+	title->write(m_question, Size(), *p_style) ;
 	screen_surface.draw(*title, Size(2 * 50, 1 * 50)) ;
 
+	std::shared_ptr<Canvas> new_background ;
 	clone(new_background, screen_surface) ;
 	background(new_background) ;
 	background().fill(create_color(0x00)) ;
@@ -301,12 +315,12 @@ void QuestInterface::init_display()
 
 		Canvas::create(p_sprite, create_videomode(4 * 50, 1 * 50, 32)) ;
 		p_sprite->fill(create_color(0x00aa)) ;
-		p_sprite->write(it_answer->second, Size()) ;
+		p_sprite->write(it_answer->second, Size(), *p_style) ;
 		m_sprites[it_answer->first] = p_sprite ;
 
 		Canvas::create(p_sprite, create_videomode(4 * 50, 1 * 50, 32)) ;
 		p_sprite->fill(create_color(0x0066)) ;
-		p_sprite->write(it_answer->second, Size()) ;
+		p_sprite->write(it_answer->second, Size(), *p_style) ;
 		m_bg_sprites[it_answer->first] = p_sprite ;
 
 		screen.draw(*(it_answer->first == m_current ? m_sprites[it_answer->first] : m_bg_sprites[it_answer->first]), position) ;
@@ -393,7 +407,12 @@ void Engine::run()
 
 void Engine::game_over()
 {
-	mp_screen->write("Looser!", Size()) ;
+	std::shared_ptr<Style> p_style ;
+	Style::create(p_style, *mp_screen) ;
+	p_style->font("Verdana") ;
+	p_style->color(create_color(0x00bbbb)) ;
+	p_style->size(30) ;
+	mp_screen->write("Looser!", Size(), *p_style) ;
 	mp_screen->update() ;
 	sleep(2) ;
 	m_ev_loop.stop() ;

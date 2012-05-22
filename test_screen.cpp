@@ -47,6 +47,8 @@ void wait()
 	ev_loop() ;
 }
 
+#include "color.hpp"
+
 void test_base()
 {
 	std::shared_ptr<Screen> p_screen ;
@@ -237,13 +239,24 @@ void test_event()
 	ev_loop() ;
 }
 
+#include "style.hpp"
+
 void test_write()
 {
 	std::shared_ptr<Screen> p_screen ;
 	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
-	p_screen->write("Rock'n'roll!", Size(50, 50)) ;
-	p_screen->write("Rock'n'roll!", Size(50, 70)) ;
-	p_screen->write("Rock'n'roll!", Size(50, 90)) ;
+
+	std::shared_ptr<Style> p_style ;
+	Style::create(p_style, *p_screen) ;
+	p_style->color(create_color(0xffffff)) ;
+	p_style->font("Comic_Sans_MS") ;
+	p_style->size(16) ;
+
+	p_screen->write("Rock'n'roll!", Size(50, 50), *p_style) ;
+	p_screen->write("Rock'n'roll!", Size(50, 70), *p_style) ;
+	p_screen->write("Rock'n'roll!", Size(50, 90), *p_style) ;
 	p_screen->update() ;
-	wait() ;
+
+	EventLoop ev_loop ;
+	ev_loop() ;
 }

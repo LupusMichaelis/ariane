@@ -13,6 +13,7 @@ LDFLAGS= \
 SRCS= \
 	  color.cpp \
 	  surface.cpp \
+	  style.cpp \
 	  screen.cpp \
 	  canvas.cpp \
 	  image.cpp \
