@@ -10,18 +10,13 @@ void clone(std::shared_ptr<Canvas> & p_target, Surface const & source) ;
 class Canvas
 	: public Surface
 {
+		friend
+		void create(std::shared_ptr<Canvas> & p_surface, VideoMode const & videomode) ;
 	public:
 		virtual
 		~Canvas() ;
 
 		Canvas(Canvas const & copied) ;
-		static
-		void create(std::shared_ptr<Canvas> & p_surface, VideoMode const & videomode)
-		{
-			std::shared_ptr<Canvas> p_new_surface(new Canvas(videomode)) ;
-			p_new_surface->init() ;
-			std::swap(p_surface, p_new_surface) ;
-		}
 
 		virtual
 		void resize(Size const & new_size) ;

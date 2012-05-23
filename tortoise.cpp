@@ -88,10 +88,10 @@ void Interface::display()
 	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
 	clone(mp_background, screen_surface) ;
 
-	Canvas::create(mp_sprite, create_videomode(20, 20, 16)) ;
+	create(mp_sprite, create_videomode(20, 20, 16)) ;
 	mp_sprite->fill(create_color(0x00aa)) ;
 
-	Canvas::create(mp_bg_sprite, create_videomode(20, 20, 16)) ;
+	create(mp_bg_sprite, create_videomode(20, 20, 16)) ;
 	mp_bg_sprite->fill(create_color(0x00)) ;
 
 	screen.draw(*mp_sprite, m_position) ;
@@ -213,7 +213,7 @@ void Interface::move_down()
 
 void Engine::run()
 {
-	Screen::create(mp_screen, create_videomode(320, 240, 16)) ;
+	create(mp_screen, create_videomode(320, 240, 16)) ;
 	{
 		std::shared_ptr<Interface>	p_interface(new Interface(*this)) ;
 		mp_interface = p_interface ;

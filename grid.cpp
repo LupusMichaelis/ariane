@@ -13,7 +13,7 @@ Grid::Grid(std::shared_ptr<Surface> const & matrix, Size const & sprite_size)
 void Grid::extract(std::shared_ptr<Surface> & p_target, int index) const
 {
 	std::shared_ptr<Canvas> p_new_canvas ;
-	Canvas::create(p_new_canvas, create_videomode(m_box_size.width(), m_box_size.height(), 16)) ;
+	create(p_new_canvas, create_videomode(m_box_size.width(), m_box_size.height(), 16)) ;
 
 	Size position = compute_position(index) ;
 

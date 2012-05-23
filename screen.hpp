@@ -11,17 +11,11 @@ class VideoMode ;
 class Screen
 	: public Surface
 {
+		friend
+		void create(std::shared_ptr<Screen> & p_surface, VideoMode const & videomode) ;
 	public:
 		virtual
 		~Screen() ;
-
-		static
-		void create(std::shared_ptr<Screen> & p_surface, VideoMode const & videomode)
-		{
-			std::shared_ptr<Screen> p_new_surface(new Screen(videomode)) ;
-			p_new_surface->init() ;
-			std::swap(p_surface, p_new_surface) ;
-		}
 
 	protected:
 		Screen(int width, int height, int depth) ;
@@ -31,6 +25,6 @@ class Screen
 		void init() ;
 		virtual
 		void release() throw() ;
-} ;
+} /* class Screen */ ;
 
 #endif // define HPP_SCREEN_SDL_QUEST

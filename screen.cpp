@@ -6,6 +6,13 @@
 
 #include <SDL/SDL.h>
 
+void create(std::shared_ptr<Screen> & p_surface, VideoMode const & videomode)
+{
+	std::shared_ptr<Screen> p_new_surface(new Screen(videomode)) ;
+	p_new_surface->init() ;
+	std::swap(p_surface, p_new_surface) ;
+}
+
 Screen::Screen(VideoMode const & videomode)
 	: Surface(videomode)
 { }

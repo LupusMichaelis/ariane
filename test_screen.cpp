@@ -52,7 +52,7 @@ void wait()
 void test_base()
 {
 	std::shared_ptr<Screen> p_screen ;
-	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
+	create(p_screen, create_videomode(320, 280, 16)) ;
 	p_screen->fill(create_color(0xaaff00)) ;
 
 	assert(width(*p_screen) == 320) ;
@@ -60,22 +60,22 @@ void test_base()
 	assert(depth(*p_screen) == 16) ;
 
 	std::shared_ptr<Canvas> p_s1 ;
-	Canvas::create(p_s1, create_videomode(320, 280, 16)) ;
+	create(p_s1, create_videomode(320, 280, 16)) ;
 	p_s1->fill(create_color(0x00ff00)) ;
 	p_screen->draw(*p_s1) ;
 
 	std::shared_ptr<Canvas> p_s2;
-	Canvas::create(p_s2, create_videomode(40, 40, 16)) ;
+	create(p_s2, create_videomode(40, 40, 16)) ;
 	p_s2->fill(create_color(0xaa)) ;
 	p_screen->draw(*p_s2, Size(20, 20)) ;
 
 	std::shared_ptr<Canvas> p_s3;
-	Canvas::create(p_s3, create_videomode(30, 30, 16)) ;
+	create(p_s3, create_videomode(30, 30, 16)) ;
 	p_s3->fill(create_color(0xffff00)) ;
 	p_screen->draw(*p_s3, Size(10, 10)) ;
 
 	std::shared_ptr<Canvas> p_s4;
-	Canvas::create(p_s4, create_videomode(60, 60, 16)) ;
+	create(p_s4, create_videomode(60, 60, 16)) ;
 	p_s4->draw(*p_screen) ;
 	//p_screen->draw(*p_s4, Size(100, 100)) ;
 	p_screen->fill(*p_s4, Size(60, 60), Size(150, 150)) ;
@@ -92,7 +92,7 @@ void test_base()
 void test_load_image()
 {
 	std::shared_ptr<Screen> p_screen ;
-	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
+	create(p_screen, create_videomode(320, 280, 16)) ;
 
 	std::shared_ptr<Image> p_images ;
 	std::string filename("gfx/kraland_shapes.bmp") ;
@@ -111,7 +111,7 @@ void test_load_image()
 void test_resize()
 {
 	std::shared_ptr<Screen> p_screen ;
-	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
+	create(p_screen, create_videomode(320, 280, 16)) ;
 	p_screen->fill(create_color(0xaaaaaa)) ;
 	p_screen->update() ;
 
@@ -119,7 +119,7 @@ void test_resize()
 	p_screen->resize(create_size(480, 320)) ;
 
 	std::shared_ptr<Canvas> p_s1 ;
-	Canvas::create(p_s1, create_videomode(20, 20, 16)) ;
+	create(p_s1, create_videomode(20, 20, 16)) ;
 	p_s1->fill(create_color(0xaa)) ;
 
 	p_screen->draw(*p_s1) ;
@@ -137,7 +137,7 @@ void test_resize()
 void test_load_sprite()
 {
 	std::shared_ptr<Screen> p_screen ;
-	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
+	create(p_screen, create_videomode(320, 280, 16)) ;
 
 	std::shared_ptr<Image> p_patchwork ;
 	std::string filename("gfx/kraland_shapes.bmp") ;
@@ -162,7 +162,7 @@ void test_load_sprite()
 void test_grid()
 {
 	std::shared_ptr<Screen> p_screen ;
-	Screen::create(p_screen, create_videomode(672, 480, 24)) ;
+	create(p_screen, create_videomode(672, 480, 24)) ;
 
 	std::shared_ptr<Image> p_patchwork ;
 	std::string filename("gfx/kraland_shapes.bmp") ;
@@ -174,7 +174,7 @@ void test_grid()
 	//int sprite_per_col = 480 / 32 ;
 
 	std::shared_ptr<Canvas> p_target ;
-	Canvas::create(p_target, create_videomode(5 * 32, 2 * (sprite_per_row + 10) * 32, 24)) ;
+	create(p_target, create_videomode(5 * 32, 2 * (sprite_per_row + 10) * 32, 24)) ;
 	for(int k=0 ; k < 2 ; ++k)
 		for(int j=0 ; j < sprite_per_row ; ++j)
 			for(int i=0 ; i < 5 ; ++i)
@@ -229,7 +229,7 @@ void test_grid()
 void test_event()
 {
 	std::shared_ptr<Screen> p_screen ;
-	Screen::create(p_screen, create_videomode(320, 240, 24)) ;
+	create(p_screen, create_videomode(320, 240, 24)) ;
 
 	EventLoop ev_loop ;
 
@@ -244,7 +244,7 @@ void test_event()
 void test_write()
 {
 	std::shared_ptr<Screen> p_screen ;
-	Screen::create(p_screen, create_videomode(320, 280, 16)) ;
+	create(p_screen, create_videomode(320, 280, 16)) ;
 
 	std::shared_ptr<Style> p_style ;
 	Style::create(p_style, *p_screen) ;

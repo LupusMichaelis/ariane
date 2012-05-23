@@ -196,7 +196,7 @@ void MenuInterface::init_display()
 	p_style->size(16) ;
 
 	std::shared_ptr<Canvas> p_title ;
-	Canvas::create(p_title, create_videomode(8 * 50, 2 * 50, 32)) ;
+	create(p_title, create_videomode(8 * 50, 2 * 50, 32)) ;
 	p_title->fill(create_color(0x111111)) ;
 	p_title->write("Hill quest", Size(), *p_style) ;
 	screen_surface.draw(*p_title, Size(2 * 50, 1 * 50)) ;
@@ -206,20 +206,20 @@ void MenuInterface::init_display()
 	background().fill(create_color(0x00)) ;
 
 	m_positions["first"] = Size(6 * 50, 4 * 50) ;
-	Canvas::create(m_entries["first"], create_videomode(4 * 50, 1 * 50, 32)) ;
+	create(m_entries["first"], create_videomode(4 * 50, 1 * 50, 32)) ;
 	m_entries["first"]->fill(create_color(0x00aa)) ;
 	m_entries["first"]->write("First quest", Size(), *p_style) ;
 
-	Canvas::create(m_bg_entries["first"], create_videomode(4 * 50, 1 * 50, 32)) ;
+	create(m_bg_entries["first"], create_videomode(4 * 50, 1 * 50, 32)) ;
 	m_bg_entries["first"]->fill(create_color(0x0022)) ;
 	m_bg_entries["first"]->write("First quest", Size(), *p_style) ;
 
-	Canvas::create(m_entries["second"], create_videomode(4 * 50, 1 * 50, 32)) ;
+	create(m_entries["second"], create_videomode(4 * 50, 1 * 50, 32)) ;
 	m_entries["second"]->fill(create_color(0x00aa)) ;
 	m_positions["second"] = Size(6 * 50, 5 * 50) ;
 	m_entries["second"]->write("Second quest", Size(), *p_style) ;
 
-	Canvas::create(m_bg_entries["second"], create_videomode(4 * 50, 1 * 50, 32)) ;
+	create(m_bg_entries["second"], create_videomode(4 * 50, 1 * 50, 32)) ;
 	m_bg_entries["second"]->fill(create_color(0x0022)) ;
 	m_bg_entries["second"]->write("Second quest", Size(), *p_style) ;
 
@@ -298,7 +298,7 @@ void QuestInterface::init_display()
 	p_style->size(16) ;
 
 	std::shared_ptr<Canvas> title ;
-	Canvas::create(title, create_videomode(8 * 50, 2 * 50, 32)) ;
+	create(title, create_videomode(8 * 50, 2 * 50, 32)) ;
 	title->fill(create_color(0x111111)) ;
 	title->write(m_question, Size(), *p_style) ;
 	screen_surface.draw(*title, Size(2 * 50, 1 * 50)) ;
@@ -313,12 +313,12 @@ void QuestInterface::init_display()
 	{
 		std::shared_ptr<Canvas> p_sprite ;
 
-		Canvas::create(p_sprite, create_videomode(4 * 50, 1 * 50, 32)) ;
+		create(p_sprite, create_videomode(4 * 50, 1 * 50, 32)) ;
 		p_sprite->fill(create_color(0x00aa)) ;
 		p_sprite->write(it_answer->second, Size(), *p_style) ;
 		m_sprites[it_answer->first] = p_sprite ;
 
-		Canvas::create(p_sprite, create_videomode(4 * 50, 1 * 50, 32)) ;
+		create(p_sprite, create_videomode(4 * 50, 1 * 50, 32)) ;
 		p_sprite->fill(create_color(0x0066)) ;
 		p_sprite->write(it_answer->second, Size(), *p_style) ;
 		m_bg_sprites[it_answer->first] = p_sprite ;
@@ -400,7 +400,7 @@ void QuestInterface::select()
 
 void Engine::run()
 {
-	Screen::create(mp_screen, create_videomode(12 * 50, 7 * 50, 16)) ;
+	create(mp_screen, create_videomode(12 * 50, 7 * 50, 16)) ;
 	title_screen() ;
 	m_ev_loop() ;
 }

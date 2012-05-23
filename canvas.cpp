@@ -3,10 +3,17 @@
 
 #include <SDL.h>
 
+void create(std::shared_ptr<Canvas> & p_surface, VideoMode const & videomode)
+{
+	std::shared_ptr<Canvas> p_new_surface(new Canvas(videomode)) ;
+	p_new_surface->init() ;
+	std::swap(p_surface, p_new_surface) ;
+}
+
 void clone(std::shared_ptr<Canvas> & p_target, Surface const & source)
 {
 	std::shared_ptr<Canvas> p_new_canvas ;
-	Canvas::create(p_new_canvas, source.videomode()) ;
+	create(p_new_canvas, source.videomode()) ;
 	p_new_canvas->draw(source) ;
 	std::swap(p_target, p_new_canvas) ;
 }

@@ -50,7 +50,7 @@ void Surface::fill(Surface const & pattern, Size const & from, Size const & to)
 {
 	Size size(to) ;
 	std::shared_ptr<Canvas> p_buffer ;
-	Canvas::create(p_buffer, create_videomode(to - from, depth(*this))) ;
+	create(p_buffer, create_videomode(to - from, depth(*this))) ;
 	Size next(0, 0) ;
 	do
 	{
