@@ -80,10 +80,12 @@ class VideoMode
 			, m_depth(depth)
 		{ }
 
-		int width() const { return m_size.width() ; }
-		int height() const { return m_size.height() ; }
-		int depth() const { return m_depth ; }
+		int const width() const { return m_size.width() ; }
+		int const height() const { return m_size.height() ; }
+		int const depth() const { return m_depth ; }
 		Size const & size() const { return m_size ; }
+
+		void size(Size const & new_size) { m_size = new_size ; }
 
 	private:
 		Size m_size ;
