@@ -3,36 +3,13 @@
 
 #include <SDL.h>
 
-void Image::release()
-	throw()
-{
-	SDL_Surface * p_raw = reinterpret_cast<SDL_Surface *>(get()) ;
-	SDL_FreeSurface(p_raw) ;
-}
 
-void Image::init()
-{
-	SDL_Surface * p_raw = SDL_LoadBMP(m_filename.c_str()) ;
-	if(!p_raw)
-		throw SDL_GetError() ;
-
-	videomode(create_videomode(p_raw->w, p_raw->h, p_raw->format->BitsPerPixel)) ;
-
-	set(p_raw) ;
-}
-
-Image::Image()
-	: Surface(create_videomode(0, 0, 0))
-	, m_filename()
+ImageSDL::ImageSDL(Gui & gui, std::unique_ptr<ImageMemory> p_surface, std::string const & filename)
+	: Image(filename)
+	, SurfaceSDL(gui, move(p_surface))
 {
 }
 
-Image::Image(std::string const & filename)
-	: Surface(create_videomode(0, 0, 0))
-	, m_filename(filename)
-{
-}
-
-Image::~Image()
+ImageSDL::~ImageSDL()
 { }
 

@@ -4,16 +4,16 @@
 #	include <memory>
 #	include "color.hpp"
 
-class Screen ;
+class Surface ;
 
 class Style
 {
 	public:
 		static
-		void create(std::shared_ptr<Style> & p_style, Screen & screen) ;
+		void create(std::shared_ptr<Style> & p_style, Surface & screen) ;
 
 	private:
-		Style(Screen & parent_screen) ;
+		Style(Surface & parent_screen) ;
 
 	public:
 		void color(RGBColor const & new_color) ;
@@ -26,7 +26,7 @@ class Style
 		unsigned const size() const ;
 
 	private:
-		Screen & m_screen ;
+		Surface & m_screen ;
 
 		RGBColor	m_color ;
 		std::string	m_font ;

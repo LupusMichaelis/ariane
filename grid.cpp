@@ -1,37 +1,34 @@
 
 #include "grid.hpp"
-#include "canvas.hpp"
+#include "gui.hpp"
 
+#include <cassert>
 
-Grid::Grid(std::shared_ptr<Surface> const & matrix, Size const & sprite_size)
-	: mp_matrix(matrix)
+Grid::Grid(Surface const & matrix, Size const & sprite_size)
+	: m_matrix(matrix)
 	, m_box_size(sprite_size)
 {
 }
-#include <cassert>
 
-void Grid::extract(std::shared_ptr<Surface> & p_target, int index) const
+std::unique_ptr<Surface> Grid::extract(int index) const
 {
-	std::shared_ptr<Canvas> p_new_canvas ;
-	create(p_new_canvas, create_videomode(m_box_size.width(), m_box_size.height(), 16)) ;
+	auto & gui = m_matrix.gui() ;
+	auto new_surface = gui.surface(m_box_size) ;
 
 	Size position = compute_position(index) ;
+	m_matrix.crop(*new_surface, position, m_box_size) ;
 
-	mp_matrix->crop(*p_new_canvas, position, m_box_size) ;
-
-	std::shared_ptr<Surface> p_new_surface(std::static_pointer_cast<Surface>(p_new_canvas)) ;
-
-	std::swap(p_new_surface, p_target) ;
+	return new_surface ;
 }
 
 int const Grid::box_per_row() const
 {
-	return width(*mp_matrix) / m_box_size.width() ;
+	return width(m_matrix) / m_box_size.width() ;
 }
 
 int const Grid::box_per_col() const
 {
-	return height(*mp_matrix) / m_box_size.height() ;
+	return height(m_matrix) / m_box_size.height() ;
 }
 
 Size const Grid::compute_position(int index) const

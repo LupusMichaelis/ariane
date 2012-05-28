@@ -1,7 +1,9 @@
-#include "screen.hpp"
-#include "canvas.hpp"
 #include "event.hpp"
 #include "color.hpp"
+#include "gui.hpp"
+#include "api.hpp"
+
+#include "tools.hpp"
 
 #include <cassert>
 #include <cstring>
@@ -15,6 +17,7 @@
 #include <boost/bind.hpp>
 
 class Engine ;
+class Surface ;
 
 class Interface
 {
@@ -40,9 +43,9 @@ class Interface
 	private:
 		Engine &					m_engine ;
 
-		std::shared_ptr<Canvas>		mp_background ;
-		std::shared_ptr<Canvas>		mp_bg_sprite ;
-		std::shared_ptr<Canvas>		mp_sprite ;
+		std::unique_ptr<Surface>	mp_background ;
+		std::unique_ptr<Surface>	mp_bg_sprite ;
+		std::unique_ptr<Surface>	mp_sprite ;
 
 		Size						m_position ;
 
@@ -51,7 +54,7 @@ class Interface
 
 		// Managed connection, to avoid dandling events if this is deleted
 		std::vector<boost::signals2::connection>
-								m_cons ;
+									m_cons ;
 
 } /* class Interface */ ;
 
@@ -59,39 +62,40 @@ class Engine
 {
 	public:
 		Engine()
+			: m_gui(create_videomode(320, 240, 16))
 		{
 		}
 
 		void run() ;
 
 		EventLoop & event_loop()			{ return m_ev_loop ; }
-		Screen & screen()					{ return *mp_screen ; }
+		Surface & screen()					{ return m_gui.screen() ; }
+		Gui & gui()							{ return m_gui ; }
 		KeyBoard const & keyboard()	const	{ return m_kb ; }
 
 	private:
 		void init_title_screen() ;
 
-		std::shared_ptr<Interface>	mp_interface ;
+		std::unique_ptr<Interface>	mp_interface ;
 
 		EventLoop					m_ev_loop ;
 		KeyBoard					m_kb ;
 
-		std::shared_ptr<Screen>		mp_screen ;
+		Gui 						m_gui ;
 
 } /* class Engine */ ;
 
 void Interface::display()
 {
-	Screen & screen = m_engine.screen() ;
+	Surface & screen = m_engine.screen() ;
 	screen.fill(create_color(0xaaaa00)) ;
 
-	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
-	clone(mp_background, screen_surface) ;
+	mp_background = m_engine.gui().surface(screen) ;
 
-	create(mp_sprite, create_videomode(20, 20, 16)) ;
+	mp_sprite = screen.gui().surface(Size {20, 20}) ;
 	mp_sprite->fill(create_color(0x00aa)) ;
 
-	create(mp_bg_sprite, create_videomode(20, 20, 16)) ;
+	mp_bg_sprite = screen.gui().surface(Size {20, 20}) ;
 	mp_bg_sprite->fill(create_color(0x00)) ;
 
 	screen.draw(*mp_sprite, m_position) ;
@@ -131,7 +135,7 @@ void Interface::move(EventLoop &, MouseButtonEvent const & me)
 	if(me.pressing())
 		return ;
 
-	Screen & screen = m_engine.screen() ;
+	Surface & screen = m_engine.screen() ;
 
 	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
 	screen.draw(*mp_bg_sprite, m_position) ;
@@ -145,7 +149,7 @@ void Interface::move(EventLoop &, MouseEvent const & me)
 {
 	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
 
-	Screen & screen = m_engine.screen() ;
+	Surface & screen = m_engine.screen() ;
 	screen.draw(*mp_bg_sprite, m_position) ;
 
 	m_position = me.position() ;
@@ -157,7 +161,7 @@ void Interface::move(EventLoop &, KeyEvent const & ke)
 {
 	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
 
-	Screen & screen = m_engine.screen() ;
+	Surface & screen = m_engine.screen() ;
 	screen.draw(*mp_bg_sprite, m_position) ;
 
 	if(ke.pressing())
@@ -179,7 +183,7 @@ void Interface::move_left()
 {
 	m_position = m_position - Size(10, 0) ;
 
-	Screen & screen = m_engine.screen() ;
+	Surface & screen = m_engine.screen() ;
 	screen.draw(*mp_sprite, m_position) ;
 	screen.update() ;
 }
@@ -188,7 +192,7 @@ void Interface::move_right()
 {
 	m_position = m_position + Size(10, 0) ;
 
-	Screen & screen = m_engine.screen() ;
+	Surface & screen = m_engine.screen() ;
 	screen.draw(*mp_sprite, m_position) ;
 	screen.update() ;
 }
@@ -197,7 +201,7 @@ void Interface::move_up()
 {
 	m_position = m_position - Size(0, 10) ;
 
-	Screen & screen = m_engine.screen() ;
+	Surface & screen = m_engine.screen() ;
 	screen.draw(*mp_sprite, m_position) ;
 	screen.update() ;
 }
@@ -206,18 +210,14 @@ void Interface::move_down()
 {
 	m_position = m_position + Size(0, 10) ;
 
-	Screen & screen = m_engine.screen() ;
+	Surface & screen = m_engine.screen() ;
 	screen.draw(*mp_sprite, m_position) ;
 	screen.update() ;
 }
 
 void Engine::run()
 {
-	create(mp_screen, create_videomode(320, 240, 16)) ;
-	{
-		std::shared_ptr<Interface>	p_interface(new Interface(*this)) ;
-		mp_interface = p_interface ;
-	}
+	mp_interface = std::make_unique<Interface>(*this) ;
 	mp_interface->display() ;
 
 	m_ev_loop() ;

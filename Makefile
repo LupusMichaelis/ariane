@@ -11,14 +11,14 @@ LDFLAGS= \
 		-g -ggdb
 
 SRCS= \
+	  api.cpp \
 	  color.cpp \
 	  surface.cpp \
 	  style.cpp \
-	  screen.cpp \
-	  canvas.cpp \
 	  image.cpp \
 	  grid.cpp \
 	  event.cpp \
+	  gui.cpp \
 
 OBJS=$(SRCS:.cpp=.o)
 
@@ -39,4 +39,4 @@ dotests: dotests.o test_screen.o $(OBJS)
 	$(CXX) -c $< $(CXXFLAGS)
 
 clean:
-	-rm -rf $(OBJS) $(TARGET) $(TARGET:=.o)
+	-rm -rf $(OBJS) $(TARGET) $(TARGET:=.o) test_screen.o

@@ -1,56 +1,68 @@
 
 #include "surface.hpp"
-#include "screen.hpp"
 #include "color.hpp"
 #include "style.hpp"
+#include "gui.hpp"
+
+#include "tools.hpp"
 
 
 #include <algorithm>
 
 #include <boost/format.hpp>
 
-#include <SDL/SDL.h>
-
-Surface::Surface(VideoMode const & videomode)
-	: m_videomode(videomode)
-	, mp_raw(0)
-{ }
-
-Surface::~Surface()
-{ }
-
-VideoMode const & Surface::videomode() const
-{ return m_videomode ; }
-
-void Surface::videomode(VideoMode const & new_videomode)
-{ m_videomode = new_videomode ; }
-
-void * Surface::get() const
+SurfaceSDL::SurfaceSDL(Gui & gui, std::unique_ptr<RawSurfaceMemory> p_surface)
+	: Surface()
+	, m_gui(gui)
+	, mp_surface(move(p_surface))
 {
-	return mp_raw ;
 }
 
-void Surface::set(void * raw)
+SurfaceSDL::SurfaceSDL(SurfaceSDL const & copied)
+	: Surface(copied)
+	, m_gui(copied.m_gui)
+	, mp_surface(std::make_unique<SurfaceMemory>(copied.videomode()))
 {
-	mp_raw = raw ;
+	draw_static(copied, Size {0,0}) ;
 }
 
-void Surface::fill(RGBColor const & color)
+SurfaceSDL::~SurfaceSDL()
 {
-	SDL_Surface * p_raw = reinterpret_cast<SDL_Surface *>(get()) ;
-	Uint32 mapped_color = SDL_MapRGB(p_raw->format, color.red(), color.green(), color.blue()) ;
-	int ret = SDL_FillRect(p_raw, 0, mapped_color) ;
+}
+
+Gui const & SurfaceSDL::gui() const
+{
+	return m_gui ;
+}
+
+Gui & SurfaceSDL::gui()
+{
+	return m_gui ;
+}
+
+SDL_Surface * SurfaceSDL::get_raw() const
+{
+	return mp_surface->get_raw() ;
+}
+
+VideoMode const SurfaceSDL::videomode() const
+{
+	return create_videomode(get_raw()->w, get_raw()->h, get_raw()->format->BitsPerPixel) ;
+}
+
+void SurfaceSDL::fill(RGBColor const & color)
+{
+	Uint32 mapped_color = SDL_MapRGB(get_raw()->format, color.red(), color.green(), color.blue()) ;
+	int ret = SDL_FillRect(get_raw(), 0, mapped_color) ;
 	if(ret == -1)
 		throw SDL_GetError() ;
 }
 
-#include "canvas.hpp"
-
-void Surface::fill(Surface const & pattern, Size const & from, Size const & to)
+void SurfaceSDL::fill(Surface const & pattern, Size const & from, Size const & to)
 {
 	Size size(to) ;
-	std::shared_ptr<Canvas> p_buffer ;
-	create(p_buffer, create_videomode(to - from, depth(*this))) ;
+	auto p_buffer = m_gui.surface(to - from) ;
+
 	Size next(0, 0) ;
 	do
 	{
@@ -67,19 +79,26 @@ void Surface::fill(Surface const & pattern, Size const & from, Size const & to)
 	draw(*p_buffer, from) ;
 }
 
-void Surface::draw(Surface const & motif)
+void SurfaceSDL::draw(Surface const & motif)
 {
 	draw(motif, Size(0, 0)) ;
 }
 
-void Surface::draw(Surface const & motif, Size const & at)
+void SurfaceSDL::draw(Surface const & motif, Size const & at)
+{
+	draw_static(motif, at) ;
+}
+
+void SurfaceSDL::draw_static(Surface const & motif, Size const & at)
 {
 	SDL_Rect dst ;
 	dst.x = at.width() ;
 	dst.y = at.height() ;
+
+	SurfaceSDL const & sdl_motif = dynamic_cast<SurfaceSDL const &>(motif) ;
 	
-	SDL_Surface * p_from = reinterpret_cast<SDL_Surface *>(motif.get()) ;
-	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(mp_raw) ;
+	SDL_Surface * p_from = sdl_motif.get_raw() ;
+	SDL_Surface * p_to = get_raw() ;
 	int ret = SDL_BlitSurface(p_from, 0, p_to, &dst) ;
 	
 	if(ret == -1)
@@ -93,29 +112,27 @@ void Surface::draw(Surface const & motif, Size const & at)
 // screen. This means if we can't recover, the object is in inconsistent state.
 // XXX I copy the surface structure before I destroy it. My guess is its undefined
 // behaviour. Should look if they are a better (and efficient) way to copy the content of the surface.
-void Surface::resize(Size const & new_size)
+void SurfaceSDL::resize(Size const & new_size)
 {
-	release() ;
-	m_videomode = create_videomode(new_size, m_videomode.depth()) ;
-	init() ;
+	auto new_videomode = create_videomode(new_size, videomode().depth()) ;
+	auto p_surface = gui().surface(*this) ;
+	mp_surface->init(new_videomode) ;
+	draw(*p_surface) ;
 }
 
-
-void Surface::update() const
+void SurfaceSDL::update() const
 {
-	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(mp_raw) ;
-	SDL_UpdateRect(p_to, 0, 0, 0, 0) ;
+	SDL_UpdateRect(get_raw(), 0, 0, 0, 0) ;
 }
 
-void Surface::dump(std::string const & filename)
+void SurfaceSDL::dump(std::string const & filename)
 {
-	SDL_Surface * p = reinterpret_cast<SDL_Surface *>(mp_raw) ;
-	int r = SDL_SaveBMP(p, filename.c_str()) ;
+	int r = SDL_SaveBMP(get_raw(), filename.c_str()) ;
 	if(r < 0)
 		throw SDL_GetError() ;
 }
 
-void Surface::crop(Surface & target, Size const & origin, Size const & size) const
+void SurfaceSDL::crop(Surface & target, Size const & origin, Size const & size) const
 {
 	SDL_Rect orig ;
 
@@ -124,8 +141,10 @@ void Surface::crop(Surface & target, Size const & origin, Size const & size) con
 	orig.w = size.width() ;
 	orig.h = size.height() ;
 
-	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(target.get()) ;
-	SDL_Surface * p_from = reinterpret_cast<SDL_Surface *>(mp_raw) ;
+	auto & actual = dynamic_cast<SurfaceSDL &>(target) ;
+
+	SDL_Surface * p_to = actual.get_raw() ;
+	SDL_Surface * p_from = get_raw() ;
 	int ret = SDL_BlitSurface(p_from, &orig, p_to, 0) ;
 
 	if(ret == -1)
@@ -136,7 +155,7 @@ void Surface::crop(Surface & target, Size const & origin, Size const & size) con
 
 #include <SDL/SDL_ttf.h>
 
-void Surface::write(std::string const & message, Size const & at, Style const & style)
+void SurfaceSDL::write(std::string const & message, Size const & at, Style const & style)
 {
 	int ret = TTF_Init() ;
 	if(ret == -1)
@@ -157,7 +176,7 @@ void Surface::write(std::string const & message, Size const & at, Style const & 
 	SDL_Rect dst = { (Sint16) at.width(), (Sint16) at.height(), 0, 0, };
 	//SDL_Rect box = { 0, 0, (Sint16) size.width(), (Sint16) size.height(), } ;
 
-	SDL_Surface * p_to = reinterpret_cast<SDL_Surface *>(mp_raw) ;
+	SDL_Surface * p_to = get_raw() ;
 
 	ret = SDL_BlitSurface(p_text, 0/*&box*/, p_to, &dst) ;
 	if(ret == -1)

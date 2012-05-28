@@ -3,31 +3,14 @@
 
 #	include "surface.hpp"
 
-class Image
-	: public Surface
+class ImageSDL
+	: public Image, public SurfaceSDL
 {
 	public:
 		virtual
-		~Image() ;
+		~ImageSDL() ;
 
-		static
-		void create(std::shared_ptr<Image> & p_surface, std::string const & filename)
-		{
-			std::shared_ptr<Image> p_new_surface(new Image(filename)) ;
-			p_new_surface->init() ;
-			std::swap(p_surface, p_new_surface) ;
-		}
-
-	private:
-		Image() ;
-		explicit Image(std::string const & filename) ;
-
-		void init() ;
-
-		virtual
-		void release() throw() ;
-
-		std::string m_filename ;
+		ImageSDL(Gui & gui, std::unique_ptr<ImageMemory> p_surface, std::string const & filename) ;
 } ;
 
 #endif // define HPP_IMAGE_SDL_QUEST
