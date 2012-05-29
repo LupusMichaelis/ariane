@@ -219,7 +219,7 @@ void test_event()
 	Gui gui {create_videomode(672, 480, 24)} ;
 	gui.screen() ;
 
-	EventLoop ev_loop ;
+	EventLoop & ev_loop = gui.event_loop() ;
 	ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(print_key_event)) ;
 	ev_loop.attach_event(EventLoop::mouse_button_event_type::slot_function_type(print_mouse_event)) ;
 	ev_loop.attach_event(EventLoop::mouse_motion_event_type::slot_function_type(print_mouse_event)) ;

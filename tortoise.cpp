@@ -68,7 +68,7 @@ class Engine
 
 		void run() ;
 
-		EventLoop & event_loop()			{ return m_ev_loop ; }
+		EventLoop & event_loop()			{ return gui().event_loop() ; }
 		Surface & screen()					{ return m_gui.screen() ; }
 		Gui & gui()							{ return m_gui ; }
 		KeyBoard const & keyboard()	const	{ return m_kb ; }
@@ -78,7 +78,6 @@ class Engine
 
 		std::unique_ptr<Interface>	mp_interface ;
 
-		EventLoop					m_ev_loop ;
 		KeyBoard					m_kb ;
 
 		Gui 						m_gui ;
@@ -220,7 +219,7 @@ void Engine::run()
 	mp_interface = std::make_unique<Interface>(*this) ;
 	mp_interface->display() ;
 
-	m_ev_loop() ;
+	(gui().event_loop())() ;
 }
 
 int main(int argc, char **argv)

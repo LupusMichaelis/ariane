@@ -3,6 +3,7 @@
 #	define HPP_GUI_SDL_QUEST
 
 #	include "videomode.hpp"
+#	include "event.hpp"
 
 #	include <memory>
 #	include <vector>
@@ -12,7 +13,6 @@
 class Size ;
 
 class Surface ;
-class EventLoop ;
 
 class Gui
 	: boost::noncopyable
@@ -28,7 +28,8 @@ class Gui
 		std::unique_ptr<Surface> surface(std::string const & file_name) const ;
 		std::unique_ptr<Surface> surface(Surface const & source) const ;
 
-		EventLoop & event_loop() const ;
+		EventLoop const & event_loop() const ;
+		EventLoop & event_loop() ;
 
 	private:
 		void init_screen() const ;
@@ -37,6 +38,7 @@ class Gui
 		mutable
 		std::unique_ptr<Surface>	mp_screen ;
 		VideoMode					m_videomode ;
+		EventLoop					m_event_loop ;
 
 } /* class Gui */ ;
 

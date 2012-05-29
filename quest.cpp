@@ -150,7 +150,6 @@ class Engine
 
 		void run() ;
 
-		EventLoop & event_loop()			{ return m_ev_loop ; }
 		KeyBoard const & keyboard()	const	{ return m_kb ; }
 
 		void title_screen() ;
@@ -164,7 +163,6 @@ class Engine
 		std::unique_ptr<Interface>	mp_interface ;
 		std::unique_ptr<Gui>		mp_gui ;
 
-		EventLoop					m_ev_loop ;
 		KeyBoard					m_kb ;
 
 
@@ -174,7 +172,7 @@ template <typename FunPtrT, typename ClassT, typename SlotFunT>
 void Interface::attach_event(FunPtrT const fun_ptr)
 {
 	auto wrapped_fun_ptr = boost::bind(fun_ptr, static_cast<ClassT * const>(this), _1, _2) ;
-	EventLoop & ev_loop = engine().event_loop() ;
+	EventLoop & ev_loop = engine().gui().event_loop() ;
 	boost::signals2::connection con ;
 	con = ev_loop.attach_event(SlotFunT(wrapped_fun_ptr)) ;
 	m_cons.push_back(con) ;
@@ -407,7 +405,7 @@ void Engine::run()
 {
 	mp_gui = std::make_unique<Gui>(create_videomode(12 * 50, 7 * 50, 16)) ;
 	title_screen() ;
-	m_ev_loop() ;
+	gui().event_loop()() ;
 }
 
 void Engine::game_over()
@@ -421,7 +419,7 @@ void Engine::game_over()
 	screen.write("Looser!", Size(), *p_style) ;
 	screen.update() ;
 	sleep(2) ;
-	m_ev_loop.stop() ;
+	gui().event_loop().stop() ;
 }
 
 void Engine::quest(std::string const & quest_name)

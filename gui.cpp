@@ -25,7 +25,9 @@ std::unique_ptr<Surface> Gui::surface(Surface const & source) const
 }
 
 Gui::Gui(VideoMode const & set_videomode)
-	: m_videomode(set_videomode)
+	: mp_screen()
+	, m_videomode(set_videomode)
+	, m_event_loop()
 {
 	if(SDL_Init(SDL_INIT_VIDEO) == -1)
 		throw SDL_GetError() ;
@@ -56,3 +58,12 @@ void Gui::init_screen() const
 }
 
 
+EventLoop const & Gui::event_loop() const
+{
+	return const_cast<EventLoop &>(const_cast<Gui &>(*this).event_loop()) ;
+}
+
+EventLoop & Gui::event_loop()
+{
+	return m_event_loop ;
+}
