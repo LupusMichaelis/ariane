@@ -195,15 +195,14 @@ void MenuInterface::init_display()
 	Surface & screen = gui.screen() ;
 	screen.fill(create_color(0x0)) ;
 
-	std::shared_ptr<Style> p_style ;
-	Style::create(p_style, screen) ;
-	p_style->color(create_color(0x0000bb)) ;
-	p_style->font("Comic_Sans_MS") ;
-	p_style->size(16) ;
+	Style style(screen) ;
+	style.color(create_color(0x0000bb)) ;
+	style.font("Comic_Sans_MS") ;
+	style.size(16) ;
 
 	auto p_title = gui.surface(Size { 8 * 50, 2 * 50}) ;
 	p_title->fill(create_color(0x111111)) ;
-	p_title->write("Hill quest", Size(), *p_style) ;
+	p_title->write("Hill quest", Size(), style) ;
 	screen.draw(*p_title, Size(2 * 50, 1 * 50)) ;
 	{
 		auto new_background = gui.surface(screen) ;
@@ -214,20 +213,20 @@ void MenuInterface::init_display()
 	m_positions["first"] = Size(6 * 50, 4 * 50) ;
 	m_entries["first"] = gui.surface(Size {4 * 50, 1 * 50}) ;
 	m_entries["first"]->fill(create_color(0x00aa)) ;
-	m_entries["first"]->write("First quest", Size(), *p_style) ;
+	m_entries["first"]->write("First quest", Size(), style) ;
 
 	m_bg_entries["first"] = gui.surface(Size {4 * 50, 1 * 50}) ;
 	m_bg_entries["first"]->fill(create_color(0x0022)) ;
-	m_bg_entries["first"]->write("First quest", Size(), *p_style) ;
+	m_bg_entries["first"]->write("First quest", Size(), style) ;
 
 	m_entries["second"] = gui.surface(Size {4 * 50, 1 * 50}) ;
 	m_entries["second"]->fill(create_color(0x00aa)) ;
 	m_positions["second"] = Size(6 * 50, 5 * 50) ;
-	m_entries["second"]->write("Second quest", Size(), *p_style) ;
+	m_entries["second"]->write("Second quest", Size(), style) ;
 
 	m_bg_entries["second"] = gui.surface(Size {4 * 50, 1 * 50}) ;
 	m_bg_entries["second"]->fill(create_color(0x0022)) ;
-	m_bg_entries["second"]->write("Second quest", Size(), *p_style) ;
+	m_bg_entries["second"]->write("Second quest", Size(), style) ;
 
 	screen.draw(*m_entries["first"], m_positions["first"]) ;
 	screen.draw(*m_bg_entries["second"], m_positions["second"]) ;
@@ -298,15 +297,14 @@ void QuestInterface::init_display()
 
 	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
 
-	std::shared_ptr<Style> p_style ;
-	Style::create(p_style, screen) ;
-	p_style->color(create_color(0xffffff)) ;
-	p_style->font("Comic_Sans_MS") ;
-	p_style->size(16) ;
+	Style style(screen) ;
+	style.color(create_color(0xffffff)) ;
+	style.font("Comic_Sans_MS") ;
+	style.size(16) ;
 
 	auto title = gui.surface(Size {8 * 50, 2 * 50}) ;
 	title->fill(create_color(0x111111)) ;
-	title->write(m_question, Size(), *p_style) ;
+	title->write(m_question, Size(), style) ;
 	screen_surface.draw(*title, Size(2 * 50, 1 * 50)) ;
 
 	auto new_background = gui.surface(screen) ;
@@ -318,12 +316,12 @@ void QuestInterface::init_display()
 	{
 		auto p_sprite = gui.surface(Size {4 * 50, 1 * 50}) ;
 		p_sprite->fill(create_color(0x00aa)) ;
-		p_sprite->write(it_answer->second, Size(), *p_style) ;
+		p_sprite->write(it_answer->second, Size(), style) ;
 		m_sprites[it_answer->first] = std::move(p_sprite) ;
 
 		p_sprite = gui.surface(Size {4 * 50, 1 * 50}) ;
 		p_sprite->fill(create_color(0x0066)) ;
-		p_sprite->write(it_answer->second, Size(), *p_style) ;
+		p_sprite->write(it_answer->second, Size(), style) ;
 		m_bg_sprites[it_answer->first] = std::move(p_sprite) ;
 
 		screen.draw(*(it_answer->first == m_current ? m_sprites[it_answer->first] : m_bg_sprites[it_answer->first]), position) ;
@@ -410,13 +408,12 @@ void Engine::run()
 
 void Engine::game_over()
 {
-	std::shared_ptr<Style> p_style ;
 	Surface & screen = gui().screen() ;
-	Style::create(p_style, screen) ;
-	p_style->font("Verdana") ;
-	p_style->color(create_color(0x00bbbb)) ;
-	p_style->size(30) ;
-	screen.write("Looser!", Size(), *p_style) ;
+	Style style(screen) ;
+	style.font("Verdana") ;
+	style.color(create_color(0x00bbbb)) ;
+	style.size(30) ;
+	screen.write("Looser!", Size(), style) ;
 	screen.update() ;
 	sleep(2) ;
 	gui().event_loop().stop() ;

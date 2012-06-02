@@ -233,15 +233,14 @@ void test_write()
 	Gui gui {create_videomode(320, 280, 24)} ;
 	Surface & screen = gui.screen() ;
 
-	std::shared_ptr<Style> p_style ;
-	Style::create(p_style, screen) ;
-	p_style->color(create_color(0xffffff)) ;
-	p_style->font("Comic_Sans_MS") ;
-	p_style->size(16) ;
+	Style style {screen} ;
+	style.color(create_color(0xffffff)) ;
+	style.font("Comic_Sans_MS") ;
+	style.size(16) ;
 
-	screen.write("Rock'n'roll!", Size(50, 50), *p_style) ;
-	screen.write("Rock'n'roll!", Size(50, 70), *p_style) ;
-	screen.write("Rock'n'roll!", Size(50, 90), *p_style) ;
+	screen.write("Rock'n'roll!", Size(50, 50), style) ;
+	screen.write("Rock'n'roll!", Size(50, 70), style) ;
+	screen.write("Rock'n'roll!", Size(50, 90), style) ;
 	screen.update() ;
 
 	wait() ;

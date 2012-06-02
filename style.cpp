@@ -1,13 +1,5 @@
 #include "style.hpp"
 
-void Style::create(std::shared_ptr<Style> & p_style, Surface & parent_screen)
-{
-	std::shared_ptr<Style> p_new_style(new Style(parent_screen)) ;
-	p_new_style->color(RGBColor(0, 0, 0)) ;
-
-	p_style = p_new_style ;
-}
-
 Style::Style(Surface & parent_screen)
 	: m_screen(parent_screen)
 	, m_color(0, 0, 0)

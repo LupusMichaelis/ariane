@@ -9,13 +9,8 @@ class Surface ;
 class Style
 {
 	public:
-		static
-		void create(std::shared_ptr<Style> & p_style, Surface & screen) ;
-
-	private:
 		Style(Surface & parent_screen) ;
 
-	public:
 		void color(RGBColor const & new_color) ;
 		RGBColor const & color() const ;
 
