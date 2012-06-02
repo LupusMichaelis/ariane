@@ -10,12 +10,14 @@
 std::unique_ptr<Surface> Gui::surface(Size const & size) const
 {
 	VideoMode videomode { size, m_videomode.depth() } ;
-	return std::make_unique<SurfaceSDL>(const_cast<Gui &>(*this), std::make_unique<SurfaceMemory>(videomode)) ;
+	auto p_impl = std::make_unique<SurfaceMemory, SurfaceSDL::impl_ptr::deleter_type>(videomode) ;
+	return std::make_unique<SurfaceSDL>(const_cast<Gui &>(*this), std::move(p_impl)) ;
 }
 
 std::unique_ptr<Surface> Gui::surface(std::string const & file_name) const
 {
-	return std::make_unique<SurfaceSDL>(const_cast<Gui &>(*this), std::make_unique<ImageMemory>(file_name)) ;
+	auto p_impl = std::make_unique<ImageMemory, SurfaceSDL::impl_ptr::deleter_type>(file_name) ;
+	return std::make_unique<SurfaceSDL>(const_cast<Gui &>(*this), std::move(p_impl)) ;
 }
 
 std::unique_ptr<Surface> Gui::surface(Surface const & source) const
@@ -53,7 +55,7 @@ Surface const & Gui::screen() const
 
 void Gui::init_screen() const
 {
-	std::unique_ptr<RawSurfaceMemory> p = std::make_unique<ScreenMemory>(m_videomode) ;
+	SurfaceSDL::impl_ptr p = std::make_unique<ScreenMemory, SurfaceSDL::impl_ptr::deleter_type>(m_videomode) ;
 	mp_screen = std::make_unique<SurfaceSDL>(const_cast<Gui &>(*this), std::move(p)) ;
 }
 

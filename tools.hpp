@@ -5,11 +5,18 @@
 /// XXX Remove when STL will provide it
 namespace std
 {
+	template<typename T, typename Del, typename ...Args>
+	std::unique_ptr<T, Del> make_unique( Args&& ...args )
+	{
+		return std::unique_ptr<T, Del>( new T( std::forward<Args>(args)... ) );
+	}
+
 	template<typename T, typename ...Args>
 	std::unique_ptr<T> make_unique( Args&& ...args )
 	{
 		return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
 	}
+
 }
 
 #endif // HPP_TOOLS_QUEST

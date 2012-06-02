@@ -11,7 +11,7 @@
 
 #include <boost/format.hpp>
 
-SurfaceSDL::SurfaceSDL(Gui & gui, std::unique_ptr<RawSurfaceMemory> p_surface)
+SurfaceSDL::SurfaceSDL(Gui & gui, impl_ptr p_surface)
 	: Surface()
 	, m_gui(gui)
 	, mp_surface(move(p_surface))
@@ -21,7 +21,7 @@ SurfaceSDL::SurfaceSDL(Gui & gui, std::unique_ptr<RawSurfaceMemory> p_surface)
 SurfaceSDL::SurfaceSDL(SurfaceSDL const & copied)
 	: Surface(copied)
 	, m_gui(copied.m_gui)
-	, mp_surface(std::make_unique<SurfaceMemory>(copied.videomode()))
+	, mp_surface(std::make_unique<SurfaceMemory, impl_ptr::deleter_type>(copied.videomode()))
 {
 	draw_static(copied, Size {0,0}) ;
 }

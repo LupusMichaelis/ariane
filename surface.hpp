@@ -18,6 +18,7 @@ class VideoMode ;
 class Size ;
 class Gui ;
 
+
 class RawSurfaceMemory
 	: boost::noncopyable
 {
@@ -29,7 +30,7 @@ class RawSurfaceMemory
 		void release() = 0 ;
 
 		virtual
-		~RawSurfaceMemory() { reset() ; }
+		~RawSurfaceMemory() { }
 
 		SDL_Surface * get_raw()
 		{
@@ -68,13 +69,13 @@ class RawSurfaceMemory
 		void reset()
 		{
 			// XXX pure virtual will be called, possible memory leak right now
-			//release() ;
+			release() ;
 			mp_surface = 0 ;
 		}
 
 	private:
 		SDL_Surface * mp_surface ;
-} ;
+} /* class RawSurfaceMemory */ ;
 
 class SurfaceMemory
 	: public RawSurfaceMemory
@@ -103,7 +104,7 @@ class SurfaceMemory
 			: RawSurfaceMemory(p_surface)
 		{
 		}
-} ;
+} /* class SurfaceMemory */ ;
 
 class ImageMemory
 	: public SurfaceMemory
@@ -120,7 +121,7 @@ class ImageMemory
 			return SDL_LoadBMP(filename.c_str()) ;
 		}
 
-} ;
+} /* class ImageMemory */ ;
 
 class ScreenMemory
 	: public RawSurfaceMemory
@@ -153,13 +154,28 @@ class ScreenMemory
 			return SDL_SetVideoMode(videomode.width(), videomode.height(), videomode.depth(), SDL_DOUBLEBUF) ;
 		}
 
-} ;
+} /* class ScreenMemory */ ;
+
+struct SurfaceMemoryDeleter
+	: std::unary_function<RawSurfaceMemory *, void>
+{
+	void operator() (RawSurfaceMemory * p_raw)
+	{
+		p_raw->release() ;
+		delete p_raw ;
+		p_raw = 0 ;
+	}
+} /* struct SurfaceMemoryDeleter */ ;
 
 class SurfaceSDL
 	: public Surface
 {
 	public:
-		SurfaceSDL(Gui & gui, std::unique_ptr<RawSurfaceMemory> p_surface) ;
+		typedef std::unique_ptr<RawSurfaceMemory, SurfaceMemoryDeleter>
+			impl_ptr ;
+
+	public:
+		SurfaceSDL(Gui & gui, impl_ptr p_surface) ;
 		SurfaceSDL(SurfaceSDL const & copied) ;
 
 		~SurfaceSDL() ;
@@ -194,7 +210,7 @@ class SurfaceSDL
 
 	private:
 		Gui &								m_gui ;
-		std::unique_ptr<RawSurfaceMemory>	mp_surface ;
+		impl_ptr							mp_surface ;
 } ;
 
 
