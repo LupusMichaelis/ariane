@@ -71,6 +71,7 @@ class Size
 		int m_width, m_height ;
 } ;
 
+bool operator== (Size const & lhs, Size const & rhs) ;
 
 class VideoMode
 {

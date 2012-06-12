@@ -11,16 +11,16 @@
 
 #include <boost/format.hpp>
 
-SurfaceSDL::SurfaceSDL(Gui & gui, impl_ptr p_surface)
+SurfaceSDL::SurfaceSDL(GuiLayout & gui_layout, impl_ptr p_surface)
 	: Surface()
-	, m_gui(gui)
+	, m_gui_layout(gui_layout)
 	, mp_surface(move(p_surface))
 {
 }
 
 SurfaceSDL::SurfaceSDL(SurfaceSDL const & copied)
 	: Surface(copied)
-	, m_gui(copied.m_gui)
+	, m_gui_layout(copied.m_gui_layout)
 	, mp_surface(std::make_unique<SurfaceMemory, impl_ptr::deleter_type>(copied.videomode()))
 {
 	draw_static(copied, Size {0,0}) ;
@@ -30,14 +30,14 @@ SurfaceSDL::~SurfaceSDL()
 {
 }
 
-Gui const & SurfaceSDL::gui() const
+GuiLayout const & SurfaceSDL::gui_layout() const
 {
-	return m_gui ;
+	return m_gui_layout ;
 }
 
-Gui & SurfaceSDL::gui()
+GuiLayout & SurfaceSDL::gui_layout()
 {
-	return m_gui ;
+	return m_gui_layout ;
 }
 
 SDL_Surface * SurfaceSDL::get_raw() const
@@ -61,7 +61,7 @@ void SurfaceSDL::fill(RGBColor const & color)
 void SurfaceSDL::fill(Surface const & pattern, Size const & from, Size const & to)
 {
 	Size size(to) ;
-	auto p_buffer = m_gui.surface(to - from) ;
+	auto p_buffer = gui_layout().surface(to - from) ;
 
 	Size next(0, 0) ;
 	do
@@ -115,7 +115,7 @@ void SurfaceSDL::draw_static(Surface const & motif, Size const & at)
 void SurfaceSDL::resize(Size const & new_size)
 {
 	auto new_videomode = create_videomode(new_size, videomode().depth()) ;
-	auto p_surface = gui().surface(*this) ;
+	auto p_surface = gui_layout().surface(*this) ;
 	mp_surface->init(new_videomode) ;
 	draw(*p_surface) ;
 }
@@ -155,23 +155,28 @@ void SurfaceSDL::crop(Surface & target, Size const & origin, Size const & size) 
 
 #include <SDL/SDL_ttf.h>
 
-void SurfaceSDL::write(std::string const & message, Size const & at, Style const & style)
+void SurfaceSDL::write(std::string const & message, Style const & style)
 {
 	int ret = TTF_Init() ;
 	if(ret == -1)
 		throw SDL_GetError() ;
 
+	Pen const & pen = style.pen() ;
+
 	std::string font_name = (boost::format("/usr/share/fonts/truetype/msttcorefonts/%s.ttf")
-			% style.font()).str() ;
+			% pen.font().name()).str() ;
 
 	TTF_Font * font = 0 ;
-	font = TTF_OpenFont(font_name.c_str(), style.size()) ;
+	font = TTF_OpenFont(font_name.c_str(), pen.size()) ;
 	if(!font)
 		throw SDL_GetError() ;
 
-	SDL_Surface * p_text = TTF_RenderText_Solid(font, message.c_str(), {0xff, 0xff, 0xff, 0, }) ;
+	SDL_Surface * p_text = TTF_RenderText_Solid(font, message.c_str()
+			, {pen.color().red(), pen.color().green(), pen.color().blue(), 0, }) ;
 	if(!p_text)
 		throw SDL_GetError() ;
+
+	Size const & at = style.padding() ;
 
 	SDL_Rect dst = { (Sint16) at.width(), (Sint16) at.height(), 0, 0, };
 	//SDL_Rect box = { 0, 0, (Sint16) size.width(), (Sint16) size.height(), } ;

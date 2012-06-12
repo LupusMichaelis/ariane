@@ -1,9 +1,9 @@
-
 #ifndef HPP_GUI_SDL_QUEST
 #	define HPP_GUI_SDL_QUEST
 
 #	include "videomode.hpp"
 #	include "event.hpp"
+#	include "style.hpp"
 
 #	include <memory>
 #	include <vector>
@@ -13,6 +13,28 @@
 class Size ;
 
 class Surface ;
+class SurfaceSDL ;
+
+class GuiLayout
+{
+	public:
+		GuiLayout(VideoMode const & set_videomode) ;
+		~GuiLayout() ;
+
+		std::unique_ptr<Surface> screen() ;
+		std::unique_ptr<Surface> surface(Size const & size) const ;
+		std::unique_ptr<Surface> surface(std::string const & file_name) const ;
+		std::unique_ptr<Surface> surface(Surface const & source) const ;
+
+	private:
+		VideoMode					m_videomode ;
+
+} /* class GuiLayout */ ;
+
+class Widget ;
+class Screen ;
+class Box ;
+class TextBox ;
 
 class Gui
 	: boost::noncopyable
@@ -21,24 +43,24 @@ class Gui
 		Gui(VideoMode const & set_videomode) ;
 		~Gui() ;
 
-		Surface const & screen() const ;
-		Surface & screen() ;
+		Screen const & screen() const ;
+		Screen & screen() ;
 
-		std::unique_ptr<Surface> surface(Size const & size) const ;
-		std::unique_ptr<Surface> surface(std::string const & file_name) const ;
-		std::unique_ptr<Surface> surface(Surface const & source) const ;
+		Box * const box(Widget & parent, Style const & set_style) ;
+		TextBox * const text_box(Widget & parent, Style const & set_style) ;
+
+		Style const style() const ;
 
 		EventLoop const & event_loop() const ;
 		EventLoop & event_loop() ;
 
-	private:
-		void init_screen() const ;
+		GuiLayout & layout() ;
 
 	private:
-		mutable
-		std::unique_ptr<Surface>	mp_screen ;
-		VideoMode					m_videomode ;
+		GuiLayout					m_layout ;
 		EventLoop					m_event_loop ;
+
+		std::unique_ptr<Screen>		mp_screen ;
 
 } /* class Gui */ ;
 

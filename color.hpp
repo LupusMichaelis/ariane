@@ -34,4 +34,6 @@ class RGBColor
 		char m_blue ;
 } ;
 
+bool const operator ==(RGBColor const & lhs, RGBColor const & rhs) ;
+
 #endif // define HPP_COLOR_SDL_QUEST

@@ -48,30 +48,32 @@ void wait()
 #include "color.hpp"
 #include "gui.hpp"
 #include "surface.hpp"
+#include "widget.hpp"
 
 void test_base()
 {
-	Gui gui {create_videomode(320, 280, 16)} ;
-	Surface & screen = gui.screen() ;
+	GuiLayout gui_layout {create_videomode(320, 280, 16)} ;
+	std::unique_ptr<Surface> p_screen = gui_layout.screen() ;
+	Surface & screen = *p_screen ;
 	screen.fill(create_color(0xaaff00)) ;
 
 	assert(width(screen) == 320) ;
 	assert(height(screen) == 280) ;
 	assert(depth(screen) == 16) ;
 
-	auto p_s1 = gui.surface(Size {320, 280}) ;
+	auto p_s1 = gui_layout.surface(Size {320, 280}) ;
 	p_s1->fill(create_color(0x00ff00)) ;
 	screen.draw(*p_s1) ;
 
-	auto p_s2 = gui.surface(Size {40, 40}) ;
+	auto p_s2 = gui_layout.surface(Size {40, 40}) ;
 	p_s2->fill(create_color(0xaa)) ;
 	screen.draw(*p_s2, Size(20, 20)) ;
 
-	auto p_s3 = gui.surface(Size {30, 30}) ;
+	auto p_s3 = gui_layout.surface(Size {30, 30}) ;
 	p_s3->fill(create_color(0xffff00)) ;
 	screen.draw(*p_s3, Size(10, 10)) ;
 
-	auto p_s4 = gui.surface(Size {60, 60}) ;
+	auto p_s4 = gui_layout.surface(Size {60, 60}) ;
 	p_s4->draw(screen) ;
 	//p_screen->draw(*p_s4, Size(100, 100)) ;
 	screen.fill(*p_s4, Size(60, 60), Size {150, 150}) ;
@@ -87,11 +89,12 @@ void test_base()
 
 void test_load_image()
 {
-	Gui gui {create_videomode(320, 280, 16)} ;
-	Surface & screen = gui.screen() ;
+	GuiLayout gui_layout {create_videomode(320, 280, 16)} ;
+	std::unique_ptr<Surface> p_screen = gui_layout.screen() ;
+	Surface & screen = *p_screen ;
 
 	std::string filename("gfx/kraland_shapes.bmp") ;
-	auto p_images = gui.surface(filename) ;
+	auto p_images = gui_layout.surface(filename) ;
 
 	assert(width(*p_images) == 672) ;
 	assert(height(*p_images) == 480) ;
@@ -105,8 +108,9 @@ void test_load_image()
 
 void test_resize()
 {
-	Gui gui {create_videomode(320, 280, 16)} ;
-	Surface & screen = gui.screen() ;
+	GuiLayout gui_layout {create_videomode(320, 280, 16)} ;
+	std::unique_ptr<Surface> p_screen = gui_layout.screen() ;
+	Surface & screen = *p_screen ;
 
 	screen.fill(create_color(0xaaaaaa)) ;
 	screen.update() ;
@@ -116,7 +120,7 @@ void test_resize()
 	screen.update() ;
 	wait() ;
 
-	auto p_s1 = gui.surface(Size {20, 20}) ;
+	auto p_s1 = gui_layout.surface(Size {20, 20}) ;
 	p_s1->fill(create_color(0xaa)) ;
 
 	screen.draw(*p_s1) ;
@@ -133,11 +137,12 @@ void test_resize()
 
 void test_load_sprite()
 {
-	Gui gui {create_videomode(320, 280, 16)} ;
-	Surface & screen = gui.screen() ;
+	GuiLayout gui_layout {create_videomode(320, 280, 16)} ;
+	std::unique_ptr<Surface> p_screen = gui_layout.screen() ;
+	Surface & screen = *p_screen ;
 
 	std::string filename("gfx/kraland_shapes.bmp") ;
-	auto p_patchwork = gui.surface(filename) ;
+	auto p_patchwork = gui_layout.surface(filename) ;
 
 	Grid sprites(*p_patchwork, Size(32,32)) ;
 
@@ -156,18 +161,19 @@ void test_load_sprite()
 
 void test_grid()
 {
-	Gui gui {create_videomode(672, 480, 24)} ;
-	Surface & screen = gui.screen() ;
+	GuiLayout gui_layout {create_videomode(672, 480, 24)} ;
+	std::unique_ptr<Surface> p_screen = gui_layout.screen() ;
+	Surface & screen = *p_screen ;
 
 	std::string filename("gfx/kraland_shapes.bmp") ;
-	auto p_patchwork = gui.surface(filename) ;
+	auto p_patchwork = gui_layout.surface(filename) ;
 
 	Grid sprites(*p_patchwork, Size(32,32)) ;
 
 	int sprite_per_row = 672 / 32 ;
 	//int sprite_per_col = 480 / 32 ;
 
-	auto p_target = gui.surface(Size { 5 * 32, 2 * (sprite_per_row + 10) * 32 }) ;
+	auto p_target = gui_layout.surface(Size { 5 * 32, 2 * (sprite_per_row + 10) * 32 }) ;
 	for(int k=0 ; k < 2 ; ++k)
 		for(int j=0 ; j < sprite_per_row ; ++j)
 			for(int i=0 ; i < 5 ; ++i)
@@ -217,7 +223,7 @@ void test_grid()
 void test_event()
 {
 	Gui gui {create_videomode(672, 480, 24)} ;
-	gui.screen() ;
+	gui.layout().screen() ;
 
 	EventLoop & ev_loop = gui.event_loop() ;
 	ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(print_key_event)) ;
@@ -230,18 +236,52 @@ void test_event()
 
 void test_write()
 {
-	Gui gui {create_videomode(320, 280, 24)} ;
-	Surface & screen = gui.screen() ;
+	GuiLayout gui_layout {create_videomode(320, 280, 24)} ;
+	std::unique_ptr<Surface> p_screen = gui_layout.screen() ;
+	Surface & screen = *p_screen ;
 
-	Style style {screen} ;
-	style.color(create_color(0xffffff)) ;
-	style.font("Comic_Sans_MS") ;
-	style.size(16) ;
+	Style style ;
+	style.color(create_color(0x0)) ;
 
-	screen.write("Rock'n'roll!", Size(50, 50), style) ;
-	screen.write("Rock'n'roll!", Size(50, 70), style) ;
-	screen.write("Rock'n'roll!", Size(50, 90), style) ;
+	Pen pen = style.pen() ;
+	pen.font(Font {"Comic_Sans_MS"}) ;
+	pen.color(create_color(0xffffff)) ;
+	pen.size(16u) ;
+	style.pen(pen) ;
+
+	style.position(Size {50, 50}) ;
+	screen.write("Rock'n'roll!", style) ;
+
+	style.position(Size {50, 70}) ;
+	screen.write("Rock'n'roll!", style) ;
+
+	style.position(Size {50, 90}) ;
+	screen.write("Rock'n'roll!", style) ;
+
 	screen.update() ;
 
 	wait() ;
 }
+
+void test_widget()
+{
+	Gui gui {create_videomode(320, 280, 24)} ;
+	Style box_style = gui.screen().style() ;
+	box_style.position(Size {30, 10}) ;
+	box_style.size(Size {30, 30}) ;
+	box_style.color(create_color(0x0)) ;
+
+	Pen pen = box_style.pen() ;
+	pen.font(Font {"Comic_Sans_MS"}) ;
+	pen.color(create_color(0xffffff)) ;
+	pen.size(16u) ;
+	box_style.pen(pen) ;
+
+	TextBox * p_box = gui.text_box(gui.screen(), box_style) ;
+	p_box->text("WTF") ;
+
+	gui.screen().display() ;
+
+	wait() ;
+}
+

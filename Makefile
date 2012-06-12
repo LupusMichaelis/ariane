@@ -12,6 +12,8 @@ LDFLAGS= \
 
 SRCS= \
 	  api.cpp \
+	  videomode.cpp \
+	  widget.cpp \
 	  color.cpp \
 	  surface.cpp \
 	  style.cpp \

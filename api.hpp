@@ -8,7 +8,7 @@ class RGBColor ;
 class Style ;
 class VideoMode ;
 class Size ;
-class Gui ;
+class GuiLayout ;
 
 class Surface
 	//: boost::noncopyable
@@ -25,12 +25,12 @@ class Surface
 		virtual void dump(std::string const & filename) = 0 ;
 		virtual void crop(Surface & target, Size const & origin, Size const & size) const = 0;
 
-		virtual void write(std::string const & message, Size const & at, Style const & style) = 0 ;
+		virtual void write(std::string const & message, Style const & style) = 0 ;
 
 		virtual ~Surface() = 0 ;
 
-		virtual Gui const & gui() const = 0 ;
-		virtual Gui & gui() = 0 ;
+		virtual const GuiLayout & gui_layout() const = 0 ;
+		virtual GuiLayout & gui_layout() = 0 ;
 
 } /* class Surface */ ;
 

@@ -3,6 +3,10 @@
 
 #	include "surface.hpp"
 
+#	include <string>
+
+class GuiLayout ;
+
 class ImageSDL
 	: public Image, public SurfaceSDL
 {
@@ -10,7 +14,7 @@ class ImageSDL
 		virtual
 		~ImageSDL() ;
 
-		ImageSDL(Gui & gui, std::unique_ptr<ImageMemory, SurfaceSDL::impl_ptr::deleter_type> p_surface, std::string const & filename) ;
+		ImageSDL(GuiLayout & gui_layout, std::unique_ptr<ImageMemory, SurfaceSDL::impl_ptr::deleter_type> p_surface, std::string const & filename) ;
 } ;
 
 #endif // define HPP_IMAGE_SDL_QUEST

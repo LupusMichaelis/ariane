@@ -12,8 +12,8 @@ Grid::Grid(Surface const & matrix, Size const & sprite_size)
 
 std::unique_ptr<Surface> Grid::extract(int index) const
 {
-	auto & gui = m_matrix.gui() ;
-	auto new_surface = gui.surface(m_box_size) ;
+	auto & gui_layout = m_matrix.gui_layout() ;
+	auto new_surface = gui_layout.surface(m_box_size) ;
 
 	Size position = compute_position(index) ;
 	m_matrix.crop(*new_surface, position, m_box_size) ;

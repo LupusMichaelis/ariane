@@ -1,4 +1,3 @@
-
 #ifndef HPP_SURFACE_SDL_QUEST
 #	define HPP_SURFACE_SDL_QUEST
 
@@ -16,7 +15,7 @@ class RGBColor ;
 class Style ;
 class VideoMode ;
 class Size ;
-class Gui ;
+class GuiLayout ;
 
 
 class RawSurfaceMemory
@@ -75,6 +74,7 @@ class RawSurfaceMemory
 
 	private:
 		SDL_Surface * mp_surface ;
+
 } /* class RawSurfaceMemory */ ;
 
 class SurfaceMemory
@@ -175,7 +175,7 @@ class SurfaceSDL
 			impl_ptr ;
 
 	public:
-		SurfaceSDL(Gui & gui, impl_ptr p_surface) ;
+		SurfaceSDL(GuiLayout & gui, impl_ptr p_surface) ;
 		SurfaceSDL(SurfaceSDL const & copied) ;
 
 		~SurfaceSDL() ;
@@ -196,10 +196,10 @@ class SurfaceSDL
 
 		void crop(Surface & target, Size const & origin, Size const & size) const ;
 
-		void write(std::string const & message, Size const & at, Style const & style) ;
+		void write(std::string const & message, Style const & style) ;
 
-		const Gui & gui() const ;
-		Gui & gui() ;
+		const GuiLayout & gui_layout() const ;
+		GuiLayout & gui_layout() ;
 
 	protected:
 		void set_raw(SDL_Surface *) ;
@@ -209,7 +209,7 @@ class SurfaceSDL
 		void draw_static(Surface const & motif, Size const & at) ;
 
 	private:
-		Gui &								m_gui ;
+		GuiLayout &							m_gui_layout ;
 		impl_ptr							mp_surface ;
 } ;
 
