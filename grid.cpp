@@ -1,6 +1,6 @@
 
 #include "grid.hpp"
-#include "gui.hpp"
+#include "gui_layout.hpp"
 
 #include <cassert>
 

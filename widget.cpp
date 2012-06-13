@@ -1,6 +1,7 @@
 
 #include "widget.hpp"
 #include "gui.hpp"
+#include "surface.hpp"
 
 Widget::Widget(Gui & gui, Widget * p_parent)
 	: m_gui(gui)
@@ -84,83 +85,5 @@ void Widget::detach_events()
 std::vector<std::unique_ptr<Widget>> & Widget::children()
 {
 	return m_children ;
-}
-
-Screen::Screen(Gui & gui)
-	: Widget(gui)
-{
-}
-
-Screen::~Screen()
-{
-}
-
-void Screen::draw()
-{
-	surface(gui().layout().screen()) ;
-
-	Surface & s = surface() ;
-	s.fill(style().color()) ;
-
-	for(auto &p_child: children())
-	{
-		p_child->display() ;
-		s.draw(p_child->surface(), p_child->style().position()) ;
-	}
-
-	s.update() ;
-}
-
-void Screen::listen_events()
-{
-}
-
-Box::Box(Gui & gui, Widget * p_parent)
-	: Widget(gui, p_parent)
-{
-}
-
-Box::~Box()
-{
-}
-
-void Box::draw()
-{
-	surface(gui().layout().surface(style().size())) ;
-}
-
-void Box::listen_events()
-{
-}
-
-TextBox::TextBox(Gui & gui, Widget * p_parent)
-	: Box(gui, p_parent)
-{
-}
-
-TextBox::~TextBox()
-{
-}
-
-void TextBox::text(std::string const & new_text)
-{
-	m_text = new_text ;
-}
-
-std::string const & TextBox::text() const
-{
-	return m_text ;
-}
-
-void TextBox::draw()
-{
-	Box::draw() ;
-
-	Surface & s = surface() ;
-	s.write(text(), style()) ;
-}
-
-void TextBox::listen_events()
-{
 }
 

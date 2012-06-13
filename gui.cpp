@@ -1,9 +1,12 @@
 
 #include "gui.hpp"
 #include "gui_layout.hpp"
-
 #include "surface.hpp"
+
 #include "widget.hpp"
+#include "box.hpp"
+#include "text_box.hpp"
+#include "screen.hpp"
 
 #include "tools.hpp"
 

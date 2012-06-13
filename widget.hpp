@@ -1,11 +1,11 @@
 #ifndef HPP_WIDGET_QUEST
 #	define HPP_WIDGET_QUEST
 
-#	include "surface.hpp"
 #	include "style.hpp"
 
 #	include <boost/signals2.hpp>
 
+class Surface ;
 class Widget ;
 class Gui ;
 
@@ -73,60 +73,5 @@ void Widget::attach_event(FunPtrT const fun_ptr)
 	auto con = ev_loop.attach_event(SlotFunT(wrapped_fun_ptr)) ;
 	m_cons.push_back(con) ;
 }
-
-class Screen
-	: public Widget
-{
-	public:
-		explicit Screen(Gui & gui) ;
-		virtual ~Screen() ;
-
-	protected:
-		virtual
-		void draw() ;
-
-		virtual
-		void listen_events() ;
-
-} /* class Screen */ ;
-
-class Box
-	: public Widget
-{
-	public:
-		explicit Box(Gui & gui, Widget * p_parent) ;
-		virtual ~Box() ;
-
-	protected:
-		virtual
-		void draw() ;
-
-		virtual
-		void listen_events() ;
-
-} /* class Box */ ;
-
-class TextBox
-	: public Box
-{
-	public:
-		explicit TextBox(Gui & gui, Widget * p_parent) ;
-		virtual ~TextBox() ;
-
-		void text(std::string const & new_text) ;
-		std::string const & text() const ;
-
-	protected:
-		virtual
-		void draw() ;
-
-		virtual
-		void listen_events() ;
-
-	private:
-		std::string m_text ;
-
-} /* class TextBox */ ;
-
 
 #endif // HPP_WIDGET_QUEST

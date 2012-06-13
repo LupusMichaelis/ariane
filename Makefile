@@ -13,14 +13,23 @@ LDFLAGS= \
 SRCS= \
 	  api.cpp \
 	  videomode.cpp \
+	  \
 	  widget.cpp \
-	  color.cpp \
-	  surface.cpp \
-	  style.cpp \
-	  image.cpp \
+	  screen.cpp \
+	  box.cpp \
+	  text_box.cpp \
+	  \
 	  grid.cpp \
+	  \
+	  color.cpp \
+	  style.cpp \
+	  \
+	  surface.cpp \
+	  image.cpp \
+	  \
 	  event.cpp \
 	  gui.cpp \
+	  gui_layout.cpp \
 
 OBJS=$(SRCS:.cpp=.o)
 

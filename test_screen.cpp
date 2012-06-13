@@ -47,6 +47,7 @@ void wait()
 
 #include "color.hpp"
 #include "gui.hpp"
+#include "gui_layout.hpp"
 #include "surface.hpp"
 #include "widget.hpp"
 
@@ -262,6 +263,9 @@ void test_write()
 
 	wait() ;
 }
+
+#include "screen.hpp"
+#include "text_box.hpp"
 
 void test_widget()
 {

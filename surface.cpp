@@ -2,7 +2,7 @@
 #include "surface.hpp"
 #include "color.hpp"
 #include "style.hpp"
-#include "gui.hpp"
+#include "gui_layout.hpp"
 
 #include "tools.hpp"
 
