@@ -10,31 +10,12 @@
 
 #	include <boost/utility.hpp>
 
-class Size ;
-
-class Surface ;
-class SurfaceSDL ;
-
-class GuiLayout
-{
-	public:
-		GuiLayout(VideoMode const & set_videomode) ;
-		~GuiLayout() ;
-
-		std::unique_ptr<Surface> screen() ;
-		std::unique_ptr<Surface> surface(Size const & size) const ;
-		std::unique_ptr<Surface> surface(std::string const & file_name) const ;
-		std::unique_ptr<Surface> surface(Surface const & source) const ;
-
-	private:
-		VideoMode					m_videomode ;
-
-} /* class GuiLayout */ ;
-
 class Widget ;
 class Screen ;
 class Box ;
 class TextBox ;
+
+class GuiLayout ;
 
 class Gui
 	: boost::noncopyable
@@ -57,7 +38,7 @@ class Gui
 		GuiLayout & layout() ;
 
 	private:
-		GuiLayout					m_layout ;
+		std::unique_ptr<GuiLayout>	mp_layout ;
 		EventLoop					m_event_loop ;
 
 		std::unique_ptr<Screen>		mp_screen ;
