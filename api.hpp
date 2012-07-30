@@ -34,14 +34,14 @@ class Surface
 
 } /* class Surface */ ;
 
-class Image
+class ImageSurface
 	: public Surface
 {
 	public:
-		virtual ~Image() = 0 ;
+		virtual ~ImageSurface() = 0 ;
 
 	protected:
-		explicit Image(std::string const & filename) ;
+		explicit ImageSurface(std::string const & filename) ;
 
 	private:
 

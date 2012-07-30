@@ -14,6 +14,8 @@ class Widget ;
 class Screen ;
 class Box ;
 class TextBox ;
+class Grid ;
+class Image ;
 
 class GuiLayout ;
 
@@ -28,7 +30,13 @@ class Gui
 		Screen & screen() ;
 
 		Box * const box(Widget & parent, Style const & set_style) ;
+		Box * const box(Style const & set_style) ;
+
 		TextBox * const text_box(Widget & parent, Style const & set_style) ;
+
+		Image * const image(Widget & parent, Style const & set_style, std::string const & filename) ;
+
+		Grid * const grid(Widget & decorated, Size const & box_size) ;
 
 		Style const style() const ;
 
@@ -42,6 +50,8 @@ class Gui
 		EventLoop					m_event_loop ;
 
 		std::unique_ptr<Screen>		mp_screen ;
+		std::vector<std::unique_ptr<Widget>>
+									m_orphans ;
 
 } /* class Gui */ ;
 

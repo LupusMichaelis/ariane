@@ -4,7 +4,7 @@
 #	include "widget.hpp"
 
 class Box
-	: public Widget
+	: public ComposedWidget
 {
 	public:
 		explicit Box(Gui & gui, Widget * p_parent) ;

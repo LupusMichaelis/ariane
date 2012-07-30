@@ -2,6 +2,7 @@
 #include "color.hpp"
 #include "gui.hpp"
 #include "api.hpp"
+#include "widget.hpp"
 
 #include "tools.hpp"
 
@@ -43,9 +44,9 @@ class Interface
 	private:
 		Engine &					m_engine ;
 
-		std::unique_ptr<Surface>	mp_background ;
-		std::unique_ptr<Surface>	mp_bg_sprite ;
-		std::unique_ptr<Surface>	mp_sprite ;
+		Widget *					mp_background ;
+		Widget *					mp_bg_sprite ;
+		Widget *					mp_sprite ;
 
 		Size						m_position ;
 
@@ -69,7 +70,7 @@ class Engine
 		void run() ;
 
 		EventLoop & event_loop()			{ return gui().event_loop() ; }
-		Surface & screen()					{ return m_gui.screen() ; }
+		Screen & screen()					{ return m_gui.screen() ; }
 		Gui & gui()							{ return m_gui ; }
 		KeyBoard const & keyboard()	const	{ return m_kb ; }
 
@@ -84,21 +85,25 @@ class Engine
 
 } /* class Engine */ ;
 
+#include "screen.hpp"
+
 void Interface::display()
 {
-	Surface & screen = m_engine.screen() ;
-	screen.fill(create_color(0xaaaa00)) ;
+	Screen & screen = m_engine.screen() ;
 
-	mp_background = m_engine.gui().surface(screen) ;
+	Style bg_style = screen.style() ;
+	bg_style.color(create_color(0xaaaa00)) ;
 
-	mp_sprite = screen.gui().surface(Size {20, 20}) ;
-	mp_sprite->fill(create_color(0x00aa)) ;
+	mp_background = (Widget *) m_engine.gui().box(dynamic_cast<Widget &>(screen), bg_style) ;
 
-	mp_bg_sprite = screen.gui().surface(Size {20, 20}) ;
-	mp_bg_sprite->fill(create_color(0x00)) ;
+	Style sprite_style ;
+	sprite_style.size(Size {20, 20}) ;
+	sprite_style.color(create_color(0x00aa)) ;
 
-	screen.draw(*mp_sprite, m_position) ;
-	screen.update() ;
+	mp_sprite = (Widget *) screen.gui().box(screen, sprite_style) ;
+
+	sprite_style.color(create_color(0x00)) ;
+	mp_bg_sprite = (Widget *) screen.gui().box(screen, sprite_style) ;
 
 	listen_events() ;
 }
@@ -134,10 +139,10 @@ void Interface::move(EventLoop &, MouseButtonEvent const & me)
 	if(me.pressing())
 		return ;
 
-	Surface & screen = m_engine.screen() ;
+	Screen & screen = m_engine.screen() ;
 
-	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
-	screen.draw(*mp_bg_sprite, m_position) ;
+	mp_background->surface().crop(mp_bg_sprite->surface(), m_position, mp_sprite->size()) ;
+	screen.surface().draw(mp_bg_sprite->surface(), m_position) ;
 
 	m_position = me.position() ;
 	screen.draw(*mp_sprite, m_position) ;

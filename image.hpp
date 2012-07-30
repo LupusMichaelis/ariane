@@ -8,7 +8,7 @@
 class GuiLayout ;
 
 class ImageSDL
-	: public Image, public SurfaceSDL
+	: public ImageSurface, public SurfaceSDL
 {
 	public:
 		virtual

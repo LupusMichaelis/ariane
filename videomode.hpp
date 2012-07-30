@@ -41,8 +41,8 @@ class Size
 		void width(int new_width) { m_width = new_width ; }
 		void height(int new_height) { m_height = new_height ; }
 
-		int width() const { return m_width ; }
-		int height() const { return m_height ; }
+		int const width() const { return m_width ; }
+		int const height() const { return m_height ; }
 
 		Size const operator+(Size const & rhs) const
 		{

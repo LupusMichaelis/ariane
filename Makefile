@@ -19,6 +19,7 @@ SRCS= \
 	  box.cpp \
 	  text_box.cpp \
 	  \
+	  decorator.cpp \
 	  grid.cpp \
 	  \
 	  color.cpp \
@@ -33,7 +34,7 @@ SRCS= \
 
 OBJS=$(SRCS:.cpp=.o)
 
-TARGET=dotests tortoise quest
+TARGET=dotests #tortoise quest
 
 target: $(TARGET)
 

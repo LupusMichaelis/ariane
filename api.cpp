@@ -6,11 +6,11 @@ Surface::~Surface()
 {
 }
 
-Image::Image(std::string const & filename)
+ImageSurface::ImageSurface(std::string const & filename)
 	: m_filename(filename)
 {
 }
 
-Image::~Image()
+ImageSurface::~ImageSurface()
 {
 }

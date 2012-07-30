@@ -3,7 +3,7 @@
 #include "surface.hpp"
 
 Box::Box(Gui & gui, Widget * p_parent)
-	: Widget(gui, p_parent)
+	: ComposedWidget {gui, p_parent}
 {
 }
 

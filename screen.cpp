@@ -4,7 +4,7 @@
 #include "surface.hpp"
 
 Screen::Screen(Gui & gui)
-	: Widget(gui)
+	: ComposedWidget {gui}
 {
 }
 

@@ -1,34 +1,43 @@
 
 #include "grid.hpp"
+#include "surface.hpp"
 #include "gui_layout.hpp"
+#include "box.hpp"
 
 #include <cassert>
 
-Grid::Grid(Surface const & matrix, Size const & sprite_size)
-	: m_matrix(matrix)
+Grid::~Grid()
+{
+}
+
+Grid::Grid(Widget & subject, Size const & sprite_size)
+	: Decorator {std::move(subject.parent().abandon(subject))}
 	, m_box_size(sprite_size)
 {
 }
 
-std::unique_ptr<Surface> Grid::extract(int index) const
+Box * Grid::extract(int const index)
 {
-	auto & gui_layout = m_matrix.gui_layout() ;
-	auto new_surface = gui_layout.surface(m_box_size) ;
+	Style box_style ;
+	box_style.size(m_box_size) ;
+	auto p_target = gui().box(box_style) ;
+	//p_target->draw() ;
 
 	Size position = compute_position(index) ;
-	m_matrix.crop(*new_surface, position, m_box_size) ;
+	surface().crop(
+			p_target->surface(), position, m_box_size) ;
 
-	return new_surface ;
+	return static_cast<Box *>(p_target) ;
 }
 
 int const Grid::box_per_row() const
 {
-	return width(m_matrix) / m_box_size.width() ;
+	return size().width() / m_box_size.width() ;
 }
 
 int const Grid::box_per_col() const
 {
-	return height(m_matrix) / m_box_size.height() ;
+	return size().height() / m_box_size.height() ;
 }
 
 Size const Grid::compute_position(int index) const
@@ -44,5 +53,14 @@ Size const Grid::compute_position(int index) const
 	position.height(m_box_size.height() * current_row) ;
 
 	return position ;
+}
+
+
+void Grid::draw()
+{
+}
+
+void Grid::listen_events()
+{
 }
 

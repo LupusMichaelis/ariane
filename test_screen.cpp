@@ -135,24 +135,30 @@ void test_resize()
 }
 
 #include "grid.hpp"
+#include "box.hpp"
+#include "screen.hpp"
 
 void test_load_sprite()
 {
-	GuiLayout gui_layout {create_videomode(320, 280, 16)} ;
-	std::unique_ptr<Surface> p_screen = gui_layout.screen() ;
-	Surface & screen = *p_screen ;
+	Gui gui {create_videomode(320, 280, 16)} ;
+	Screen & screen = gui.screen() ;
 
 	std::string filename("gfx/kraland_shapes.bmp") ;
-	auto p_patchwork = gui_layout.surface(filename) ;
+	Style grid_style = screen.style() ;
 
-	Grid sprites(*p_patchwork, Size(32,32)) ;
+	Image * p_image = gui.image(screen, Style(), filename) ;
+	assert(p_image != nullptr) ;
+	Grid * p_patchwork = gui.grid(*p_image, Size {32, 32}) ;
+	assert(p_patchwork != nullptr) ;
 
 	for(int i=0 ; i < 300 ; ++i)
 	{
-		auto p_sprite = sprites.extract(i) ;
+		Box & sprite = *(p_patchwork->extract(i)) ;
+		assert(&sprite != nullptr) ;
 
-		screen.draw(*p_sprite) ;
-		screen.update() ;
+		auto p_sprite = sprite.parent().abandon(sprite) ;
+		screen.adopt(std::move(p_sprite)) ;
+		screen.display() ;
 
 		usleep(500000) ;
 	}
@@ -162,61 +168,73 @@ void test_load_sprite()
 
 void test_grid()
 {
-	GuiLayout gui_layout {create_videomode(672, 480, 24)} ;
-	std::unique_ptr<Surface> p_screen = gui_layout.screen() ;
-	Surface & screen = *p_screen ;
+	Gui gui {create_videomode(672, 480, 24)} ;
+	Screen & screen = gui.screen() ;
 
 	std::string filename("gfx/kraland_shapes.bmp") ;
-	auto p_patchwork = gui_layout.surface(filename) ;
+	Image * p_patchwork = gui.image(screen, Style(), filename) ;
 
-	Grid sprites(*p_patchwork, Size(32,32)) ;
+	Style grid_style ;
+	Grid & sprites = *gui.grid(*p_patchwork, { 32, 32 }) ;
 
 	int sprite_per_row = 672 / 32 ;
 	//int sprite_per_col = 480 / 32 ;
 
-	auto p_target = gui_layout.surface(Size { 5 * 32, 2 * (sprite_per_row + 10) * 32 }) ;
+	Style target_style ;
+	target_style.size({ 5 * 32, 2 * (sprite_per_row + 10) * 32 }) ;
+	Box & canvas = *gui.box(target_style) ;
+
+	Style sprite_style ;
 	for(int k=0 ; k < 2 ; ++k)
 		for(int j=0 ; j < sprite_per_row ; ++j)
 			for(int i=0 ; i < 5 ; ++i)
 			{
-				auto p_sprite = sprites.extract((i + 5*k) * sprite_per_row + j) ;
-				p_target->draw(*p_sprite, Size(i*32, (j+k*sprite_per_row)*32)) ;
+				Box & sprite = *sprites.extract((i + 5*k) * sprite_per_row + j) ;
+				sprite_style.size({ i*32, (j+k*sprite_per_row)*32 }) ;
+				auto p_sprite = sprite.parent().abandon(sprite) ;
+				canvas.adopt(std::move(p_sprite)) ;
 			}
 
 	// Grounds
 	for(int j=0 ; j < 2 ; ++j)
 		for(int i=0 ; i < 5 ; ++i)
 		{
-			auto p_sprite = sprites.extract(j + (i + 10) * sprite_per_row) ;
-			p_target->draw(*p_sprite, Size(i*32, (j+2*sprite_per_row)*32)) ;
+			Box & sprite = *sprites.extract(j + (i + 10) * sprite_per_row) ;
+			sprite_style.size({ i*32, (j+2*sprite_per_row)*32 }) ;
+			auto p_sprite = sprite.parent().abandon(sprite) ;
+			canvas.adopt(std::move(p_sprite)) ;
 		}
 
 	// Roads
 	for(int j=0 ; j < 2 ; ++j)
 		for(int i=0 ; i < 4 ; ++i)
 		{
-			auto p_sprite = sprites.extract(2 + j + (i + 10) * sprite_per_row) ;
-			p_target->draw(*p_sprite, Size(i*32, (j+2+2*sprite_per_row)*32)) ;
+			Box & sprite = *sprites.extract(2 + j + (i + 10) * sprite_per_row) ;
+			sprite_style.size({ i*32, (j+2+2*sprite_per_row)*32 }) ;
+			auto p_sprite = sprite.parent().abandon(sprite) ;
+			canvas.adopt(std::move(p_sprite)) ;
 		}
 
 	// Trees
 	for(int i=0 ; i < 4 ; ++i)
 	{
-		auto p_sprite = sprites.extract(2 + i + 14 * sprite_per_row) ;
-		p_target->draw(*p_sprite, Size(i*32, (4+2*sprite_per_row)*32)) ;
+		Box & sprite = *sprites.extract(2 + i + 14 * sprite_per_row) ;
+		sprite_style.size({ i*32, (4+2*sprite_per_row)*32 }) ;
+		auto p_sprite = sprite.parent().abandon(sprite) ;
+		canvas.adopt(std::move(p_sprite)) ;
 	}
 
 	// Flowers
 	{
-		auto p_sprite = sprites.extract(2 + 3 + 13 * sprite_per_row) ;
-		p_target->draw(*p_sprite, Size(4*32, (4+2*sprite_per_row)*32)) ;
+		Box & sprite = *sprites.extract(2 + 3 + 13 * sprite_per_row) ;
+		sprite_style.size({ 4*32, (4+2*sprite_per_row)*32 }) ;
+		auto p_sprite = sprite.parent().abandon(sprite) ;
+		canvas.adopt(std::move(p_sprite)) ;
 	}
 
-	p_target->update() ;
-	screen.resize(p_target->videomode().size()) ;
-	screen.draw(*p_target) ;
-	screen.update() ;
-	p_target->dump(std::string("gfx/building.bmp")) ;
+	//screen.resize(p_target->videomode().size()) ;
+	screen.display() ;
+	//p_target->dump(std::string("gfx/building.bmp")) ;
 
 	wait() ;
 }

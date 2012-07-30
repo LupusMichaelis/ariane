@@ -7,7 +7,7 @@ class TextBox
 	: public Box
 {
 	public:
-		explicit TextBox(Gui & gui, Widget * p_parent) ;
+		TextBox(Gui & gui, Widget * p_parent) ;
 		virtual ~TextBox() ;
 
 		void text(std::string const & new_text) ;

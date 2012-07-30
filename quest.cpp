@@ -2,6 +2,7 @@
 #include "style.hpp"
 #include "event.hpp"
 #include "gui.hpp"
+#include "widget.hpp"
 #include "api.hpp"
 #include "tools.hpp"
 
@@ -30,42 +31,53 @@ T & get_or_throw(std::shared_ptr<T> const & sptr)
 	return *sptr ;
 }
 
-class Engine ;
 class Surface ;
+class Interface ;
+
+class Engine
+{
+	public:
+		Engine()
+		{
+		}
+
+		void run() ;
+
+		KeyBoard const & keyboard()	const	{ return m_kb ; }
+
+		void title_screen() ;
+		void game_over() ;
+		void quest(std::string const & quest_name) ;
+
+		Gui const & gui() const { return *mp_gui ; }
+		Gui & gui() { return *mp_gui ; }
+
+	private:
+		std::unique_ptr<Interface>	mp_interface ;
+		std::unique_ptr<Gui>		mp_gui ;
+
+		KeyBoard					m_kb ;
+
+
+} /* class Engine */ ;
 
 class Interface
+	: public Widget
 {
 	public:
 		explicit Interface(Engine & engine)
-			: m_engine(engine)
+			: Widget {engine.gui()}
+			, m_engine(&engine)
 		{ }
-
-		virtual ~Interface() { detach_events() ; }
 
 		void background(std::unique_ptr<Surface> & new_background)
 								{ mp_background = std::move(new_background) ; }
 		Surface & background()	{ return get_or_throw(mp_background) ; }
 		Engine & engine()		{ return m_engine ; }
 
-		void display() ;
-
-	protected:
-		template <typename FunPtrT, typename ClassT, typename SlotFunT>
-		void attach_event(FunPtrT const fun_ptr) ;
-		void detach_events() ;
-
-		virtual
-		void init_display() = 0 ;
-		virtual
-		void listen_events() = 0 ;
-
 	private:
 		Engine &					m_engine ;
 		std::unique_ptr<Surface>	mp_background ;
-
-		// Managed connection, to avoid dandling events if this is deleted
-		std::vector<boost::signals2::connection>
-								m_cons ;
 
 } /* class Interface */ ;
 
@@ -88,7 +100,7 @@ class MenuInterface
 
 	private:
 		virtual
-		void init_display() ;
+		void draw() ;
 		virtual
 		void listen_events() ;
 
@@ -125,7 +137,7 @@ class QuestInterface
 
 	private:
 		virtual
-		void init_display() ;
+		void draw() ;
 		virtual
 		void listen_events() ;
 
@@ -141,69 +153,36 @@ class QuestInterface
 
 } /* class MenuInterface */ ;
 
-class Engine
-{
-	public:
-		Engine()
-		{
-		}
-
-		void run() ;
-
-		KeyBoard const & keyboard()	const	{ return m_kb ; }
-
-		void title_screen() ;
-		void game_over() ;
-		void quest(std::string const & quest_name) ;
-
-		Gui const & gui() const { return *mp_gui ; }
-		Gui & gui() { return *mp_gui ; }
-
-	private:
-		std::unique_ptr<Interface>	mp_interface ;
-		std::unique_ptr<Gui>		mp_gui ;
-
-		KeyBoard					m_kb ;
-
-
-} /* class Engine */ ;
-
-template <typename FunPtrT, typename ClassT, typename SlotFunT>
-void Interface::attach_event(FunPtrT const fun_ptr)
-{
-	auto wrapped_fun_ptr = boost::bind(fun_ptr, static_cast<ClassT * const>(this), _1, _2) ;
-	EventLoop & ev_loop = engine().gui().event_loop() ;
-	boost::signals2::connection con ;
-	con = ev_loop.attach_event(SlotFunT(wrapped_fun_ptr)) ;
-	m_cons.push_back(con) ;
-}
-
-void Interface::display()
-{
-	init_display() ;
-	listen_events() ;
-}
-
-void Interface::detach_events()
-{
-	std::for_each(m_cons.begin(), m_cons.end(), std::mem_fun_ref(&boost::signals2::connection::disconnect)) ;
-}
-
-void MenuInterface::init_display()
+void MenuInterface::draw()
 {
 	Gui & gui = engine().gui() ;
-	Surface & screen = gui.screen() ;
-	screen.fill(create_color(0x0)) ;
+	Screen & screen = gui.screen() ;
 
-	Style style(screen) ;
-	style.color(create_color(0x0000bb)) ;
-	style.font("Comic_Sans_MS") ;
-	style.size(16) ;
+	{
+		Style screen_style ;
+		screen_style.color(create_color(0x0)) ;
 
-	auto p_title = gui.surface(Size { 8 * 50, 2 * 50}) ;
-	p_title->fill(create_color(0x111111)) ;
-	p_title->write("Hill quest", Size(), style) ;
-	screen.draw(*p_title, Size(2 * 50, 1 * 50)) ;
+		Pen pen = screen_style.pen() ;
+		pen.color(create_color(0x0000bb)) ;
+		pen.font(Font {"Comic_Sans_MS"}) ;
+		pen.size(16) ;
+		screen_style.pen(pen) ;
+
+		screen.style(screen_style) ;
+	}
+
+	{
+		Style ttyle = screen.style() ;
+		title_screen.color(create_color(0x111111) ;
+		title_screen.size(Size { 8 * 50, 2 * 50}) ;
+
+		auto p_title = gui.text_box(screen, title_style) ;
+		p_title->text("Hill quest") ;
+
+		// p_title->write("Hill quest", Size(), style) ;
+		screen.surface().draw(p_title->surface(), Size(2 * 50, 1 * 50)) ;
+	}
+
 	{
 		auto new_background = gui.surface(screen) ;
 		background(new_background) ;
@@ -289,7 +268,7 @@ void MenuInterface::select()
 	engine().quest(m_current) ;
 }
 
-void QuestInterface::init_display()
+void QuestInterface::draw()
 {
 	Gui & gui = engine().gui() ;
 	Surface & screen = gui.screen() ;
@@ -297,7 +276,7 @@ void QuestInterface::init_display()
 
 	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
 
-	Style style(screen) ;
+	Style style ;
 	style.color(create_color(0xffffff)) ;
 	style.font("Comic_Sans_MS") ;
 	style.size(16) ;
@@ -409,7 +388,7 @@ void Engine::run()
 void Engine::game_over()
 {
 	Surface & screen = gui().screen() ;
-	Style style(screen) ;
+	Style style ;
 	style.font("Verdana") ;
 	style.color(create_color(0x00bbbb)) ;
 	style.size(30) ;

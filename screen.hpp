@@ -4,7 +4,7 @@
 #	include "widget.hpp"
 
 class Screen
-	: public Widget
+	: public ComposedWidget
 {
 	public:
 		explicit Screen(Gui & gui) ;

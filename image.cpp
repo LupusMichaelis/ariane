@@ -5,7 +5,7 @@
 
 
 ImageSDL::ImageSDL(GuiLayout & gui_layout, std::unique_ptr<ImageMemory, SurfaceSDL::impl_ptr::deleter_type> p_surface, std::string const & filename)
-	: Image(filename)
+	: ImageSurface(filename)
 	, SurfaceSDL(gui_layout, move(p_surface))
 {
 }
