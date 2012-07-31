@@ -133,40 +133,6 @@ void test_resize()
 	wait() ;
 }
 
-#include "grid.hpp"
-#include "box.hpp"
-#include "screen.hpp"
-
-void test_load_sprite()
-{
-	/*
-	Gui gui {create_videomode(320, 280, 16)} ;
-	Screen & screen = gui.screen() ;
-
-	std::string filename("gfx/kraland_shapes.bmp") ;
-	Style grid_style = screen.style() ;
-
-	Image * p_image = gui.image(screen, Style(), filename) ;
-	assert(p_image != nullptr) ;
-	Grid * p_patchwork = gui.grid(*p_image, Size {32, 32}) ;
-	assert(p_patchwork != nullptr) ;
-
-	for(int i=0 ; i < 300 ; ++i)
-	{
-		std::unique_ptr<Surface> = *(p_patchwork->extract(i)) ;
-		assert(&sprite != nullptr) ;
-
-		auto p_sprite = sprite.parent().abandon(sprite) ;
-		screen.adopt(std::move(p_sprite)) ;
-		screen.display() ;
-
-		usleep(500000) ;
-	}
-
-	wait() ;
-	*/
-}
-
 void test_grid()
 {
 	/*

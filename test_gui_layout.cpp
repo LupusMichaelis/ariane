@@ -6,11 +6,13 @@
 
 void test_layout() ;
 void test_resize() ;
+void test_load_sprite() ;
 
 struct test { char const * name ; void (*fn)() ; } ;
 test const tests[] = {
 	{"test_layout", test_layout},
 	{"test_resize", test_resize},
+	{"test_load_sprite", test_load_sprite},
 } ;
 int const tests_size = sizeof tests / sizeof (test) ;
 
@@ -71,5 +73,34 @@ void test_resize()
 	sleep(1) ;
 	s->resize({640, 480}) ;
 	sleep(1) ;
+}
+
+#include "grid.hpp"
+
+void test_load_sprite()
+{
+	GuiLayout gl(create_videomode(480, 240, 24)) ;
+	auto s = gl.screen() ;
+
+	std::string filename("gfx/kraland_shapes.bmp") ;
+	//Style grid_style = screen.style() ;
+
+	auto p_image = gl.surface(filename) ;
+	assert(p_image) ;
+	auto p_patchwork = gl.grid(*p_image, Size {32, 32}) ;
+	assert(p_patchwork) ;
+
+	for(int i=0 ; i < 300 ; ++i)
+	{
+		std::unique_ptr<Surface> p_sprite = p_patchwork->extract(i) ;
+		assert(p_sprite) ;
+
+		s->draw(*p_sprite) ;
+		s->update() ;
+
+		usleep(500000) ;
+	}
+
+	wait() ;
 }
 

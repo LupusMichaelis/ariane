@@ -7,6 +7,7 @@
 
 class Size ;
 class Surface ;
+class Grid ;
 
 class GuiLayout
 {
@@ -18,6 +19,8 @@ class GuiLayout
 		std::unique_ptr<Surface> surface(Size const & size) const ;
 		std::unique_ptr<Surface> surface(std::string const & file_name) const ;
 		std::unique_ptr<Surface> surface(Surface const & source) const ;
+
+		std::unique_ptr<Grid> grid(Surface & reference, Size const & sprite_size) ;
 
 	private:
 		VideoMode					m_videomode ;

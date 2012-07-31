@@ -1,6 +1,7 @@
 
 #include "gui_layout.hpp"
 #include "surface.hpp"
+#include "grid.hpp"
 
 #include "tools.hpp"
 
@@ -38,3 +39,7 @@ std::unique_ptr<Surface> GuiLayout::surface(Surface const & source) const
 	return std::make_unique<SurfaceSDL>(sdl_source) ;
 }
 
+std::unique_ptr<Grid> GuiLayout::grid(Surface & reference, Size const & sprite_size)
+{
+	return std::make_unique<Grid>(reference, sprite_size) ;
+}
