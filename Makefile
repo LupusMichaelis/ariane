@@ -14,6 +14,10 @@ SRCS= \
 	  api.cpp \
 	  videomode.cpp \
 	  \
+	  node.cpp \
+	  parent.cpp \
+	  visitor.cpp \
+	  \
 	  widget.cpp \
 	  screen.cpp \
 	  box.cpp \
@@ -32,7 +36,7 @@ SRCS= \
 
 OBJS=$(SRCS:.cpp=.o)
 
-TARGET=test_layout dotests #tortoise quest
+TARGET=test_tree#test_widget test_layout dotests tortoise quest
 
 target: $(TARGET)
 
@@ -48,8 +52,11 @@ dotests: dotests.o test_screen.o $(OBJS)
 test_layout: test_gui_layout.o grid.o surface.o gui_layout.o api.o style.o color.o videomode.o
 	$(CXX) -o $@ test_gui_layout.o grid.o surface.o gui_layout.o api.o style.o color.o videomode.o $(LDFLAGS)
 
+test_tree: test_tree.o node.o parent.o visitor.o
+	$(CXX) -o $@  test_tree.o node.o parent.o visitor.o $(LDFLAGS)
+
 %.o: %.cpp
 	$(CXX) -c $< $(CXXFLAGS)
 
 clean:
-	-rm -rf $(OBJS) $(TARGET) $(TARGET:=.o) test_screen.o
+	-rm -rf $(OBJS) $(TARGET) $(TARGET:=.o) test_screen.o test_gui_layout.o
