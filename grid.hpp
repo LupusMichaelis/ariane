@@ -3,17 +3,17 @@
 
 #	include <memory>
 
+#	include "surface.hpp"
 #	include "videomode.hpp"
-#	include "decorator.hpp"
 
 class Box ;
 
 class Grid
-	: public Decorator
+	: public Surface
 {
 	public:
-		Grid(Widget & subject, Size const & sprite_size) ;
-		Box * extract(int const index) ;
+		Grid(Surface & surface, Size const & sprite_size) ;
+		std::unique_ptr<Surface> extract(int const index) ;
 
 		virtual
 		~Grid() ;
@@ -25,11 +25,7 @@ class Grid
 
 		Size					m_box_size ;
 
-		virtual
-		void draw() ;
-		virtual
-		void listen_events() ;
-
+		Surface & m_surface ;
 } ;
 
 

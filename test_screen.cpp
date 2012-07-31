@@ -140,6 +140,7 @@ void test_resize()
 
 void test_load_sprite()
 {
+	/*
 	Gui gui {create_videomode(320, 280, 16)} ;
 	Screen & screen = gui.screen() ;
 
@@ -153,7 +154,7 @@ void test_load_sprite()
 
 	for(int i=0 ; i < 300 ; ++i)
 	{
-		Box & sprite = *(p_patchwork->extract(i)) ;
+		std::unique_ptr<Surface> = *(p_patchwork->extract(i)) ;
 		assert(&sprite != nullptr) ;
 
 		auto p_sprite = sprite.parent().abandon(sprite) ;
@@ -164,10 +165,12 @@ void test_load_sprite()
 	}
 
 	wait() ;
+	*/
 }
 
 void test_grid()
 {
+	/*
 	Gui gui {create_videomode(672, 480, 24)} ;
 	Screen & screen = gui.screen() ;
 
@@ -237,6 +240,7 @@ void test_grid()
 	//p_target->dump(std::string("gfx/building.bmp")) ;
 
 	wait() ;
+	*/
 }
 
 void test_event()

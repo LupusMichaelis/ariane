@@ -10,24 +10,21 @@ Grid::~Grid()
 {
 }
 
-Grid::Grid(Widget & subject, Size const & sprite_size)
-	: Decorator {std::move(subject.parent().abandon(subject))}
-	, m_box_size(sprite_size)
+Grid::Grid(Surface & surface, Size const & sprite_size)
+	: m_box_size(sprite_size)
+	, m_surface(surface)
 {
 }
 
-Box * Grid::extract(int const index)
+/*
+std::unique_ptr<Surface> Grid::extract(int const index)
 {
-	Style box_style ;
-	box_style.size(m_box_size) ;
-	auto p_target = gui().box(box_style) ;
-	//p_target->draw() ;
+	auto p_target = gui().layout().surface(box_style.size()) ;
 
 	Size position = compute_position(index) ;
-	surface().crop(
-			p_target->surface(), position, m_box_size) ;
+	m_surface.crop(p_target, position, m_box_size) ;
 
-	return static_cast<Box *>(p_target) ;
+	return std::move(p_target) ;
 }
 
 int const Grid::box_per_row() const
@@ -55,12 +52,5 @@ Size const Grid::compute_position(int index) const
 	return position ;
 }
 
-
-void Grid::draw()
-{
-}
-
-void Grid::listen_events()
-{
-}
+*/
 

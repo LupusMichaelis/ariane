@@ -78,6 +78,7 @@ Image * const Gui::image(Widget & parent, Style const & set_style, std::string c
 	return p ;
 }
 
+	/*
 Grid * const Gui::grid(Widget & decorated, Size const & box_size)
 {
 	//auto p_b = std::make_unique<Grid>(decorated, box_size) ;
@@ -86,6 +87,7 @@ Grid * const Gui::grid(Widget & decorated, Size const & box_size)
 	auto p = new Grid {decorated, box_size} ;
 	return p ;
 }
+	*/
 
 EventLoop const & Gui::event_loop() const
 {
