@@ -19,7 +19,6 @@ SRCS= \
 	  box.cpp \
 	  text_box.cpp \
 	  \
-	  decorator.cpp \
 	  grid.cpp \
 	  \
 	  color.cpp \
