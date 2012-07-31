@@ -9,7 +9,6 @@
 void test_base() ;
 void test_resize() ;
 void test_load_image() ;
-void test_grid() ;
 void test_event() ;
 void test_write() ;
 void test_widget() ;
@@ -19,7 +18,6 @@ test const tests[] = {
 	{"test_base", test_base},
 	{"test_resize", test_resize},
 	{"test_load_image", test_load_image},
-	{"test_grid", test_grid},
 	{"test_event", test_event},
 	{"test_write", test_write},
 	{"test_widget", test_widget},
