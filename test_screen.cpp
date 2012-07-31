@@ -86,7 +86,6 @@ void test_base()
 	wait() ;
 }
 
-#include "image.hpp"
 
 void test_load_image()
 {

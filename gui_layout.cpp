@@ -13,8 +13,7 @@ GuiLayout::GuiLayout(VideoMode const & set_videomode)
 
 std::unique_ptr<Surface> GuiLayout::screen()
 {
-	SurfaceSDL::impl_ptr p = std::make_unique<ScreenMemory, SurfaceSDL::impl_ptr::deleter_type>(m_videomode) ;
-	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), std::move(p)) ;
+	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), m_videomode, true) ;
 }
 
 GuiLayout::~GuiLayout()
@@ -25,14 +24,12 @@ GuiLayout::~GuiLayout()
 std::unique_ptr<Surface> GuiLayout::surface(Size const & size) const
 {
 	VideoMode videomode { size, m_videomode.depth() } ;
-	auto p_impl = std::make_unique<SurfaceMemory, SurfaceSDL::impl_ptr::deleter_type>(videomode) ;
-	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), std::move(p_impl)) ;
+	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), videomode) ;
 }
 
 std::unique_ptr<Surface> GuiLayout::surface(std::string const & file_name) const
 {
-	auto p_impl = std::make_unique<ImageMemory, SurfaceSDL::impl_ptr::deleter_type>(file_name) ;
-	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), std::move(p_impl)) ;
+	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), file_name) ;
 }
 
 std::unique_ptr<Surface> GuiLayout::surface(Surface const & source) const

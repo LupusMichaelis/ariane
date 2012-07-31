@@ -4,13 +4,13 @@
 #include <iostream>
 #include <boost/format.hpp>
 
-void test_surface() ;
 void test_layout() ;
+void test_resize() ;
 
 struct test { char const * name ; void (*fn)() ; } ;
 test const tests[] = {
 	{"test_layout", test_layout},
-	{"test_surface", test_surface},
+	{"test_resize", test_resize},
 } ;
 int const tests_size = sizeof tests / sizeof (test) ;
 
@@ -63,10 +63,13 @@ void test_layout()
 	sleep(1) ;
 }
 
-void test_surface()
+void test_resize()
 {
-	SurfaceSDL::impl_ptr p = std::make_unique<ScreenMemory, SurfaceSDL::impl_ptr::deleter_type>(create_videomode(640, 480, 24)) ;
-	//auto s = std::make_unique<SurfaceSDL>(std::move(p)) ;
+	GuiLayout gl(create_videomode(480, 240, 24)) ;
+	auto s = gl.screen() ;
+
+	sleep(1) ;
+	s->resize({640, 480}) ;
 	sleep(1) ;
 }
 

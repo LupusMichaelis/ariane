@@ -25,7 +25,6 @@ SRCS= \
 	  style.cpp \
 	  \
 	  surface.cpp \
-	  image.cpp \
 	  \
 	  event.cpp \
 	  gui.cpp \
@@ -33,7 +32,7 @@ SRCS= \
 
 OBJS=$(SRCS:.cpp=.o)
 
-TARGET=test_layout #dotests #tortoise quest
+TARGET=test_layout dotests #tortoise quest
 
 target: $(TARGET)
 
@@ -46,8 +45,8 @@ tortoise: tortoise.o $(OBJS)
 dotests: dotests.o test_screen.o $(OBJS)
 	$(CXX) -o $@ dotests.o test_screen.o $(OBJS) $(LDFLAGS)
 
-test_layout: test_gui_layout.o surface.o gui_layout.o api.o style.o color.o videomode.o
-	$(CXX) -o $@ test_gui_layout.o surface.o gui_layout.o api.o style.o color.o videomode.o $(LDFLAGS)
+test_layout: test_gui_layout.o grid.o surface.o gui_layout.o api.o style.o color.o videomode.o
+	$(CXX) -o $@ test_gui_layout.o grid.o surface.o gui_layout.o api.o style.o color.o videomode.o $(LDFLAGS)
 
 %.o: %.cpp
 	$(CXX) -c $< $(CXXFLAGS)

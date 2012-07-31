@@ -11,17 +11,67 @@
 
 #include <boost/format.hpp>
 
-SurfaceSDL::SurfaceSDL(GuiLayout & gui_layout, impl_ptr p_surface)
+class SurfaceSDL::Impl
+	: std::unique_ptr<SDL_Surface, void (*) (SDL_Surface *)>
+{
+	private:
+		typedef std::unique_ptr<SDL_Surface, void (*) (SDL_Surface *)> unique_ptr ;
+
+		void ensure()
+		{
+			if(!*this)
+				throw SDL_GetError() ;
+		}
+
+	public:
+		explicit Impl(GuiLayout & gui_layout, VideoMode const & videomode, bool is_screen = false)
+			: unique_ptr
+			{
+				is_screen
+					  ? SDL_SetVideoMode(videomode.width(), videomode.height(), videomode.depth(), SDL_DOUBLEBUF)
+					  : SDL_CreateRGBSurface(SDL_SWSURFACE, videomode.width(), videomode.height(), videomode.depth()
+							//, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000) ;
+							, 0, 0, 0, 0) 
+				, is_screen
+					? &SDL_FreeSurface
+					: [] (SDL_Surface *) { /* SDL_Quit() ; */ }
+			}
+			, m_gui_layout(gui_layout)
+			, m_is_screen(is_screen)
+		{
+			ensure() ;
+		}
+
+		explicit Impl(GuiLayout & gui_layout, std::string const & filename)
+			: unique_ptr { SDL_LoadBMP(filename.c_str()), &SDL_FreeSurface }
+			, m_gui_layout(gui_layout)
+			, m_is_screen(false)
+		{
+			ensure() ;
+		}
+
+		using unique_ptr::get ;
+
+		GuiLayout &							m_gui_layout ;
+		bool m_is_screen ;
+
+} /* SurfaceSDL::Impl */ ;
+
+SurfaceSDL::SurfaceSDL(GuiLayout & gui_layout, VideoMode videomode, bool is_screen /*= false*/)
 	: Surface()
-	, m_gui_layout(gui_layout)
-	, mp_surface(move(p_surface))
+	, mp_impl(std::make_unique<Impl>(gui_layout, videomode, is_screen))
+{
+}
+
+SurfaceSDL::SurfaceSDL(GuiLayout & gui_layout, std::string filename)
+	: Surface()
+	, mp_impl(std::make_unique<Impl>(gui_layout, filename))
 {
 }
 
 SurfaceSDL::SurfaceSDL(SurfaceSDL const & copied)
 	: Surface(copied)
-	, m_gui_layout(copied.m_gui_layout)
-	, mp_surface(std::make_unique<SurfaceMemory, impl_ptr::deleter_type>(copied.videomode()))
+	, mp_impl(std::make_unique<Impl>(const_cast<GuiLayout &>(copied.gui_layout()), copied.videomode()))
 {
 	draw_static(copied, Size {0,0}) ;
 }
@@ -32,17 +82,17 @@ SurfaceSDL::~SurfaceSDL()
 
 GuiLayout const & SurfaceSDL::gui_layout() const
 {
-	return m_gui_layout ;
+	return mp_impl->m_gui_layout ;
 }
 
 GuiLayout & SurfaceSDL::gui_layout()
 {
-	return m_gui_layout ;
+	return mp_impl->m_gui_layout ;
 }
 
 SDL_Surface * SurfaceSDL::get_raw() const
 {
-	return mp_surface->get_raw() ;
+	return mp_impl->get() ;
 }
 
 VideoMode const SurfaceSDL::videomode() const
@@ -115,9 +165,9 @@ void SurfaceSDL::draw_static(Surface const & motif, Size const & at)
 void SurfaceSDL::resize(Size const & new_size)
 {
 	auto new_videomode = create_videomode(new_size, videomode().depth()) ;
-	auto p_surface = gui_layout().surface(*this) ;
-	mp_surface->init(new_videomode) ;
-	draw(*p_surface) ;
+	auto p_copy = gui_layout().surface(*this) ;
+	mp_impl = std::make_unique<Impl>(gui_layout(), new_videomode, mp_impl->m_is_screen) ;
+	draw(*p_copy) ;
 }
 
 void SurfaceSDL::update() const
