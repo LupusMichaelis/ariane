@@ -36,7 +36,7 @@ SRCS= \
 
 OBJS=$(SRCS:.cpp=.o)
 
-TARGET=test_tree test_widget test_layout dotests #tortoise quest
+TARGET=test_tree test_widget test_layout dotests tortoise #quest
 
 target: $(TARGET)
 

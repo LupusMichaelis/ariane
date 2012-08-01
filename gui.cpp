@@ -54,17 +54,17 @@ Screen & Gui::screen()
 	return *mp_impl->mp_screen ;
 }
 
-std::shared_ptr<Box> Gui::box(Box & parent, Style const & set_style)
+std::shared_ptr<Box> Gui::box(Box & parent, Style const & set_style) const
 {
-	auto p_box = Box::make(*this) ;
+	auto p_box = Box::make(const_cast<Gui&>(*this)) ;
 	adopt(parent, *p_box) ;
 	p_box->style(set_style) ;
 	return p_box ;
 }
 
-std::shared_ptr<TextBox> Gui::text_box(Box & parent, Style const & set_style)
+std::shared_ptr<TextBox> Gui::text_box(Box & parent, Style const & set_style) const
 {
-	auto p_tb = TextBox::make(*this) ;
+	auto p_tb = TextBox::make(const_cast<Gui&>(*this)) ;
 	adopt(parent, *p_tb) ;
 	p_tb->style(set_style) ;
 

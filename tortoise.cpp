@@ -3,6 +3,7 @@
 #include "gui.hpp"
 #include "api.hpp"
 #include "widget.hpp"
+#include "box.hpp"
 
 #include "tools.hpp"
 
@@ -25,7 +26,6 @@ class Interface
 	public:
 		explicit Interface(Engine & engine)
 			: m_engine(engine)
-			, m_position(50, 50)
 		{ }
 
 		virtual ~Interface() { unlisten_events() ; }
@@ -43,12 +43,7 @@ class Interface
 
 	private:
 		Engine &					m_engine ;
-
-		Widget *					mp_background ;
-		Widget *					mp_bg_sprite ;
-		Widget *					mp_sprite ;
-
-		Size						m_position ;
+		Box::SharedPtr				mp_turtle ;
 
 		void listen_events() ;
 		void unlisten_events() ;
@@ -86,6 +81,7 @@ class Engine
 } /* class Engine */ ;
 
 #include "screen.hpp"
+#include "style.hpp"
 
 void Interface::display()
 {
@@ -93,18 +89,16 @@ void Interface::display()
 
 	Style bg_style = screen.style() ;
 	bg_style.color(create_color(0xaaaa00)) ;
-
-	mp_background = (Widget *) m_engine.gui().box(dynamic_cast<Widget &>(screen), bg_style) ;
+	screen.style(bg_style) ;
 
 	Style sprite_style ;
 	sprite_style.size(Size {20, 20}) ;
 	sprite_style.color(create_color(0x00aa)) ;
 
-	mp_sprite = (Widget *) screen.gui().box(screen, sprite_style) ;
-
 	sprite_style.color(create_color(0x00)) ;
-	mp_bg_sprite = (Widget *) screen.gui().box(screen, sprite_style) ;
+	mp_turtle = screen.gui().box(screen, sprite_style) ;
 
+	m_engine.gui().refresh() ;
 	listen_events() ;
 }
 
@@ -136,38 +130,32 @@ void Interface::unlisten_events()
 
 void Interface::move(EventLoop &, MouseButtonEvent const & me)
 {
-	if(me.pressing())
-		return ;
+	Style turtle_style = mp_turtle->style() ;
+	Style bg_style = m_engine.gui().screen().style() ;
 
-	Screen & screen = m_engine.screen() ;
+	RGBColor turtle_color = turtle_style.color() ;
+	RGBColor bg_color = bg_style.color() ;
 
-	mp_background->surface().crop(mp_bg_sprite->surface(), m_position, mp_sprite->size()) ;
-	screen.surface().draw(mp_bg_sprite->surface(), m_position) ;
+	turtle_style.color(bg_color) ;
+	mp_turtle->style(turtle_style) ;
 
-	m_position = me.position() ;
-	screen.draw(*mp_sprite, m_position) ;
-	screen.update() ;
+	bg_style.color(turtle_color) ;
+	m_engine.gui().screen().style(bg_style) ;
+
+	m_engine.gui().refresh() ;
 }
 
 void Interface::move(EventLoop &, MouseEvent const & me)
 {
-	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
+	Style turtle_style = mp_turtle->style() ;
+	turtle_style.position(me.position()) ;
+	mp_turtle->style(turtle_style) ;
 
-	Surface & screen = m_engine.screen() ;
-	screen.draw(*mp_bg_sprite, m_position) ;
-
-	m_position = me.position() ;
-	screen.draw(*mp_sprite, m_position) ;
-	screen.update() ;
+	m_engine.gui().refresh() ;
 }
 
 void Interface::move(EventLoop &, KeyEvent const & ke)
 {
-	mp_background->crop(*mp_bg_sprite, m_position, mp_sprite->videomode().size()) ;
-
-	Surface & screen = m_engine.screen() ;
-	screen.draw(*mp_bg_sprite, m_position) ;
-
 	if(ke.pressing())
 		return ;
 
@@ -181,42 +169,40 @@ void Interface::move(EventLoop &, KeyEvent const & ke)
 		move_right() ;
 	else if(ke.key() == kb.left())
 		move_left() ;
+
+	m_engine.gui().refresh() ;
 }
 
 void Interface::move_left()
 {
-	m_position = m_position - Size(10, 0) ;
-
-	Surface & screen = m_engine.screen() ;
-	screen.draw(*mp_sprite, m_position) ;
-	screen.update() ;
+	Style turtle_style = mp_turtle->style() ;
+	Size new_position = turtle_style.position() - Size(10, 0) ;
+	turtle_style.position(new_position) ;
+	mp_turtle->style(turtle_style) ;
 }
 
 void Interface::move_right()
 {
-	m_position = m_position + Size(10, 0) ;
-
-	Surface & screen = m_engine.screen() ;
-	screen.draw(*mp_sprite, m_position) ;
-	screen.update() ;
+	Style turtle_style = mp_turtle->style() ;
+	Size new_position = turtle_style.position() + Size(10, 0) ;
+	turtle_style.position(new_position) ;
+	mp_turtle->style(turtle_style) ;
 }
 
 void Interface::move_up()
 {
-	m_position = m_position - Size(0, 10) ;
-
-	Surface & screen = m_engine.screen() ;
-	screen.draw(*mp_sprite, m_position) ;
-	screen.update() ;
+	Style turtle_style = mp_turtle->style() ;
+	Size new_position = turtle_style.position() - Size(0, 10) ;
+	turtle_style.position(new_position) ;
+	mp_turtle->style(turtle_style) ;
 }
 
 void Interface::move_down()
 {
-	m_position = m_position + Size(0, 10) ;
-
-	Surface & screen = m_engine.screen() ;
-	screen.draw(*mp_sprite, m_position) ;
-	screen.update() ;
+	Style turtle_style = mp_turtle->style() ;
+	Size new_position = turtle_style.position() + Size(0, 10) ;
+	turtle_style.position(new_position) ;
+	mp_turtle->style(turtle_style) ;
 }
 
 void Engine::run()

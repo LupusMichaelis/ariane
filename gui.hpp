@@ -26,8 +26,8 @@ class Gui
 		Screen const & screen() const ;
 		Screen & screen() ;
 
-		std::shared_ptr<Box> box(Box & parent, Style const & set_style) ;
-		std::shared_ptr<TextBox> text_box(Box & parent, Style const & set_style) ;
+		std::shared_ptr<Box> box(Box & parent, Style const & set_style) const ;
+		std::shared_ptr<TextBox> text_box(Box & parent, Style const & set_style) const ;
 
 		Style const style() const ;
 
