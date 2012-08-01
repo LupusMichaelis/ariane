@@ -146,42 +146,75 @@ void test_event()
 }
 
 #include "style.hpp"
-
-void test_write()
-{
-	GuiLayout gui_layout {create_videomode(320, 280, 24)} ;
-	std::unique_ptr<Surface> p_screen = gui_layout.screen() ;
-	Surface & screen = *p_screen ;
-
-	Style style ;
-	style.color(create_color(0x0)) ;
-
-	Pen pen = style.pen() ;
-	pen.font(Font {"Comic_Sans_MS"}) ;
-	pen.color(create_color(0xffffff)) ;
-	pen.size(16u) ;
-	style.pen(pen) ;
-
-	style.size(Size {50, 50}) ;
-	style.position(Size {50, 50}) ;
-	screen.write("Rock'n'roll!", style) ;
-
-	style.size(Size {10, 10}) ;
-	style.position(Size {50, 70}) ;
-	screen.write("Rock'n'roll!", style) ;
-
-	style.size(Size {100, 100}) ;
-	style.position(Size {50, 90}) ;
-	screen.write("Rock'n'roll!", style) ;
-
-	screen.update() ;
-
-	wait() ;
-}
-
+#include "box.hpp"
 #include "screen.hpp"
 #include "text_box.hpp"
 #include "visitor.hpp"
+
+void test_write()
+{
+	Gui gui {create_videomode(640, 480, 24)} ;
+	Box::SharedPtr p_box ;
+
+	{
+		Style style ;
+		style.position({10, 10}) ;
+		style.size({600, 400}) ;
+		style.color(create_color(0xffff)) ;
+
+		p_box = gui.box(gui.screen(), style) ;
+	}
+
+	{
+		Style style ;
+		style.color(create_color(0x0)) ;
+
+		Pen pen = style.pen() ;
+		pen.font(Font {"Comic_Sans_MS"}) ;
+		pen.color(create_color(0xffffff)) ;
+		pen.size(16u) ;
+		style.pen(pen) ;
+		style.padding(Size {10, 10}) ;
+
+		style.size(Size {300, 100}) ;
+		style.position(Size {50, 50}) ;
+
+		TextBox::SharedPtr p_tb ;
+
+		style.color(create_color(0xff)) ;
+		p_tb = gui.text_box(gui.screen(), style) ;
+		p_tb->text("Rock'n'roll!") ;
+		adopt(*p_box, *p_tb) ;
+
+		style.color(create_color(0xff00)) ;
+		style.position(Size {50, 200}) ;
+		p_tb = gui.text_box(gui.screen(), style) ;
+		p_tb->text("Rock'n'roll!") ;
+		adopt(*p_box, *p_tb) ;
+
+		style.color(create_color(0xff0000)) ;
+		style.position(Size {50, 350}) ;
+		p_tb = gui.text_box(gui.screen(), style) ;
+		p_tb->text("Rock'n'roll!") ;
+		adopt(*p_box, *p_tb) ;
+	}
+
+	gui.refresh() ;
+
+	int n = 10 ;
+	do
+	{
+		sleep(1) ;
+		Drawable & c = dynamic_cast<Drawable &>(*children(gui.screen())[0]) ;
+		Style style = c.style() ;
+		style.position(style.position() + Size {10, 10}) ;
+		c.style(style) ;
+		gui.refresh() ;
+	}
+	while(--n) ;
+
+	wait() ;
+}
 
 void test_widget()
 {
@@ -207,7 +240,6 @@ void test_widget()
 	gui.screen().style(screen_style) ;
 
 	gui.refresh() ;
-
 	wait() ;
 }
 

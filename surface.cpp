@@ -226,7 +226,7 @@ void SurfaceSDL::write(std::string const & message, Style const & style)
 	if(!p_text)
 		throw SDL_GetError() ;
 
-	Size const & at = style.position() ;
+	Size const & at = style.padding() ;
 	Size const & size = style.size() ;
 
 	SDL_Rect dst = { (Sint16) at.width(), (Sint16) at.height(), 0, 0, };
