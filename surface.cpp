@@ -226,14 +226,15 @@ void SurfaceSDL::write(std::string const & message, Style const & style)
 	if(!p_text)
 		throw SDL_GetError() ;
 
-	Size const & at = style.padding() ;
+	Size const & at = style.position() ;
+	Size const & size = style.size() ;
 
 	SDL_Rect dst = { (Sint16) at.width(), (Sint16) at.height(), 0, 0, };
-	//SDL_Rect box = { 0, 0, (Sint16) size.width(), (Sint16) size.height(), } ;
+	SDL_Rect box = { 0, 0, (Uint16) size.width(), (Uint16) size.height(), } ;
 
 	SDL_Surface * p_to = get_raw() ;
 
-	ret = SDL_BlitSurface(p_text, 0/*&box*/, p_to, &dst) ;
+	ret = SDL_BlitSurface(p_text, &box, p_to, &dst) ;
 	if(ret == -1)
 		throw SDL_GetError() ;
 

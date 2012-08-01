@@ -1,9 +1,10 @@
 #include "text_box.hpp"
 #include "gui_layout.hpp"
 #include "surface.hpp"
+#include "style.hpp"
 
-TextBox::TextBox(Gui & gui, Widget * p_parent)
-	: Box(gui, p_parent)
+TextBox::TextBox(Gui & gui)
+	: Box(gui)
 {
 }
 
@@ -29,8 +30,7 @@ void TextBox::draw()
 	s.write(text(), style()) ;
 }
 
-void TextBox::listen_events()
+TextBox::SharedPtr TextBox::make(Gui & gui)
 {
+	return TextBox::SharedPtr(new TextBox(gui)) ;
 }
-
-

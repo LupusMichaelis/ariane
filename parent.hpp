@@ -6,7 +6,7 @@
 class Parent
 	: public Node
 {
-	private:
+	protected:
 		Parent() ;
 
 	public:

@@ -15,12 +15,12 @@ class GuiLayout
 		GuiLayout(VideoMode const & set_videomode) ;
 		~GuiLayout() ;
 
-		std::unique_ptr<Surface> screen() ;
+		std::unique_ptr<Surface> screen() const ;
 		std::unique_ptr<Surface> surface(Size const & size) const ;
 		std::unique_ptr<Surface> surface(std::string const & file_name) const ;
 		std::unique_ptr<Surface> surface(Surface const & source) const ;
 
-		std::unique_ptr<Grid> grid(Surface & reference, Size const & sprite_size) ;
+		std::unique_ptr<Grid> grid(Surface & reference, Size const & sprite_size) const ;
 
 	private:
 		VideoMode					m_videomode ;

@@ -1,21 +1,27 @@
 #ifndef HPP_SCREEN_WIDGET_QUEST
 #	define HPP_SCREEN_WIDGET_QUEST
 
-#	include "widget.hpp"
+#	include "box.hpp"
 
 class Screen
-	: public ComposedWidget
+	: public Box
 {
-	public:
+	protected:
+		Screen() = delete ;
 		explicit Screen(Gui & gui) ;
+
+	public:
+		typedef std::shared_ptr<Screen>		SharedPtr ;
+		typedef std::weak_ptr<Screen>			WeakPtr ;
+
+		static SharedPtr make(Gui & gui) ;
+
+	public:
 		virtual ~Screen() ;
 
 	protected:
 		virtual
-		void draw() ;
-
-		virtual
-		void listen_events() ;
+		void init() ;
 
 } /* class Screen */ ;
 

@@ -1,22 +1,33 @@
-#ifndef HPP_BOX_WIDGET_QUEST
-#	define HPP_BOX_WIDGET_QUEST
+#ifndef HPP_BOX_QUEST
+#	define HPP_BOX_QUEST
 
 #	include "widget.hpp"
+#	include "parent.hpp"
+
+#	include <memory>
 
 class Box
-	: public ComposedWidget
+	: public Widget
+	, public Parent
 {
-	public:
-		explicit Box(Gui & gui, Widget * p_parent) ;
-		virtual ~Box() ;
-
 	protected:
+		Box() = delete ;
+		Box(Gui & gui) ;
+
+		virtual
+		void init() ;
+
+	public:
+		typedef std::shared_ptr<Box>		SharedPtr ;
+		typedef std::weak_ptr<Box>			WeakPtr ;
+
+		static SharedPtr make(Gui & gui) ;
+
 		virtual
 		void draw() ;
 
-		virtual
-		void listen_events() ;
+		virtual ~Box() ;
 
 } /* class Box */ ;
 
-#endif // HPP_BOX_WIDGET_QUEST
+#endif // HPP_BOX_QUEST

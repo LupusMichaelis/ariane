@@ -1,6 +1,7 @@
 tortoise
 quest
 dotests
+test_*
 
 *.vim
 .*.swp

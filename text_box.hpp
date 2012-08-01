@@ -6,8 +6,15 @@
 class TextBox
 	: public Box
 {
+	protected:
+		TextBox() = delete ;
+		TextBox(Gui & gui) ;
+
 	public:
-		TextBox(Gui & gui, Widget * p_parent) ;
+		typedef std::shared_ptr<TextBox>		SharedPtr ;
+		typedef std::weak_ptr<TextBox>			WeakPtr ;
+
+		static SharedPtr make(Gui & gui) ;
 		virtual ~TextBox() ;
 
 		void text(std::string const & new_text) ;
@@ -16,9 +23,6 @@ class TextBox
 	protected:
 		virtual
 		void draw() ;
-
-		virtual
-		void listen_events() ;
 
 	private:
 		std::string m_text ;

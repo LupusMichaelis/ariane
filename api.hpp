@@ -4,11 +4,11 @@
 #	include <memory>
 #	include <boost/utility.hpp>
 
+class GuiLayout ;
 class RGBColor ;
-class Style ;
 class VideoMode ;
 class Size ;
-class GuiLayout ;
+class Style ;
 
 class Surface
 	//: boost::noncopyable
@@ -34,19 +34,33 @@ class Surface
 
 } /* class Surface */ ;
 
-class ImageSurface
-	: public Surface
+class Gui ;
+class Style ;
+
+class Drawable
 {
 	public:
-		virtual ~ImageSurface() = 0 ;
+		virtual Surface /* const */ & surface() = 0 ;
+		virtual void draw() = 0 ;
 
-	protected:
-		explicit ImageSurface(std::string const & filename) ;
+		virtual Gui const & gui() = 0 ;
 
-	private:
+		virtual void style(Style const & new_style) = 0 ;
+		virtual Style const & style() const = 0 ;
+		virtual Style style() = 0 ;
 
-		std::string m_filename ;
-} /* class Image */ ;
+		virtual ~Drawable() = 0 ;
 
+} /* class Drawable */ ;
+
+#include <boost/signals2/trackable.hpp>
+
+class EventTarget
+	: public boost::signals2::trackable
+{
+	public:
+		virtual ~EventTarget() = 0 ;
+
+} /* class EventTarget */ ;
 
 #endif // define HPP_API_QUEST

@@ -12,7 +12,7 @@ GuiLayout::GuiLayout(VideoMode const & set_videomode)
 		throw SDL_GetError() ;
 }
 
-std::unique_ptr<Surface> GuiLayout::screen()
+std::unique_ptr<Surface> GuiLayout::screen() const
 {
 	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), m_videomode, true) ;
 }
@@ -39,7 +39,7 @@ std::unique_ptr<Surface> GuiLayout::surface(Surface const & source) const
 	return std::make_unique<SurfaceSDL>(sdl_source) ;
 }
 
-std::unique_ptr<Grid> GuiLayout::grid(Surface & reference, Size const & sprite_size)
+std::unique_ptr<Grid> GuiLayout::grid(Surface & reference, Size const & sprite_size) const
 {
 	return std::make_unique<Grid>(reference, sprite_size) ;
 }

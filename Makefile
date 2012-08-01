@@ -36,7 +36,7 @@ SRCS= \
 
 OBJS=$(SRCS:.cpp=.o)
 
-TARGET=test_tree#test_widget test_layout dotests tortoise quest
+TARGET=test_tree test_widget test_layout dotests #tortoise quest
 
 target: $(TARGET)
 
@@ -54,6 +54,9 @@ test_layout: test_gui_layout.o grid.o surface.o gui_layout.o api.o style.o color
 
 test_tree: test_tree.o node.o parent.o visitor.o
 	$(CXX) -o $@  test_tree.o node.o parent.o visitor.o $(LDFLAGS)
+
+test_widget: test_widget.o $(OBJS)
+	$(CXX) -o $@  test_widget.o $(OBJS) $(LDFLAGS)
 
 %.o: %.cpp
 	$(CXX) -c $< $(CXXFLAGS)

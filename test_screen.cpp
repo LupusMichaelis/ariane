@@ -162,12 +162,15 @@ void test_write()
 	pen.size(16u) ;
 	style.pen(pen) ;
 
+	style.size(Size {50, 50}) ;
 	style.position(Size {50, 50}) ;
 	screen.write("Rock'n'roll!", style) ;
 
+	style.size(Size {10, 10}) ;
 	style.position(Size {50, 70}) ;
 	screen.write("Rock'n'roll!", style) ;
 
+	style.size(Size {100, 100}) ;
 	style.position(Size {50, 90}) ;
 	screen.write("Rock'n'roll!", style) ;
 
@@ -178,13 +181,14 @@ void test_write()
 
 #include "screen.hpp"
 #include "text_box.hpp"
+#include "visitor.hpp"
 
 void test_widget()
 {
 	Gui gui {create_videomode(320, 280, 24)} ;
 	Style box_style = gui.screen().style() ;
 	box_style.position(Size {30, 10}) ;
-	box_style.size(Size {30, 30}) ;
+	box_style.size(Size {300, 30}) ;
 	box_style.color(create_color(0x0)) ;
 
 	Pen pen = box_style.pen() ;
@@ -193,10 +197,16 @@ void test_widget()
 	pen.size(16u) ;
 	box_style.pen(pen) ;
 
-	TextBox * p_box = gui.text_box(gui.screen(), box_style) ;
+	auto p_box = gui.text_box(gui.screen(), box_style) ;
 	p_box->text("WTF") ;
 
-	gui.screen().display() ;
+	adopt(gui.screen(), *p_box) ;
+
+	Style screen_style {box_style} ;
+	screen_style.color(create_color(0xff)) ;
+	gui.screen().style(screen_style) ;
+
+	gui.refresh() ;
 
 	wait() ;
 }
