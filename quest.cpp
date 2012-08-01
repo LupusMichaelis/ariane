@@ -5,6 +5,9 @@
 #include "widget.hpp"
 #include "api.hpp"
 #include "tools.hpp"
+#include "box.hpp"
+#include "text_box.hpp"
+#include "screen.hpp"
 
 #include <cassert>
 #include <cstring>
@@ -17,20 +20,6 @@
 #include <boost/format.hpp>
 #include <boost/bind.hpp>
 
-template<typename T>
-T & get_or_throw(std::unique_ptr<T> const & sptr)
-{
-	if(!sptr) throw std::bad_alloc() ;
-	return *sptr ;
-}
-
-template<typename T>
-T & get_or_throw(std::shared_ptr<T> const & sptr)
-{
-	if(!sptr) throw std::bad_alloc() ;
-	return *sptr ;
-}
-
 class Surface ;
 class Interface ;
 
@@ -38,47 +27,64 @@ class Engine
 {
 	public:
 		Engine()
+			: m_gui(create_videomode(640, 480, 16))
 		{
 		}
 
 		void run() ;
 
-		KeyBoard const & keyboard()	const	{ return m_kb ; }
-
 		void title_screen() ;
 		void game_over() ;
 		void quest(std::string const & quest_name) ;
 
-		Gui const & gui() const { return *mp_gui ; }
-		Gui & gui() { return *mp_gui ; }
+		EventLoop & event_loop()			{ return gui().event_loop() ; }
+		Screen & screen()					{ return m_gui.screen() ; }
+		Gui & gui()							{ return m_gui ; }
+		KeyBoard const & keyboard()	const	{ return m_kb ; }
 
 	private:
+		void init_title_screen() ;
+
 		std::unique_ptr<Interface>	mp_interface ;
-		std::unique_ptr<Gui>		mp_gui ;
 
 		KeyBoard					m_kb ;
 
+		Gui 						m_gui ;
 
 } /* class Engine */ ;
 
 class Interface
-	: public Widget
 {
 	public:
 		explicit Interface(Engine & engine)
-			: Widget {engine.gui()}
-			, m_engine(&engine)
+			: m_engine(engine)
 		{ }
 
-		void background(std::unique_ptr<Surface> & new_background)
-								{ mp_background = std::move(new_background) ; }
-		Surface & background()	{ return get_or_throw(mp_background) ; }
 		Engine & engine()		{ return m_engine ; }
+		Gui & gui()				{ return engine().gui() ; }
+
+		Style title_style() const ;
+
+		virtual
+		void display() = 0 ;
+
+		virtual ~Interface() { unlisten_events() ; }
+
+	protected:
+		std::vector<boost::signals2::connection> & cons() { return m_cons ; }
+
+	private:
+		void unlisten_events()
+		{
+			std::for_each(m_cons.begin(), m_cons.end(), std::mem_fun_ref(&boost::signals2::connection::disconnect)) ;
+		}
 
 	private:
 		Engine &					m_engine ;
-		std::unique_ptr<Surface>	mp_background ;
 
+		// Managed connection, to avoid dandling events if this is deleted
+		std::vector<boost::signals2::connection>
+									m_cons ;
 } /* class Interface */ ;
 
 class MenuInterface
@@ -88,9 +94,9 @@ class MenuInterface
 		explicit MenuInterface(Engine & engine)
 			: Interface(engine)
 			, m_current("first")
-			, m_entries()
-			, m_positions()
-		{ }
+			, m_widgets()
+		{
+		}
 
 		void move(EventLoop &, KeyEvent const & ke) ;
 
@@ -100,17 +106,12 @@ class MenuInterface
 
 	private:
 		virtual
-		void draw() ;
-		virtual
+		void display() ;
 		void listen_events() ;
 
 		std::string					m_current ;
-		std::map<std::string, std::unique_ptr<Surface>>
-									m_entries ;
-		std::map<std::string, std::unique_ptr<Surface>>
-									m_bg_entries ;
-
-		std::map<std::string, Size> m_positions ;
+		std::map<std::string, TextBox::SharedPtr>
+									m_widgets ;
 
 } /* class MenuInterface */ ;
 
@@ -137,99 +138,91 @@ class QuestInterface
 
 	private:
 		virtual
-		void draw() ;
-		virtual
+		void display() ;
 		void listen_events() ;
 
 		std::string					m_question ;
 		char						m_current ;
 		char						m_good_answer ;
 		std::map<char, std::string>	m_answers ;
-		std::map<char, std::unique_ptr<Surface>>
-									m_sprites ;
-		std::map<char, std::unique_ptr<Surface>>
-									m_bg_sprites ;
-		std::map<char, Size>		m_positions ;
+		std::map<char, Box::SharedPtr>
+									m_widgets ;
 
-} /* class MenuInterface */ ;
+} /* class QuestInterface */ ;
 
-void MenuInterface::draw()
+Style Interface::title_style() const
+{
+	Style style ;
+	style.color(create_color(0x0)) ;
+	style.size(Size { 8 * 50, 2 * 50}) ;
+	style.position(Size {2 * 50, 1 * 50}) ;
+
+	Pen pen = style.pen() ;
+	pen.color(create_color(0x660000)) ;
+	pen.font(Font {"Comic_Sans_MS"}) ;
+	pen.size(16) ;
+	style.pen(pen) ;
+
+	return style ;
+}
+
+void MenuInterface::display()
 {
 	Gui & gui = engine().gui() ;
-	Screen & screen = gui.screen() ;
+
+	Style containter_style { gui.screen().style() } ;
+	containter_style.color(create_color(0x660000)) ;
+	auto p_container = gui.box(gui.screen(), containter_style) ;
 
 	{
-		Style screen_style ;
-		screen_style.color(create_color(0x0)) ;
-
-		Pen pen = screen_style.pen() ;
-		pen.color(create_color(0x0000bb)) ;
-		pen.font(Font {"Comic_Sans_MS"}) ;
-		pen.size(16) ;
-		screen_style.pen(pen) ;
-
-		screen.style(screen_style) ;
-	}
-
-	{
-		Style ttyle = screen.style() ;
-		title_screen.color(create_color(0x111111) ;
-		title_screen.size(Size { 8 * 50, 2 * 50}) ;
-
-		auto p_title = gui.text_box(screen, title_style) ;
+		auto p_title = gui.text_box(*p_container, title_style()) ;
 		p_title->text("Hill quest") ;
-
-		// p_title->write("Hill quest", Size(), style) ;
-		screen.surface().draw(p_title->surface(), Size(2 * 50, 1 * 50)) ;
 	}
 
+	Style entry_style ;
+	entry_style.color(create_color(0xaaaaaa)) ;
 	{
-		auto new_background = gui.surface(screen) ;
-		background(new_background) ;
+		Pen pen ;
+		pen.color(create_color(0x00aa)) ;
+		pen.font(Font {"Verdana"}) ;
+		pen.size(11) ;
+		entry_style.pen(pen) ;
 	}
-	background().fill(create_color(0x00)) ;
 
-	m_positions["first"] = Size(6 * 50, 4 * 50) ;
-	m_entries["first"] = gui.surface(Size {4 * 50, 1 * 50}) ;
-	m_entries["first"]->fill(create_color(0x00aa)) ;
-	m_entries["first"]->write("First quest", Size(), style) ;
+	entry_style.size(Size {4 * 50, 1 * 50} ) ;
 
-	m_bg_entries["first"] = gui.surface(Size {4 * 50, 1 * 50}) ;
-	m_bg_entries["first"]->fill(create_color(0x0022)) ;
-	m_bg_entries["first"]->write("First quest", Size(), style) ;
+	entry_style.position(Size {6 * 50, 3 * 50} ) ;
+	m_widgets["first"] = gui.text_box(*p_container, entry_style) ;
+	m_widgets["first"]->text("First quest") ;
 
-	m_entries["second"] = gui.surface(Size {4 * 50, 1 * 50}) ;
-	m_entries["second"]->fill(create_color(0x00aa)) ;
-	m_positions["second"] = Size(6 * 50, 5 * 50) ;
-	m_entries["second"]->write("Second quest", Size(), style) ;
+	entry_style.color(create_color(0x111111)) ;
+	entry_style.position(Size {6 * 50, 4 * 50} ) ; 
+	m_widgets["second"] = gui.text_box(*p_container, entry_style) ;
+	m_widgets["second"]->text("Second quest") ;
 
-	m_bg_entries["second"] = gui.surface(Size {4 * 50, 1 * 50}) ;
-	m_bg_entries["second"]->fill(create_color(0x0022)) ;
-	m_bg_entries["second"]->write("Second quest", Size(), style) ;
+	entry_style.position(Size {6 * 50, 5 * 50} ) ; 
+	m_widgets["third"] = gui.text_box(*p_container, entry_style) ;
+	m_widgets["third"]->text("Third quest") ;
 
-	screen.draw(*m_entries["first"], m_positions["first"]) ;
-	screen.draw(*m_bg_entries["second"], m_positions["second"]) ;
-	screen.update() ;
+	gui.refresh() ;
+	if(!cons().size()) listen_events() ;
 }
 
 void MenuInterface::listen_events()
 {
-	// This is complex, I should be able to make something simpler (automatic FunPtr
-	// signature, for example)
-	attach_event<void (MenuInterface::*)(EventLoop &, KeyEvent const &)
-		, MenuInterface
-		, EventLoop::keyboard_event_type::slot_function_type
-		>(&MenuInterface::move) ;
+	EventLoop & ev_loop = engine().event_loop() ;
+	boost::signals2::connection con ;
+
+	void (MenuInterface::*oks)(EventLoop &, KeyEvent const &) = &MenuInterface::move ;
+	auto wrapped_oks = boost::bind(oks, this, _1, _2) ;
+	con = ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(wrapped_oks)) ;
+	cons().push_back(con) ;
 }
 
 void MenuInterface::move(EventLoop &, KeyEvent const & ke)
 {
 	if(ke.pressing())
 		return ;
-
-	// preserve background of destination
-	Surface & screen = engine().gui().screen() ;
-	screen.draw(background(), m_positions[m_current]) ;
 
 	KeyBoard const & kb = engine().keyboard() ;
 
@@ -243,24 +236,48 @@ void MenuInterface::move(EventLoop &, KeyEvent const & ke)
 
 void MenuInterface::entry_next()
 {
-	Surface & screen = engine().gui().screen() ;
-	screen.draw(*m_bg_entries["first"], m_positions[m_current]) ;
+	auto it_current = m_widgets.find(m_current) ; 
+	{
+		Style ws { it_current->second->style() } ;
+		ws.color(create_color(0x111111)) ;
+		it_current->second->style(ws) ;
+	}
 
-	m_current = "second" ;
+	++it_current;
+	if(it_current == m_widgets.end())
+		it_current = m_widgets.begin() ;
 
-	screen.draw(*m_entries[m_current], m_positions[m_current]) ;
-	screen.update() ;
+	{
+		Style ws { it_current->second->style() } ;
+		ws.color(create_color(0xaaaaaa)) ;
+		it_current->second->style(ws) ;
+	}
+
+	m_current = it_current->first ;
+	gui().refresh() ;
 }
 
 void MenuInterface::entry_previous()
 {
-	Surface & screen = engine().gui().screen() ;
-	screen.draw(*m_bg_entries["second"], m_positions[m_current]) ;
+	auto it_current = m_widgets.find(m_current) ; 
+	{
+		Style ws { it_current->second->style() } ;
+		ws.color(create_color(0x111111)) ;
+		it_current->second->style(ws) ;
+	}
 
-	m_current = "first" ;
+	--it_current;
+	if(it_current == m_widgets.end())
+		it_current = --m_widgets.end() ;
 
-	screen.draw(*m_entries[m_current], m_positions[m_current]) ;
-	screen.update() ;
+	{
+		Style ws { it_current->second->style() } ;
+		ws.color(create_color(0xaaaaaa)) ;
+		it_current->second->style(ws) ;
+	}
+
+	m_current = it_current->first ;
+	gui().refresh() ;
 }
 
 void MenuInterface::select()
@@ -268,57 +285,60 @@ void MenuInterface::select()
 	engine().quest(m_current) ;
 }
 
-void QuestInterface::draw()
+void QuestInterface::display()
 {
 	Gui & gui = engine().gui() ;
-	Surface & screen = gui.screen() ;
-	screen.fill(create_color(0x0)) ;
 
-	Surface & screen_surface = dynamic_cast<Surface &>(screen) ;
+	auto p_container = gui.box(gui.screen(), gui.screen().style()) ;
 
-	Style style ;
-	style.color(create_color(0xffffff)) ;
-	style.font("Comic_Sans_MS") ;
-	style.size(16) ;
-
-	auto title = gui.surface(Size {8 * 50, 2 * 50}) ;
-	title->fill(create_color(0x111111)) ;
-	title->write(m_question, Size(), style) ;
-	screen_surface.draw(*title, Size(2 * 50, 1 * 50)) ;
-
-	auto new_background = gui.surface(screen) ;
-	background(new_background) ;
-	background().fill(create_color(0x00)) ;
-
-	Size position = Size(6 * 50, 4 * 50) ;
-	for(auto it_answer = m_answers.begin() ; it_answer != m_answers.end() ; ++it_answer)
 	{
-		auto p_sprite = gui.surface(Size {4 * 50, 1 * 50}) ;
-		p_sprite->fill(create_color(0x00aa)) ;
-		p_sprite->write(it_answer->second, Size(), style) ;
-		m_sprites[it_answer->first] = std::move(p_sprite) ;
-
-		p_sprite = gui.surface(Size {4 * 50, 1 * 50}) ;
-		p_sprite->fill(create_color(0x0066)) ;
-		p_sprite->write(it_answer->second, Size(), style) ;
-		m_bg_sprites[it_answer->first] = std::move(p_sprite) ;
-
-		screen.draw(*(it_answer->first == m_current ? m_sprites[it_answer->first] : m_bg_sprites[it_answer->first]), position) ;
-		m_positions[it_answer->first] = position ;
-		position.height(position.height() + 1 * 50) ;
+		auto p_title = gui.text_box(*p_container, title_style()) ;
+		p_title->text(m_question) ;
 	}
 
-	screen.update() ;
+	Style active_style ;
+	active_style.position(Size {6 * 50, 4 * 50} ) ;
+	active_style.size(Size {4 * 50, 1 * 50 }) ;
+	active_style.color(create_color(0x00aa)) ;
+
+	{
+		Pen pen = active_style.pen() ;
+		pen.color(create_color(0x111111)) ;
+		pen.font(Font {"Arial"}) ;
+		pen.size(16) ;
+		active_style.pen(pen) ;
+	}
+
+	Style inactive_style {active_style} ;
+	inactive_style.color(create_color(0x0066));
+
+	//letter_style.size(Size {4 * 50, 1 * 50}) ;
+
+	RGBColor active_color {create_color(0x00aa)} ;
+
+	for(auto it_answer = m_answers.begin() ; it_answer != m_answers.end() ; ++it_answer)
+	{
+		TextBox::SharedPtr p_answer = gui.text_box(*p_container,
+				it_answer->first == m_current ? active_style : inactive_style) ;
+		p_answer->text(it_answer->second) ;
+
+		m_widgets[it_answer->first] = p_answer ;
+
+		inactive_style.position(inactive_style.position() + Size {0, 1 * 50}) ;
+		inactive_style.position(inactive_style.position() + Size {0, 1 * 50}) ;
+	}
+	if(!cons().size()) listen_events() ;
 }
 
 void QuestInterface::listen_events()
 {
-	// This is complex, I should be able to make something simpler (automatic FunPtr
-	// signature, for example)
-	attach_event<void (QuestInterface::*)(EventLoop &, KeyEvent const &)
-		, QuestInterface
-		, EventLoop::keyboard_event_type::slot_function_type
-		>(&QuestInterface::move) ;
+	EventLoop & ev_loop = engine().event_loop() ;
+	boost::signals2::connection con ;
+
+	void (QuestInterface::*oks)(EventLoop &, KeyEvent const &) = &QuestInterface::move ;
+	auto wrapped_oks = boost::bind(oks, this, _1, _2) ;
+	con = ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(wrapped_oks)) ;
+	cons().push_back(con) ;
 }
 
 void QuestInterface::move(EventLoop &, KeyEvent const & ke)
@@ -338,36 +358,46 @@ void QuestInterface::move(EventLoop &, KeyEvent const & ke)
 
 void QuestInterface::answer_next()
 {
-	auto it_current = m_sprites.find(m_current) ; 
+	auto it_current = m_widgets.find(m_current) ; 
 
-	Surface & screen = engine().gui().screen() ;
-	screen.draw(*m_bg_sprites[it_current->first], m_positions[m_current]) ;
+	Style current_style = it_current->second->style() ;
+	current_style.color(create_color(0x0066));
+	it_current->second->style(current_style) ;
+
 
 	++it_current ;
-	if(it_current == m_sprites.end())
-		it_current = m_sprites.begin() ;
+	if(it_current == m_widgets.end())
+		it_current = m_widgets.begin() ;
 
 	m_current = it_current->first ;
 
-	screen.draw(*it_current->second, m_positions[m_current]) ;
-	screen.update() ;
+	current_style = it_current->second->style() ;
+	current_style.color(create_color(0x00aa));
+	it_current->second->style(current_style) ;
+
+	gui().refresh() ;
 }
 
 void QuestInterface::answer_previous()
 {
-	auto it_current = m_sprites.find(m_current) ; 
+	auto it_current = m_widgets.find(m_current) ; 
 
-	Surface & screen = engine().gui().screen() ;
-	screen.draw(*m_bg_sprites[it_current->first], m_positions[m_current]) ;
+	Style current_style = it_current->second->style() ;
+	current_style.color(create_color(0x0066));
+	it_current->second->style(current_style) ;
+
 
 	--it_current ;
-	if(it_current == m_sprites.end())
-		it_current = --m_sprites.end() ;
+	if(it_current == m_widgets.end())
+		it_current = --m_widgets.end() ;
 
 	m_current = it_current->first ;
 
-	screen.draw(*it_current->second, m_positions[m_current]) ;
-	screen.update() ;
+	current_style = it_current->second->style() ;
+	current_style.color(create_color(0x00aa));
+	it_current->second->style(current_style) ;
+
+	gui().refresh() ;
 }
 
 void QuestInterface::select()
@@ -380,34 +410,49 @@ void QuestInterface::select()
 
 void Engine::run()
 {
-	mp_gui = std::make_unique<Gui>(create_videomode(12 * 50, 7 * 50, 16)) ;
 	title_screen() ;
-	gui().event_loop()() ;
+	mp_interface->display() ;
+	(gui().event_loop())() ;
 }
 
 void Engine::game_over()
 {
-	Surface & screen = gui().screen() ;
+	Pen pen ;
+	pen.font(Font {"Verdana"}) ;
+	pen.color(create_color(0x00bbbb)) ;
+	pen.size(30) ;
+
 	Style style ;
-	style.font("Verdana") ;
-	style.color(create_color(0x00bbbb)) ;
-	style.size(30) ;
-	screen.write("Looser!", Size(), style) ;
-	screen.update() ;
+	style.position( {10, 10} ) ;
+	style.size( {100, 50} ) ;
+	style.pen(pen) ;
+
+	TextBox::SharedPtr p_b = gui().text_box(gui().screen(), style) ;
+	p_b->text("Looser!") ;
+
+	gui().refresh() ;
 	sleep(2) ;
 	gui().event_loop().stop() ;
 }
 
 void Engine::quest(std::string const & quest_name)
 {
-	mp_interface = std::make_unique<QuestInterface>(*this) ;
+	{
+		std::unique_ptr<Interface> p_interface = std::make_unique<QuestInterface>(*this) ;
+		std::swap(mp_interface, p_interface) ;
+	}
 	mp_interface->display() ;
+	gui().refresh() ;
 }
 
 void Engine::title_screen()
 {
-	mp_interface = std::make_unique<MenuInterface>(*this) ;
+	{
+		std::unique_ptr<Interface> p_interface = std::make_unique<MenuInterface>(*this) ;
+		std::swap(mp_interface, p_interface) ;
+	}
 	mp_interface->display() ;
+	gui().refresh() ;
 }
 
 int main(int argc, char **argv)

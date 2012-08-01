@@ -19,4 +19,18 @@ namespace std
 
 }
 
+template<typename T>
+T & get_or_throw(std::unique_ptr<T> const & sptr)
+{
+	if(!sptr) throw std::bad_alloc() ;
+	return *sptr ;
+}
+
+template<typename T>
+T & get_or_throw(std::shared_ptr<T> const & sptr)
+{
+	if(!sptr) throw std::bad_alloc() ;
+	return *sptr ;
+}
+
 #endif // HPP_TOOLS_QUEST

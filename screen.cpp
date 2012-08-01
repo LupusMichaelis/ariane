@@ -22,6 +22,9 @@ Screen::~Screen()
 void Screen::init()
 {
 	auto p_s = gui().layout().screen() ;
+	Style s = style() ;
+	s.size(p_s->videomode().size()) ;
+	style(s) ;
 	surface(std::move(p_s)) ;
 }
 
