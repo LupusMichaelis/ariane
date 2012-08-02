@@ -36,6 +36,7 @@ class Engine
 		void title_screen() ;
 		void game_over() ;
 		void quest(std::string const & quest_name) ;
+		void tortoise() ;
 
 		Gui & gui()							{ return m_gui ; }
 		KeyBoard const & keyboard()	const	{ return m_kb ; }
@@ -83,6 +84,35 @@ class Interface
 		std::vector<EventLoop::con_type>
 									m_cons ;
 } /* class Interface */ ;
+
+class TortoiseInterface
+	: public Interface
+{
+	public:
+		explicit TortoiseInterface(Engine & engine)
+			: Interface {engine}
+		{ }
+
+		virtual ~TortoiseInterface() { }
+
+		void move(EventLoop &, KeyEvent const & ke) ;
+		void move(EventLoop &, MouseEvent const & me) ;
+		void move(EventLoop &, MouseButtonEvent const & me) ;
+
+		void move_left() ;
+		void move_right() ;
+		void move_up() ;
+		void move_down() ;
+
+		void display() ;
+
+	private:
+		void listen_events() ;
+
+	private:
+		Box::SharedPtr				mp_turtle ;
+
+} /* class TortoiseInterface */ ;
 
 class MenuInterface
 	: public Interface
@@ -161,6 +191,116 @@ Style Interface::title_style() const
 	style.pen(pen) ;
 
 	return style ;
+}
+
+void TortoiseInterface::display()
+{
+	Screen & screen = engine().gui().screen() ;
+
+	Style bg_style = screen.style() ;
+	bg_style.color(create_color(0xaaaa00)) ;
+	screen.style(bg_style) ;
+
+	Style sprite_style ;
+	sprite_style.size(Size {20, 20}) ;
+	sprite_style.color(create_color(0x00aa)) ;
+
+	sprite_style.color(create_color(0x00)) ;
+	mp_turtle = screen.gui().box(screen, sprite_style) ;
+
+	listen_events() ;
+}
+
+void TortoiseInterface::listen_events()
+{
+	EventLoop & ev_loop = engine().gui().event_loop() ;
+	boost::signals2::connection con ;
+
+	void (TortoiseInterface::*oks)(EventLoop &, KeyEvent const &) = &TortoiseInterface::move ;
+	auto wrapped_oks = boost::bind(oks, this, _1, _2) ;
+	con = ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(wrapped_oks)) ;
+	cons().push_back(con) ;
+
+	void (TortoiseInterface::*omb)(EventLoop &, MouseEvent const &) = &TortoiseInterface::move ;
+	auto wrapped_omb = boost::bind(omb, this, _1, _2) ;
+	con = ev_loop.attach_event(EventLoop::mouse_motion_event_type::slot_function_type(wrapped_omb)) ;
+	cons().push_back(con) ;
+
+	void (TortoiseInterface::*opb)(EventLoop &, MouseButtonEvent const &) = &TortoiseInterface::move ;
+	auto wrapped_opb = boost::bind(opb, this, _1, _2) ;
+	con = ev_loop.attach_event(EventLoop::mouse_button_event_type::slot_function_type(wrapped_opb)) ;
+	cons().push_back(con) ;
+}
+
+void TortoiseInterface::move(EventLoop &, MouseButtonEvent const & me)
+{
+	Style turtle_style = mp_turtle->style() ;
+	Style bg_style = engine().gui().screen().style() ;
+
+	RGBColor turtle_color = turtle_style.color() ;
+	RGBColor bg_color = bg_style.color() ;
+
+	turtle_style.color(bg_color) ;
+	mp_turtle->style(turtle_style) ;
+
+	bg_style.color(turtle_color) ;
+	engine().gui().screen().style(bg_style) ;
+}
+
+void TortoiseInterface::move(EventLoop &, MouseEvent const & me)
+{
+	Style turtle_style = mp_turtle->style() ;
+	turtle_style.position(me.position()) ;
+	mp_turtle->style(turtle_style) ;
+}
+
+void TortoiseInterface::move(EventLoop &, KeyEvent const & ke)
+{
+	if(ke.pressing())
+		return ;
+
+	KeyBoard const & kb = engine().keyboard() ;
+
+	if(ke.key() == kb.up())
+		move_up() ;
+	else if(ke.key() == kb.down())
+		move_down() ;
+	else if(ke.key() == kb.right())
+		move_right() ;
+	else if(ke.key() == kb.left())
+		move_left() ;
+}
+
+void TortoiseInterface::move_left()
+{
+	Style turtle_style = mp_turtle->style() ;
+	Size new_position = turtle_style.position() - Size(10, 0) ;
+	turtle_style.position(new_position) ;
+	mp_turtle->style(turtle_style) ;
+}
+
+void TortoiseInterface::move_right()
+{
+	Style turtle_style = mp_turtle->style() ;
+	Size new_position = turtle_style.position() + Size(10, 0) ;
+	turtle_style.position(new_position) ;
+	mp_turtle->style(turtle_style) ;
+}
+
+void TortoiseInterface::move_up()
+{
+	Style turtle_style = mp_turtle->style() ;
+	Size new_position = turtle_style.position() - Size(0, 10) ;
+	turtle_style.position(new_position) ;
+	mp_turtle->style(turtle_style) ;
+}
+
+void TortoiseInterface::move_down()
+{
+	Style turtle_style = mp_turtle->style() ;
+	Size new_position = turtle_style.position() + Size(0, 10) ;
+	turtle_style.position(new_position) ;
+	mp_turtle->style(turtle_style) ;
 }
 
 void MenuInterface::display()
@@ -277,7 +417,12 @@ void MenuInterface::entry_previous()
 
 void MenuInterface::select()
 {
-	engine().quest(m_current) ;
+	if("first" == m_current)
+		engine().quest(m_current) ;
+	else if("second" == m_current)
+		engine().tortoise() ;
+	else
+		engine().game_over() ;
 }
 
 void QuestInterface::display()
@@ -410,6 +555,7 @@ void Engine::run()
 	auto wrapped_oks = boost::bind(oks, this, _1) ;
 	auto con = ev_loop.attach_event(EventLoop::time_event_type::slot_function_type(wrapped_oks)) ;
 	ev_loop() ;
+	con.disconnect() ;
 }
 
 void Engine::game_over()
@@ -439,8 +585,17 @@ void Engine::quest(std::string const & quest_name)
 		std::swap(mp_interface, p_interface) ;
 	}
 	mp_interface->display() ;
-	gui().refresh() ;
 }
+
+void Engine::tortoise()
+{
+	{
+		std::unique_ptr<Interface> p_interface = std::make_unique<TortoiseInterface>(*this) ;
+		std::swap(mp_interface, p_interface) ;
+	}
+	mp_interface->display() ;
+}
+
 
 void Engine::title_screen()
 {
