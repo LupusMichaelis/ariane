@@ -204,6 +204,29 @@ void SurfaceSDL::crop(Surface & target, Size const & origin, Size const & size) 
 }
 
 #include <SDL/SDL_ttf.h>
+#include <map>
+
+static TTF_Font * get_font(std::string name, unsigned size)
+{
+	static std::map<std::pair<std::string, unsigned>, TTF_Font *> m_fonts ;
+
+	TTF_Font * font_handle = NULL ;
+
+	auto key = std::pair<std::string, unsigned>(name, size) ;
+	auto it_font_handle = m_fonts.find(key) ;
+	if(m_fonts.end() != it_font_handle)
+		font_handle = it_font_handle->second ;
+	else
+	{
+		font_handle = TTF_OpenFont(name.c_str(), size) ;
+		if(!font_handle)
+			throw SDL_GetError() ;
+
+		m_fonts[key] = font_handle ;
+	}
+
+	return font_handle ;
+}
 
 void SurfaceSDL::write(std::string const & message, Style const & style)
 {
@@ -216,10 +239,7 @@ void SurfaceSDL::write(std::string const & message, Style const & style)
 	std::string font_name = (boost::format("/usr/share/fonts/truetype/msttcorefonts/%s.ttf")
 			% pen.font().name()).str() ;
 
-	TTF_Font * font = 0 ;
-	font = TTF_OpenFont(font_name.c_str(), pen.size()) ;
-	if(!font)
-		throw SDL_GetError() ;
+	TTF_Font * font = get_font(font_name, pen.size()) ;
 
 	SDL_Surface * p_text = TTF_RenderText_Solid(font, message.c_str()
 			, {pen.color().red(), pen.color().green(), pen.color().blue(), 0, }) ;
