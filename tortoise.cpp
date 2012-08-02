@@ -58,7 +58,7 @@ class Engine
 {
 	public:
 		Engine()
-			: m_gui(create_videomode(320, 240, 16))
+			: m_gui(create_videomode(1024, 768, 16))
 		{
 		}
 
@@ -68,6 +68,16 @@ class Engine
 		Screen & screen()					{ return m_gui.screen() ; }
 		Gui & gui()							{ return m_gui ; }
 		KeyBoard const & keyboard()	const	{ return m_kb ; }
+
+		void refresh()
+		{
+			gui().refresh() ;
+		}
+
+		void heart_beat(EventLoop &)
+		{
+			refresh() ;
+		}
 
 	private:
 		void init_title_screen() ;
@@ -98,7 +108,6 @@ void Interface::display()
 	sprite_style.color(create_color(0x00)) ;
 	mp_turtle = screen.gui().box(screen, sprite_style) ;
 
-	m_engine.gui().refresh() ;
 	listen_events() ;
 }
 
@@ -141,8 +150,6 @@ void Interface::move(EventLoop &, MouseButtonEvent const & me)
 
 	bg_style.color(turtle_color) ;
 	m_engine.gui().screen().style(bg_style) ;
-
-	m_engine.gui().refresh() ;
 }
 
 void Interface::move(EventLoop &, MouseEvent const & me)
@@ -150,8 +157,6 @@ void Interface::move(EventLoop &, MouseEvent const & me)
 	Style turtle_style = mp_turtle->style() ;
 	turtle_style.position(me.position()) ;
 	mp_turtle->style(turtle_style) ;
-
-	m_engine.gui().refresh() ;
 }
 
 void Interface::move(EventLoop &, KeyEvent const & ke)
@@ -169,8 +174,6 @@ void Interface::move(EventLoop &, KeyEvent const & ke)
 		move_right() ;
 	else if(ke.key() == kb.left())
 		move_left() ;
-
-	m_engine.gui().refresh() ;
 }
 
 void Interface::move_left()
@@ -210,7 +213,12 @@ void Engine::run()
 	mp_interface = std::make_unique<Interface>(*this) ;
 	mp_interface->display() ;
 
+	void (Engine::*oks)(EventLoop &) = &Engine::heart_beat ;
+	auto wrapped_oks = boost::bind(oks, this, _1) ;
+	auto con = event_loop().attach_event(EventLoop::time_event_type::slot_function_type(wrapped_oks)) ;
+
 	(gui().event_loop())() ;
+	con.disconnect() ;
 }
 
 int main(int argc, char **argv)

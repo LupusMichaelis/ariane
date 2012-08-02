@@ -1,10 +1,31 @@
 
 #include "event.hpp"
+#include "tools.hpp"
 
 #include <SDL/SDL.h>
 #include <cstring>
 #include <map>
 #include <boost/format.hpp>
+
+int const EventLoop::c_time_tick_event = 100 ; // in ms
+
+static Uint32 _heart_beat (Uint32 time, void * )
+{
+	SDL_UserEvent ue ;
+	std::memset(&ue, 0, sizeof ue) ;
+	ue.type = SDL_USEREVENT ;
+	ue.code = EventLoop::c_time_tick_event ;
+
+	//TimeEvent * te = new TimeEvent ;
+	//ue.data1 = te ;
+
+	SDL_Event e ;
+	std::memset(&e, 0, sizeof e) ;
+	e.user = ue ;
+
+	return SDL_PushEvent(&e) ;
+}
+
 
 class KeyBoard::KBImpl
 {
@@ -114,19 +135,43 @@ KeyEvent const KeyEvent_from_sdl(SDL_KeyboardEvent const & kev)
 	return KeyEvent (*pk, kev.type == SDL_KEYDOWN ? true : false) ;
 }
 
+struct EventLoop::Impl
+{
+	bool					m_running ;
+
+	keyboard_event_type		m_onkeypress ;
+	mouse_button_event_type m_onmousebutton ;
+	mouse_motion_event_type m_onmousemotion ;
+
+	time_event_type			m_onheartbeat ;
+
+	unsigned				m_heart_pace ;
+} /* struct EventLoop::Impl */ ;
+
+EventLoop::EventLoop()
+	: mp_impl(std::make_unique<Impl>())
+{
+}
+
+EventLoop::~EventLoop()
+{
+}
+
 void EventLoop::operator() ()
 {
 	SDL_Event ev ;
 	std::memset(&ev, 0, sizeof ev) ;
 
-	m_running = true ;
+	init_heart(100) ;
+
+	mp_impl->m_running = true ;
 	do
 	{
 		SDL_WaitEvent(&ev) ;
 		if(ev.type == SDL_KEYDOWN or ev.type == SDL_KEYUP)
 		{
 			KeyEvent ke(KeyEvent_from_sdl(ev.key)) ;
-			m_onkeypress(*this, ke) ;
+			mp_impl->m_onkeypress(*this, ke) ;
 		}
 		else if(ev.type == SDL_MOUSEBUTTONDOWN
 				or ev.type == SDL_MOUSEBUTTONUP)
@@ -142,7 +187,7 @@ void EventLoop::operator() ()
 
 			MouseButtonEvent me(Size(ev.button.x, ev.button.y), bs, press) ;
 
-			m_onmousebutton(*this, me) ;
+			mp_impl->m_onmousebutton(*this, me) ;
 		}
 		else if(ev.type == SDL_MOUSEMOTION)
 		{
@@ -156,7 +201,7 @@ void EventLoop::operator() ()
 
 			MouseMotionEvent me(Size(ev.motion.x, ev.motion.y), bs) ;
 
-			m_onmousemotion(*this, me) ;
+			mp_impl->m_onmousemotion(*this, me) ;
 		}
 		else if(ev.type == SDL_ACTIVEEVENT)
 		{
@@ -165,36 +210,65 @@ void EventLoop::operator() ()
 		}
 		else if(ev.type == SDL_VIDEORESIZE)
 		{
-			// Resize surface
+			// Resized surface
 		}
 		else if(ev.type == SDL_VIDEOEXPOSE)
 		{
 			// redraw surface
 		}
+		else if(ev.type == SDL_USEREVENT)
+		{
+			SDL_UserEvent * uev = &ev.user ;
+			if(uev->code == EventLoop::c_time_tick_event)
+			{
+				mp_impl->m_onheartbeat(*this) ;
+				heart_pace() ;
+			}
+		}
 		else if(ev.type == SDL_QUIT)
 			stop() ;
 	}
-	while(m_running) ;
+	while(mp_impl->m_running) ;
+}
+
+
+void EventLoop::init_heart(unsigned pace)
+{
+	mp_impl->m_heart_pace = pace ;
+	heart_pace() ;
+}
+
+void EventLoop::heart_pace()
+{
+	unsigned interval = 1000 /* ms */ / mp_impl->m_heart_pace ;
+
+	if(-1 ==SDL_InitSubSystem(SDL_INIT_TIMER))
+		throw SDL_GetError() ;
+	// XXX 10 : system time granularity
+	/* int timer_id = */ SDL_AddTimer((interval / 10 )* 10, _heart_beat, NULL) ;
 }
 
 void EventLoop::stop()
 {
-	m_running = false ;
+	mp_impl->m_running = false ;
 }
 
-boost::signals2::connection const EventLoop::attach_event(keyboard_event_type::slot_function_type const & fn)
+EventLoop::con_type const EventLoop::attach_event(keyboard_event_type::slot_function_type const & fn)
 {
-	return m_onkeypress.connect(fn) ;
+	return mp_impl->m_onkeypress.connect(fn) ;
 }
 
-boost::signals2::connection const EventLoop::attach_event(mouse_button_event_type::slot_function_type const & fn)
+EventLoop::con_type const EventLoop::attach_event(mouse_button_event_type::slot_function_type const & fn)
 {
-	return m_onmousebutton.connect(fn) ;
+	return mp_impl->m_onmousebutton.connect(fn) ;
 }
 
-boost::signals2::connection const EventLoop::attach_event(mouse_motion_event_type::slot_function_type const & fn)
+EventLoop::con_type const EventLoop::attach_event(mouse_motion_event_type::slot_function_type const & fn)
 {
-	return m_onmousemotion.connect(fn) ;
+	return mp_impl->m_onmousemotion.connect(fn) ;
 }
 
-
+EventLoop::con_type const EventLoop::attach_event(time_event_type::slot_function_type const & fn)
+{
+	return mp_impl->m_onheartbeat.connect(fn) ;
+}

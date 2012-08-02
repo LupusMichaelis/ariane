@@ -184,27 +184,51 @@ class MouseButtonEvent
 
 } /* class MouseButtonEvent */ ;
 
+class TimeEvent
+	: public Event
+{
+	public:
+
+	private:
+		int m_elapsed ;
+
+} /* class TimeEvent */ ;
+
 class EventLoop
 {
 	public:
+		typedef boost::signals2::connection con_type ;
 		typedef boost::signals2::signal<void (EventLoop &, KeyEvent const &)>			keyboard_event_type ;
 		typedef boost::signals2::signal<void (EventLoop &, MouseMotionEvent const &)>	mouse_motion_event_type ;
 		typedef boost::signals2::signal<void (EventLoop &, MouseButtonEvent const &)> 	mouse_button_event_type ;
 
+		typedef boost::signals2::signal<void (EventLoop &)>								time_event_type ;
+		static
+		int const c_time_tick_event /*= 100 */ ; // in ms
+
+		void init_heart(unsigned time) ;
+
+	public:
+		EventLoop() ;
+
 		void operator() () ;
 
-		boost::signals2::connection const attach_event(keyboard_event_type::slot_function_type const & fn) ;
-		boost::signals2::connection const attach_event(mouse_motion_event_type::slot_function_type const & fn) ;
-		boost::signals2::connection const attach_event(mouse_button_event_type::slot_function_type const & fn) ;
+		con_type const attach_event(keyboard_event_type::slot_function_type const & fn) ;
+		con_type const attach_event(mouse_motion_event_type::slot_function_type const & fn) ;
+		con_type const attach_event(mouse_button_event_type::slot_function_type const & fn) ;
+
+		con_type const attach_event(time_event_type::slot_function_type const & fn) ;
 
 		void stop() ;
 
-	private:
-		bool				m_running ;
+		~EventLoop() ;
 
-		keyboard_event_type		m_onkeypress ;
-		mouse_button_event_type m_onmousebutton ;
-		mouse_motion_event_type m_onmousemotion ;
+	private:
+		void heart_pace() ;
+
+	private:
+		class Impl ;
+		std::unique_ptr<Impl> mp_impl ;
 
 } /* class EventLoop */ ;
 
