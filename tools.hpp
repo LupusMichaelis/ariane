@@ -1,6 +1,7 @@
 #ifndef HPP_TOOLS_QUEST
 #	define HPP_TOOLS_QUEST
 
+#	include <memory>
 
 /// XXX Remove when STL will provide it
 namespace std
