@@ -64,20 +64,11 @@ class Engine
 
 		void run() ;
 
-		EventLoop & event_loop()			{ return gui().event_loop() ; }
 		Screen & screen()					{ return m_gui.screen() ; }
 		Gui & gui()							{ return m_gui ; }
 		KeyBoard const & keyboard()	const	{ return m_kb ; }
 
-		void refresh()
-		{
-			gui().refresh() ;
-		}
-
-		void heart_beat(EventLoop &)
-		{
-			refresh() ;
-		}
+		void heart_beat(EventLoop &) { gui().refresh() ; }
 
 	private:
 		void init_title_screen() ;
@@ -113,7 +104,7 @@ void Interface::display()
 
 void Interface::listen_events()
 {
-	EventLoop & ev_loop = m_engine.event_loop() ;
+	EventLoop & ev_loop = m_engine.gui().event_loop() ;
 	boost::signals2::connection con ;
 
 	void (Interface::*oks)(EventLoop &, KeyEvent const &) = &Interface::move ;
@@ -215,7 +206,7 @@ void Engine::run()
 
 	void (Engine::*oks)(EventLoop &) = &Engine::heart_beat ;
 	auto wrapped_oks = boost::bind(oks, this, _1) ;
-	auto con = event_loop().attach_event(EventLoop::time_event_type::slot_function_type(wrapped_oks)) ;
+	auto con = gui().event_loop().attach_event(EventLoop::time_event_type::slot_function_type(wrapped_oks)) ;
 
 	(gui().event_loop())() ;
 	con.disconnect() ;

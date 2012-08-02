@@ -37,13 +37,12 @@ class Engine
 		void game_over() ;
 		void quest(std::string const & quest_name) ;
 
-		EventLoop & event_loop()			{ return gui().event_loop() ; }
-		Screen & screen()					{ return m_gui.screen() ; }
 		Gui & gui()							{ return m_gui ; }
 		KeyBoard const & keyboard()	const	{ return m_kb ; }
 
 	private:
 		void init_title_screen() ;
+		void heart_beat(EventLoop &) { gui().refresh() ; }
 
 		std::unique_ptr<Interface>	mp_interface ;
 
@@ -61,8 +60,6 @@ class Interface
 		{ }
 
 		Engine & engine()		{ return m_engine ; }
-		Gui & gui()				{ return engine().gui() ; }
-
 		Style title_style() const ;
 
 		virtual
@@ -71,19 +68,19 @@ class Interface
 		virtual ~Interface() { unlisten_events() ; }
 
 	protected:
-		std::vector<boost::signals2::connection> & cons() { return m_cons ; }
+		std::vector<EventLoop::con_type> & cons() { return m_cons ; }
 
 	private:
 		void unlisten_events()
 		{
-			std::for_each(m_cons.begin(), m_cons.end(), std::mem_fun_ref(&boost::signals2::connection::disconnect)) ;
+			std::for_each(m_cons.begin(), m_cons.end(), std::mem_fun_ref(&EventLoop::con_type::disconnect)) ;
 		}
 
 	private:
 		Engine &					m_engine ;
 
 		// Managed connection, to avoid dandling events if this is deleted
-		std::vector<boost::signals2::connection>
+		std::vector<EventLoop::con_type>
 									m_cons ;
 } /* class Interface */ ;
 
@@ -210,8 +207,8 @@ void MenuInterface::display()
 
 void MenuInterface::listen_events()
 {
-	EventLoop & ev_loop = engine().event_loop() ;
-	boost::signals2::connection con ;
+	EventLoop & ev_loop = engine().gui().event_loop() ;
+	EventLoop::con_type con ;
 
 	void (MenuInterface::*oks)(EventLoop &, KeyEvent const &) = &MenuInterface::move ;
 	auto wrapped_oks = boost::bind(oks, this, _1, _2) ;
@@ -254,7 +251,6 @@ void MenuInterface::entry_next()
 	}
 
 	m_current = it_current->first ;
-	gui().refresh() ;
 }
 
 void MenuInterface::entry_previous()
@@ -277,7 +273,6 @@ void MenuInterface::entry_previous()
 	}
 
 	m_current = it_current->first ;
-	gui().refresh() ;
 }
 
 void MenuInterface::select()
@@ -332,8 +327,8 @@ void QuestInterface::display()
 
 void QuestInterface::listen_events()
 {
-	EventLoop & ev_loop = engine().event_loop() ;
-	boost::signals2::connection con ;
+	EventLoop & ev_loop = engine().gui().event_loop() ;
+	EventLoop::con_type con ;
 
 	void (QuestInterface::*oks)(EventLoop &, KeyEvent const &) = &QuestInterface::move ;
 	auto wrapped_oks = boost::bind(oks, this, _1, _2) ;
@@ -374,8 +369,6 @@ void QuestInterface::answer_next()
 	current_style = it_current->second->style() ;
 	current_style.color(create_color(0x00aa));
 	it_current->second->style(current_style) ;
-
-	gui().refresh() ;
 }
 
 void QuestInterface::answer_previous()
@@ -397,7 +390,6 @@ void QuestInterface::answer_previous()
 	current_style.color(create_color(0x00aa));
 	it_current->second->style(current_style) ;
 
-	gui().refresh() ;
 }
 
 void QuestInterface::select()
@@ -412,7 +404,12 @@ void Engine::run()
 {
 	title_screen() ;
 	mp_interface->display() ;
-	(gui().event_loop())() ;
+
+	EventLoop & ev_loop = gui().event_loop() ;
+	void (Engine::*oks)(EventLoop &) = &Engine::heart_beat ;
+	auto wrapped_oks = boost::bind(oks, this, _1) ;
+	auto con = ev_loop.attach_event(EventLoop::time_event_type::slot_function_type(wrapped_oks)) ;
+	ev_loop() ;
 }
 
 void Engine::game_over()
