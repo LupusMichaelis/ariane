@@ -33,6 +33,10 @@ SRCS= \
 	  event.cpp \
 	  gui.cpp \
 	  gui_layout.cpp \
+	  \
+	  interface.cpp \
+	  engine.cpp \
+
 
 OBJS=$(SRCS:.cpp=.o)
 
