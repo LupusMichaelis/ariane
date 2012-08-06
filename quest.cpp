@@ -16,7 +16,6 @@
 #include <memory>
 #include <iostream>
 
-
 #include <boost/format.hpp>
 #include <boost/bind.hpp>
 
@@ -107,8 +106,8 @@ class MenuInterface
 	public:
 		explicit MenuInterface(QuestEngine & engine)
 			: QuestInterface {engine}
-			, m_current("map")
-			, m_widgets()
+			, m_current(0)
+			, m_widgets(3)
 		{
 		}
 
@@ -127,8 +126,8 @@ class MenuInterface
 		virtual
 		void display() ;
 
-		std::string					m_current ;
-		std::map<std::string, TextBox::SharedPtr>
+		unsigned					m_current ;
+		std::vector<TextBox::SharedPtr>
 									m_widgets ;
 
 } /* class MenuInterface */ ;
@@ -259,18 +258,25 @@ void MenuInterface::display()
 
 	entry_style.size(Size {4 * 50, 1 * 50} ) ;
 
-	entry_style.position(Size {6 * 50, 3 * 50} ) ;
-	m_widgets["map"] = screen.gui().text_box(*p_container, entry_style) ;
-	m_widgets["map"]->text("Map builder") ;
+	m_widgets[0] = screen.gui().text_box(*p_container, entry_style) ;
+	m_widgets[0]->text("Map builder") ;
 
 	entry_style.color(create_color(0x111111)) ;
-	entry_style.position(Size {6 * 50, 4 * 50} ) ; 
-	m_widgets["tortoise"] = screen.gui().text_box(*p_container, entry_style) ;
-	m_widgets["tortoise"]->text("Tortoise") ;
+	m_widgets[1] = screen.gui().text_box(*p_container, entry_style) ;
+	m_widgets[1]->text("Tortoise") ;
 
-	entry_style.position(Size {6 * 50, 5 * 50} ) ; 
-	m_widgets["me"] = screen.gui().text_box(*p_container, entry_style) ;
-	m_widgets["me"]->text("Get me") ;
+	m_widgets[2] = screen.gui().text_box(*p_container, entry_style) ;
+	m_widgets[2]->text("Get me") ;
+
+	int pos = 0 ;
+	for(auto w: m_widgets)
+	{
+		Style s { w->style() } ;
+		s.position(Size {6 * 50, (3 + pos) * 50 } ) ;
+		w->style(s) ;
+
+		++pos ;
+	}
 
 	set_container(p_container) ;
 }
@@ -292,56 +298,56 @@ void MenuInterface::move(EventLoop &, KeyEvent const & ke)
 
 void MenuInterface::entry_next()
 {
-	auto it_current = m_widgets.find(m_current) ; 
 	{
-		Style ws { it_current->second->style() } ;
+		auto & w = *m_widgets[m_current] ; 
+		Style ws { w.style() } ;
 		ws.color(create_color(0x111111)) ;
-		it_current->second->style(ws) ;
+		w.style(ws) ;
 	}
 
-	++it_current;
-	if(it_current == m_widgets.end())
-		it_current = m_widgets.begin() ;
+
+	++m_current;
+	if(m_current == m_widgets.size())
+		m_current = 0 ;
 
 	{
-		Style ws { it_current->second->style() } ;
+		auto & w = *m_widgets[m_current] ; 
+		Style ws { w.style() } ;
 		ws.color(create_color(0xaaaaaa)) ;
-		it_current->second->style(ws) ;
+		w.style(ws) ;
 	}
-
-	m_current = it_current->first ;
 }
 
 void MenuInterface::entry_previous()
 {
-	auto it_current = m_widgets.find(m_current) ; 
 	{
-		Style ws { it_current->second->style() } ;
+		auto & w = *m_widgets[m_current] ; 
+		Style ws { w.style() } ;
 		ws.color(create_color(0x111111)) ;
-		it_current->second->style(ws) ;
+		w.style(ws) ;
 	}
 
-	--it_current;
-	if(it_current == m_widgets.end())
-		it_current = --m_widgets.end() ;
+	if(m_current == 0)
+		m_current = m_widgets.size() - 1 ;
+	else
+		--m_current ;
 
 	{
-		Style ws { it_current->second->style() } ;
+		auto & w = *m_widgets[m_current] ; 
+		Style ws { w.style() } ;
 		ws.color(create_color(0xaaaaaa)) ;
-		it_current->second->style(ws) ;
+		w.style(ws) ;
 	}
-
-	m_current = it_current->first ;
 }
 
 void MenuInterface::select()
 {
-	if("tortoise" == m_current)
+	if(1 == m_current)
 		engine().tortoise() ;
-	else if("me" == m_current)
+	else if(2 == m_current)
 		engine().menu() ;
 	/*
-	else if("map" == m_current)
+	else if(0 == m_current)
 		engine().map_builder()
 		*/
 	else
