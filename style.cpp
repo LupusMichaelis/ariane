@@ -1,128 +1,218 @@
 #include "style.hpp"
+#include "tools.hpp"
 
-Font::Font()
-	: m_name()
+struct Font::Impl
+{
+	std::string		m_name ;
+	unsigned		m_size ;
+
+	Impl(std::string const & name, unsigned const size)
+		: m_name(name), m_size(size) { }
+
+} /* struct Font::Impl */ ;
+
+Font::Font(std::string const & name, unsigned const size)
+	: mp_impl { std::make_unique<Impl>(name, size) }
+{ }
+
+Font::Font(Font const & copied)
+	: Font {copied.name(), copied.size()}
+{ }
+
+Font & Font::operator =(Font const & copied)
+{
+	Font copy {copied} ;
+	std::swap(mp_impl, copy.mp_impl) ;
+	return *this ;
+}
+
+Font::~Font()
 {
 }
 
-Font::Font(std::string const & font_name)
-	: m_name(font_name)
+unsigned const Font::size() const
 {
+	return mp_impl->m_size ;
 }
 
 std::string const & Font::name() const
 {
-	return m_name ;
+	return mp_impl->m_name ;
 }
 
-void Font::name(std::string const & new_name)
+bool const operator ==(Font const & lhs, Font const & rhs)
 {
-	m_name = new_name ;
+	return lhs.name() == rhs.name() && lhs.size() == rhs.size() ;
+}
+
+bool const operator !=(Font const & lhs, Font const & rhs)
+{
+	return ! (lhs == rhs) ;
 }
 
 ////////////////////////////////////////////////////////////////////////
-Pen::Pen()
-	: m_font()
-	, m_color(0, 0, 0)
-	, m_size(10u)
+struct Pen::Impl
+{
+	Font		m_font ;
+	RGBColor	m_color ;
+	unsigned	m_size ;
+
+	Impl(Font const & set_font, RGBColor const & set_color, unsigned const set_size)
+		: m_font(set_font)
+		, m_color(set_color)
+		, m_size(set_size)
+	{
+	}
+} /* struct Pen::Impl */ ;
+
+Pen::Pen(Pen const & copied)
+	: Pen {copied.mp_impl->m_font, copied.mp_impl->m_color, copied.mp_impl->m_size}
 {
 }
 
+Pen::~Pen()
+{
+}
+
+Pen & Pen::operator =(Pen const & copied)
+{
+	Pen copy {copied} ;
+	std::swap(mp_impl, copy.mp_impl) ;
+	return *this ;
+}
+
 Pen::Pen(Font const & set_font, RGBColor const & set_color, unsigned const set_size)
-	: m_font(set_font)
-	, m_color(set_color)
-	, m_size(set_size)
+	: mp_impl {std::make_unique<Impl>(set_font, set_color, set_size) }
 {
 }
 
 void Pen::color(RGBColor const & color)
 {
-	m_color = color ;
+	mp_impl->m_color = color ;
 }
 
 RGBColor const & Pen::color() const
 {
-	return m_color ;
+	return mp_impl->m_color ;
 }
 
 void Pen::font(Font const & new_font)
 {
-	m_font = new_font ;
+	mp_impl->m_font = new_font ;
 }
 
 Font const & Pen::font() const
 {
-	return m_font ;
+	return mp_impl->m_font ;
 }
 
 void Pen::size(unsigned new_size)
 {
-	m_size = new_size ;
+	mp_impl->m_size = new_size ;
 }
 
 unsigned const Pen::size() const
 {
-	return m_size ;
+	return mp_impl->m_size ;
 }
 
 ////////////////////////////////////////////////////////////////////////
-Style::Style()
-	: m_pen(Font {}, create_color(0xffffff), 10u)
-	, m_color(0, 0, 0)
-	, m_padding()
-	, m_position()
-	, m_size()
+struct Style::Impl
 {
+	Impl(Pen const & set_pen
+		, RGBColor const & set_color
+		, Size const & set_position
+		, Size const & set_padding
+		, Size const & set_size
+		)
+		: m_pen(set_pen)
+		, m_color(set_color)
+		, m_padding(set_padding)
+		, m_position(set_position)
+		, m_size(set_size)
+	{}
+
+	Pen			m_pen ;
+	RGBColor	m_color ;
+	Size		m_padding ;
+	Size		m_position ;
+	Size		m_size ;
+} /* struct Style::Impl */ ;
+
+Style::Style(Pen const & set_pen
+		, RGBColor const & set_color
+		, Size const & set_position
+		, Size const & set_padding
+		, Size const & set_size
+		)
+	: mp_impl {std::make_unique<Impl>(set_pen, set_color, set_position, set_padding, set_size) }
+{
+}
+
+Style::~Style()
+{
+}
+
+Style::Style(Style const & copied)
+	: Style {copied.pen(), copied.color(), copied.position(), copied.padding(), copied.size() }
+{
+}
+
+Style & Style::operator =(Style const & copied)
+{
+	Style copy {copied} ;
+	std::swap(copy.mp_impl, this->mp_impl) ;
+	return *this ;
 }
 
 void Style::position(Size const & new_position)
 {
-	m_position = new_position ;
+	mp_impl->m_position = new_position ;
 }
 
 Size const & Style::position() const
 {
-	return m_position ;
+	return mp_impl->m_position ;
 }
 
 void Style::padding(Size const & new_padding)
 {
-	m_padding = new_padding ;
+	mp_impl->m_padding = new_padding ;
 }
 
 Size const & Style::padding() const
 {
-	return m_padding ;
+	return mp_impl->m_padding ;
 }
 
 void Style::color(RGBColor const & color)
 {
-	m_color = color ;
+	mp_impl->m_color = color ;
 }
 
 RGBColor const & Style::color() const
 {
-	return m_color ;
+	return mp_impl->m_color ;
 }
 
 void Style::pen(Pen const & new_pen)
 {
-	m_pen = new_pen ;
+	mp_impl->m_pen = new_pen ;
 }
 
 Pen const & Style::pen() const
 {
-	return m_pen ;
+	return mp_impl->m_pen ;
 }
 
 void Style::size(Size const & new_size)
 {
-	m_size = new_size ;
+	mp_impl->m_size = new_size ;
 }
 
 Size const & Style::size() const
 {
-	return m_size ;
+	return mp_impl->m_size ;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -151,12 +241,3 @@ bool const operator !=(Pen const & lhs, Pen const & rhs)
 	return ! (lhs == rhs) ;
 }
 
-bool const operator ==(Font const & lhs, Font const & rhs)
-{
-	return lhs.name() == rhs.name() ;
-}
-
-bool const operator !=(Font const & lhs, Font const & rhs)
-{
-	return ! (lhs == rhs) ;
-}

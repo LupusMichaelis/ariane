@@ -14,15 +14,17 @@
 
 #include "videomode.hpp"
 #include "event.hpp"
+#include "font_manager.hpp"
 #include "style.hpp"
 
 #include "tools.hpp"
 
 struct Gui::Impl
 {
-	Impl(VideoMode const & set_videomode)
+	Impl(Gui & gui, VideoMode const & set_videomode)
 		: mp_layout(std::make_unique<GuiLayout>(set_videomode))
 		, m_event_loop()
+		, mp_screen()
 	{ }
 
 	std::unique_ptr<GuiLayout>	mp_layout ;
@@ -33,7 +35,7 @@ struct Gui::Impl
 
 ////////////////////////////////////////////////////////////
 Gui::Gui(VideoMode const & set_videomode)
-	: mp_impl(std::make_unique<Impl>(set_videomode))
+	: mp_impl(std::make_unique<Impl>(*this, set_videomode))
 {
 }
 
@@ -83,7 +85,9 @@ EventLoop & Gui::event_loop()
 
 Style const Gui::style() const
 {
-	return Style() ;
+	return Style(Pen {Font {"Arial", 12}, create_color(0xffffff), 12}
+			, create_color(0x0)
+			, Size {0, 0}, Size {10, 10}, Size{100, 100}) ;
 }
 
 GuiLayout const & Gui::layout() const

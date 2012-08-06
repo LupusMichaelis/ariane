@@ -2,19 +2,34 @@
 #include "gui_layout.hpp"
 #include "surface.hpp"
 #include "grid.hpp"
+#include "font_manager.hpp"
+#include "text_surface.hpp"
+#include "gui.hpp"
 
 #include "tools.hpp"
 
+struct GuiLayout::Impl
+{
+	Impl(GuiLayout & gui_layout, VideoMode const & videomode)
+		: m_videomode(videomode)
+		, m_font_manager(gui_layout, {})
+	{ }
+
+	VideoMode					m_videomode ;
+	FontManager					m_font_manager ;
+} /* struct GuiLayout::Impl */ ;
+
 GuiLayout::GuiLayout(VideoMode const & set_videomode)
-	: m_videomode(set_videomode)
+	: mp_impl(std::make_unique<Impl>(*this, set_videomode))
 {
 	if(SDL_Init(SDL_INIT_VIDEO) == -1)
 		throw SDL_GetError() ;
+	SDL_ShowCursor(SDL_DISABLE) ;
 }
 
 std::unique_ptr<Surface> GuiLayout::screen() const
 {
-	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), m_videomode, true) ;
+	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), videomode(), true) ;
 }
 
 GuiLayout::~GuiLayout()
@@ -22,10 +37,15 @@ GuiLayout::~GuiLayout()
 	SDL_Quit() ;
 }
 
+VideoMode const GuiLayout::videomode() const
+{
+	return mp_impl->m_videomode ;
+}
+
 std::unique_ptr<Surface> GuiLayout::surface(Size const & size) const
 {
-	VideoMode videomode { size, m_videomode.depth() } ;
-	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), videomode) ;
+	VideoMode v { size, videomode().depth() } ;
+	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), v) ;
 }
 
 std::unique_ptr<Surface> GuiLayout::surface(std::string const & file_name) const
@@ -42,4 +62,26 @@ std::unique_ptr<Surface> GuiLayout::surface(Surface const & source) const
 std::unique_ptr<Grid> GuiLayout::grid(Surface & reference, Size const & sprite_size) const
 {
 	return std::make_unique<Grid>(reference, sprite_size) ;
+}
+
+FontManager const & GuiLayout::fonts() const
+{
+	return const_cast<FontManager &>(const_cast<GuiLayout &>(*this).fonts()) ;
+}
+
+FontManager & GuiLayout::fonts()
+{
+	return mp_impl->m_font_manager ;
+}
+
+std::unique_ptr<TextSurface> GuiLayout::text(std::string const & content, Pen const & pen, Size const & size)
+{
+	auto p_font = fonts().get(pen.font().name(), pen.size()) ;
+	return std::make_unique<TextSurfaceSDL>(*this
+			, create_videomode(size, videomode().depth())
+			, content
+			, std::static_pointer_cast<FontSDL>(p_font)
+			, pen.color()
+		) ;
+
 }

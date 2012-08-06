@@ -5,26 +5,39 @@
 #	include "color.hpp"
 #	include "videomode.hpp"
 
-class Surface ;
+class Pen ;
 
 class Font
 {
 	public:
-		Font() ;
-		Font(std::string const & font_name) ;
+		typedef std::shared_ptr<Font>		SharedPtr ;
 
+	public:
+		Font(Font const & copied) ;
+		Font & operator =(Font const & copied) ;
+		Font(std::string const & name, unsigned const size) ;
+		virtual
+		~Font() ;
+
+		virtual
+		unsigned const size() const ;
+		virtual
 		std::string const & name() const ;
-		void name(std::string const & new_name) ;
 
 	private:
-		std::string		m_name ;
+		class Impl ;
+		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class Font */ ;
+
+bool const operator ==(Font const & lhs, Font const & rhs) ;
+bool const operator !=(Font const & lhs, Font const & rhs) ;
 
 class Pen
 {
 	public:
-		Pen() ;
+		Pen(Pen const & copied) ;
+		Pen & operator =(Pen const & copied) ;
 		Pen(Font const & set_font, RGBColor const & set_color, unsigned const set_size) ;
 
 		void color(RGBColor const & new_color) ;
@@ -36,17 +49,26 @@ class Pen
 		void size(unsigned const new_size) ;
 		unsigned const size() const ;
 
+		~Pen() ;
+
 	private:
-		Font		m_font ;
-		RGBColor	m_color ;
-		unsigned	m_size ;
+		class Impl ;
+		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class Pen */ ;
 
 class Style
 {
 	public:
-		Style() ;
+		Style(Pen const & set_pen
+				, RGBColor const & set_color
+				, Size const & set_position
+				, Size const & set_padding
+				, Size const & set_size
+			) ;
+
+		Style(Style const & copied) ;
+		Style & operator =(Style const & copied) ;
 
 		void pen(Pen const & new_pen) ;
 		Pen const & pen() const ;
@@ -63,17 +85,13 @@ class Style
 		void color(RGBColor const & new_color) ;
 		RGBColor const & color() const ;
 
+		virtual ~Style() ;
+
 	private:
-		Pen			m_pen ;
-		RGBColor	m_color ;
-		Size		m_padding ;
-		Size		m_position ;
-		Size		m_size ;
+		class Impl ;
+		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class Style */ ;
-
-bool const operator ==(Font const & lhs, Font const & rhs) ;
-bool const operator !=(Font const & lhs, Font const & rhs) ;
 
 bool const operator ==(Pen const & lhs, Pen const & rhs) ;
 bool const operator !=(Pen const & lhs, Pen const & rhs) ;

@@ -76,7 +76,6 @@ void test_base()
 
 	auto p_s4 = gui_layout.surface(Size {60, 60}) ;
 	p_s4->draw(screen) ;
-	//p_screen->draw(*p_s4, Size(100, 100)) ;
 	screen.fill(*p_s4, Size(60, 60), Size {150, 150}) ;
 
 	screen.update() ;
@@ -157,7 +156,7 @@ void test_write()
 	Box::SharedPtr p_box ;
 
 	{
-		Style style ;
+		Style style = gui.style() ;
 		style.position({10, 10}) ;
 		style.size({600, 400}) ;
 		style.color(create_color(0xffff)) ;
@@ -166,11 +165,11 @@ void test_write()
 	}
 
 	{
-		Style style ;
+		Style style = gui.style() ;
 		style.color(create_color(0x0)) ;
 
 		Pen pen = style.pen() ;
-		pen.font(Font {"Comic_Sans_MS"}) ;
+		pen.font(Font {"Comic_Sans_MS", 16u}) ;
 		pen.color(create_color(0xffffff)) ;
 		pen.size(16u) ;
 		style.pen(pen) ;
@@ -225,7 +224,7 @@ void test_widget()
 	box_style.color(create_color(0x0)) ;
 
 	Pen pen = box_style.pen() ;
-	pen.font(Font {"Comic_Sans_MS"}) ;
+	pen.font(Font {"Comic_Sans_MS", 16u}) ;
 	pen.color(create_color(0xffffff)) ;
 	pen.size(16u) ;
 	box_style.pen(pen) ;

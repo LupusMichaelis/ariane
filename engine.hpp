@@ -23,6 +23,7 @@ class Engine
 		void game_over() ;
 
 		Gui & gui() ;
+		Gui const & gui() const ;
 		KeyBoard const & keyboard()	const ;
 
 		template <typename InterfaceType, typename EngineType = Engine>

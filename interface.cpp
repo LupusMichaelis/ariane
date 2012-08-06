@@ -1,6 +1,8 @@
 
 #include "interface.hpp"
 #include "engine.hpp"
+#include "style.hpp"
+#include "screen.hpp"
 #include "tools.hpp"
 
 struct Interface::Impl
@@ -23,12 +25,33 @@ Interface::Interface(Engine & engine)
 	listen_events() ;
 }
 
+Style Interface::title_style() const
+{
+	Style style = engine().gui().screen().style() ;
+	style.color(create_color(0x0)) ;
+	style.size(Size { 8 * 50, 2 * 50}) ;
+	style.position(Size {2 * 50, 1 * 50}) ;
+
+	Pen pen = style.pen() ;
+	pen.color(create_color(0x660000)) ;
+	pen.font(Font {"Comic_Sans_MS", 16}) ;
+	pen.size(16) ;
+	style.pen(pen) ;
+
+	return style ;
+}
+
 Interface::~Interface()
 {
 	unlisten_events() ;
 }
 
 Engine & Interface::engine()
+{
+	return const_cast<Engine &>(const_cast<Interface const &>(*this).engine()) ;
+}
+
+Engine const & Interface::engine() const
 {
 	return mp_impl->m_engine ;
 }

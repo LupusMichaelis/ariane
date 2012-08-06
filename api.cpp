@@ -6,6 +6,10 @@ Surface::~Surface()
 {
 }
 
+TextSurface::~TextSurface()
+{
+}
+
 EventTarget::~EventTarget()
 {
 }

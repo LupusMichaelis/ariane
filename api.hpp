@@ -2,6 +2,7 @@
 #	define HPP_API_QUEST
 
 #	include <memory>
+#	include <string>
 #	include <boost/utility.hpp>
 
 class GuiLayout ;
@@ -9,6 +10,8 @@ class RGBColor ;
 class VideoMode ;
 class Size ;
 class Style ;
+class Pen ;
+class Font ;
 
 class Surface
 	//: boost::noncopyable
@@ -27,12 +30,25 @@ class Surface
 
 		virtual void write(std::string const & message, Style const & style) = 0 ;
 
-		virtual ~Surface() = 0 ;
-
 		virtual const GuiLayout & gui_layout() const = 0 ;
 		virtual GuiLayout & gui_layout() = 0 ;
 
+		virtual ~Surface() = 0 ;
+
 } /* class Surface */ ;
+
+class TextSurface
+	: public virtual Surface
+{
+	public:
+		virtual std::string const & text() const = 0 ;
+		virtual Font const & font() const = 0 ;
+		virtual
+		RGBColor const & color() const = 0 ;
+
+		virtual ~TextSurface() = 0 ;
+
+} /* class TextSurface */ ;
 
 class Gui ;
 class Style ;

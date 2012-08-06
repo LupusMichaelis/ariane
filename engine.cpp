@@ -31,6 +31,11 @@ Engine::~Engine()
 
 Gui & Engine::gui()
 {
+	return const_cast<Gui &>(const_cast<Engine const &>(*this).gui()) ;
+}
+
+Gui const & Engine::gui() const
+{
 	return mp_impl->m_gui ;
 }
 
@@ -59,15 +64,8 @@ void Engine::run()
 
 void Engine::game_over()
 {
-	Pen pen ;
-	pen.font(Font {"Verdana"}) ;
-	pen.color(create_color(0x00bbbb)) ;
-	pen.size(30) ;
-
-	Style style ;
-	style.position( {10, 10} ) ;
-	style.size( {100, 50} ) ;
-	style.pen(pen) ;
+	Pen pen(Font {"Verdana", 30}, create_color(0x00bbbb), 30) ;
+	Style style {pen, create_color(0), {10, 10}, {1, 1}, {100, 50} } ;
 
 	TextBox::SharedPtr p_b = gui().text_box(gui().screen(), style) ;
 	p_b->text("Looser!") ;

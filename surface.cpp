@@ -12,20 +12,30 @@
 #include <boost/format.hpp>
 
 class SurfaceSDL::Impl
-	: std::unique_ptr<SDL_Surface, void (*) (SDL_Surface *)>
 {
 	private:
 		typedef std::unique_ptr<SDL_Surface, void (*) (SDL_Surface *)> unique_ptr ;
 
 		void ensure()
 		{
-			if(!*this)
+			if(!mp_surface)
 				throw SDL_GetError() ;
 		}
 
 	public:
-		explicit Impl(GuiLayout & gui_layout, VideoMode const & videomode, bool is_screen = false)
-			: unique_ptr
+		Impl(SDL_Surface * p_raw
+			, unique_ptr::deleter_type deleter
+			, GuiLayout & gui_layout
+			, bool is_screen = false
+			)
+			: mp_surface {p_raw, deleter}
+			, m_gui_layout(gui_layout)
+			, m_is_screen(is_screen)
+		{
+		}
+
+		Impl(GuiLayout & gui_layout, VideoMode const & videomode, bool is_screen = false)
+			: Impl
 			{
 				is_screen
 					  ? SDL_SetVideoMode(videomode.width(), videomode.height(), videomode.depth(), SDL_DOUBLEBUF)
@@ -35,25 +45,24 @@ class SurfaceSDL::Impl
 				, is_screen
 					? &SDL_FreeSurface
 					: [] (SDL_Surface *) { /* SDL_Quit() ; */ }
+				, gui_layout
+				, is_screen
 			}
-			, m_gui_layout(gui_layout)
-			, m_is_screen(is_screen)
 		{
 			ensure() ;
 		}
 
 		explicit Impl(GuiLayout & gui_layout, std::string const & filename)
-			: unique_ptr { SDL_LoadBMP(filename.c_str()), &SDL_FreeSurface }
+			: mp_surface { SDL_LoadBMP(filename.c_str()), &SDL_FreeSurface }
 			, m_gui_layout(gui_layout)
 			, m_is_screen(false)
 		{
 			ensure() ;
 		}
 
-		using unique_ptr::get ;
-
-		GuiLayout &							m_gui_layout ;
-		bool m_is_screen ;
+		unique_ptr			mp_surface ;
+		GuiLayout &			m_gui_layout ;
+		bool				m_is_screen ;
 
 } /* SurfaceSDL::Impl */ ;
 
@@ -73,7 +82,7 @@ SurfaceSDL::SurfaceSDL(SurfaceSDL const & copied)
 	: Surface(copied)
 	, mp_impl(std::make_unique<Impl>(const_cast<GuiLayout &>(copied.gui_layout()), copied.videomode()))
 {
-	draw_static(copied, Size {0,0}) ;
+	draw_static(copied, nullptr, nullptr) ;
 }
 
 SurfaceSDL::~SurfaceSDL()
@@ -92,7 +101,12 @@ GuiLayout & SurfaceSDL::gui_layout()
 
 SDL_Surface * SurfaceSDL::get_raw() const
 {
-	return mp_impl->get() ;
+	return mp_impl->mp_surface.get() ;
+}
+
+void SurfaceSDL::set_raw(SDL_Surface * p_raw)
+{
+	mp_impl->mp_surface.reset(p_raw) ; //std::unique_ptr<SDL_Surface, void (*)(SDL_Surface *)>(p_raw, &SDL_FreeSurface)) ;
 }
 
 VideoMode const SurfaceSDL::videomode() const
@@ -131,25 +145,42 @@ void SurfaceSDL::fill(Surface const & pattern, Size const & from, Size const & t
 
 void SurfaceSDL::draw(Surface const & motif)
 {
-	draw(motif, Size(0, 0)) ;
+	draw_static(motif, nullptr, nullptr) ;
 }
 
 void SurfaceSDL::draw(Surface const & motif, Size const & at)
 {
-	draw_static(motif, at) ;
+	draw_static(motif, &at, nullptr) ;
 }
 
-void SurfaceSDL::draw_static(Surface const & motif, Size const & at)
+void SurfaceSDL::draw(Surface const & motif, Size const & at, Size const & by)
 {
-	SDL_Rect dst ;
-	dst.x = at.width() ;
-	dst.y = at.height() ;
+	draw_static(motif, &at, &by) ;
+}
+
+void SurfaceSDL::draw_static(Surface const & motif, Size const * at, Size const * by)
+{
+	std::unique_ptr<SDL_Rect> position, boundary ;
+
+	if(at)
+	{
+		position = std::make_unique<SDL_Rect>() ;
+		position->x = at->width() ;
+		position->y = at->height() ;
+	}
+
+	if(by)
+	{
+		boundary = std::make_unique<SDL_Rect>() ;
+		boundary->w = by->width() ;
+		boundary->h = by->height() ;
+	}
 
 	SurfaceSDL const & sdl_motif = dynamic_cast<SurfaceSDL const &>(motif) ;
 	
 	SDL_Surface * p_from = sdl_motif.get_raw() ;
 	SDL_Surface * p_to = get_raw() ;
-	int ret = SDL_BlitSurface(p_from, 0, p_to, &dst) ;
+	int ret = SDL_BlitSurface(p_from, boundary.get(), p_to, position.get()) ;
 	
 	if(ret == -1)
 		throw SDL_GetError() ;
@@ -169,6 +200,9 @@ void SurfaceSDL::resize(Size const & new_size)
 	mp_impl = std::make_unique<Impl>(gui_layout(), new_videomode, mp_impl->m_is_screen) ;
 	draw(*p_copy) ;
 }
+
+#include <iostream>
+#include <boost/format.hpp>
 
 void SurfaceSDL::update() const
 {
@@ -203,60 +237,11 @@ void SurfaceSDL::crop(Surface & target, Size const & origin, Size const & size) 
 		throw "Must reload resources" ;
 }
 
-#include <SDL/SDL_ttf.h>
-#include <map>
-
-static TTF_Font * get_font(std::string name, unsigned size)
-{
-	static std::map<std::pair<std::string, unsigned>, TTF_Font *> m_fonts ;
-
-	TTF_Font * font_handle = NULL ;
-
-	auto key = std::pair<std::string, unsigned>(name, size) ;
-	auto it_font_handle = m_fonts.find(key) ;
-	if(m_fonts.end() != it_font_handle)
-		font_handle = it_font_handle->second ;
-	else
-	{
-		font_handle = TTF_OpenFont(name.c_str(), size) ;
-		if(!font_handle)
-			throw SDL_GetError() ;
-
-		m_fonts[key] = font_handle ;
-	}
-
-	return font_handle ;
-}
-
 void SurfaceSDL::write(std::string const & message, Style const & style)
 {
-	int ret = TTF_Init() ;
-	if(ret == -1)
-		throw SDL_GetError() ;
-
-	Pen const & pen = style.pen() ;
-
-	std::string font_name = (boost::format("/usr/share/fonts/truetype/msttcorefonts/%s.ttf")
-			% pen.font().name()).str() ;
-
-	TTF_Font * font = get_font(font_name, pen.size()) ;
-
-	SDL_Surface * p_text = TTF_RenderText_Solid(font, message.c_str()
-			, {pen.color().red(), pen.color().green(), pen.color().blue(), 0, }) ;
-	if(!p_text)
-		throw SDL_GetError() ;
-
 	Size const & at = style.padding() ;
-	Size const & size = style.size() ;
+	Size const & by = style.size() ;
 
-	SDL_Rect dst = { (Sint16) at.width(), (Sint16) at.height(), 0, 0, };
-	SDL_Rect box = { 0, 0, (Uint16) size.width(), (Uint16) size.height(), } ;
-
-	SDL_Surface * p_to = get_raw() ;
-
-	ret = SDL_BlitSurface(p_text, &box, p_to, &dst) ;
-	if(ret == -1)
-		throw SDL_GetError() ;
-
-	SDL_FreeSurface(p_text) ;
+	std::unique_ptr<Surface> p_text { gui_layout().text(message, style.pen(), by - at - at) } ;
+	draw(*p_text, at, by) ;
 }

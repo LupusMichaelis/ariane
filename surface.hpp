@@ -18,7 +18,7 @@ class Size ;
 class GuiLayout ;
 
 class SurfaceSDL
-	: public Surface
+	: virtual public Surface
 {
 	public:
 		explicit SurfaceSDL(GuiLayout & gui_layout, VideoMode videomode, bool is_screen = false) ;
@@ -33,17 +33,17 @@ class SurfaceSDL
 
 		void draw(Surface const & motif) ;
 		void draw(Surface const & motif, Size const & at) ;
-		void update() const ;
+		void draw(Surface const & motif, Size const & at, Size const & by) ;
 		void fill(RGBColor const & color) ;
 		void fill(Surface const & pattern) ;
-		void fill(Surface const & pattern, Size const & from, Size const & to) ;
+		void fill(Surface const & pattern, Size const & from, Size const & by) ;
+		void crop(Surface & target, Size const & origin, Size const & size) const ;
 		void resize(Size const & new_size) ;
+		void write(std::string const & message, Style const & style) ;
 
 		void dump(std::string const & filename) ;
 
-		void crop(Surface & target, Size const & origin, Size const & size) const ;
-
-		void write(std::string const & message, Style const & style) ;
+		void update() const ;
 
 		const GuiLayout & gui_layout() const ;
 		GuiLayout & gui_layout() ;
@@ -53,7 +53,7 @@ class SurfaceSDL
 		SDL_Surface * get_raw() const ;
 
 	private:
-		void draw_static(Surface const & motif, Size const & at) ;
+		void draw_static(Surface const & motif, Size const * at, Size const * by) ;
 
 	private:
 		class Impl ;

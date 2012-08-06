@@ -144,22 +144,6 @@ void QuestEngine::menu()
 	Engine::set_interface<MenuInterface, QuestEngine>() ;
 }
 
-Style Interface::title_style() const
-{
-	Style style ;
-	style.color(create_color(0x0)) ;
-	style.size(Size { 8 * 50, 2 * 50}) ;
-	style.position(Size {2 * 50, 1 * 50}) ;
-
-	Pen pen = style.pen() ;
-	pen.color(create_color(0x660000)) ;
-	pen.font(Font {"Comic_Sans_MS"}) ;
-	pen.size(16) ;
-	style.pen(pen) ;
-
-	return style ;
-}
-
 void TortoiseInterface::display()
 {
 	Screen & screen = engine().gui().screen() ;
@@ -170,7 +154,7 @@ void TortoiseInterface::display()
 	bg_style.color(create_color(0xaaaa00)) ;
 	auto p_container = screen.gui().box(screen, bg_style) ;
 
-	Style sprite_style ;
+	Style sprite_style = screen.style() ;
 	sprite_style.size(Size {20, 20}) ;
 	sprite_style.color(create_color(0x00aa)) ;
 
@@ -266,13 +250,10 @@ void MenuInterface::display()
 		p_title->text("Hill quest") ;
 	}
 
-	Style entry_style ;
+	Style entry_style = screen.style() ;
 	entry_style.color(create_color(0xaaaaaa)) ;
 	{
-		Pen pen ;
-		pen.color(create_color(0x00aa)) ;
-		pen.font(Font {"Verdana"}) ;
-		pen.size(11) ;
+		Pen pen { Font {"Verdana", 11}, create_color(0x00aa), 11 };
 		entry_style.pen(pen) ;
 	}
 

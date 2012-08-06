@@ -12,7 +12,7 @@ class Screen
 
 	public:
 		typedef std::shared_ptr<Screen>		SharedPtr ;
-		typedef std::weak_ptr<Screen>			WeakPtr ;
+		typedef std::weak_ptr<Screen>		WeakPtr ;
 
 		static SharedPtr make(Gui & gui) ;
 

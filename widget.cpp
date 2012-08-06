@@ -2,10 +2,15 @@
 #include "widget.hpp"
 #include "style.hpp"
 #include "tools.hpp"
+#include "gui.hpp"
 
 struct Widget::Impl
 {
-	Impl(Gui & gui) : m_gui(gui) { }
+	Impl(Gui & gui)
+		: m_gui(gui)
+		, m_style(gui.style())
+		, mp_surface()
+	{ }
 
 	Gui &						m_gui ;
 	Style						m_style ;

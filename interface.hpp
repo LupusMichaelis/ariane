@@ -14,6 +14,7 @@ class Interface
 		explicit Interface(Engine & engine) ;
 
 		Engine & engine() ;
+		Engine const & engine() const ;
 		Style title_style() const ;
 
 		virtual

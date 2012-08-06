@@ -7,7 +7,13 @@
 
 class Size ;
 class Surface ;
+class TextSurface ;
 class Grid ;
+class Font ;
+
+class Pen ;
+class Style ;
+class FontManager ;
 
 class GuiLayout
 {
@@ -16,14 +22,22 @@ class GuiLayout
 		~GuiLayout() ;
 
 		std::unique_ptr<Surface> screen() const ;
-		std::unique_ptr<Surface> surface(Size const & size) const ;
-		std::unique_ptr<Surface> surface(std::string const & file_name) const ;
-		std::unique_ptr<Surface> surface(Surface const & source) const ;
+
+		std::unique_ptr<Surface>		surface(Size const & size) const ;
+		std::unique_ptr<Surface>		surface(std::string const & file_name) const ;
+		std::unique_ptr<Surface>		surface(Surface const & source) const ;
+		std::unique_ptr<TextSurface>	text(std::string const & content, Pen const & pen, Size const & size) ;
 
 		std::unique_ptr<Grid> grid(Surface & reference, Size const & sprite_size) const ;
 
+		FontManager const & fonts() const ;
+		FontManager & fonts() ;
+
+		VideoMode const videomode() const ;
+
 	private:
-		VideoMode					m_videomode ;
+		class Impl ;
+		std::unique_ptr<Impl> mp_impl ;
 
 } /* class GuiLayout */ ;
 

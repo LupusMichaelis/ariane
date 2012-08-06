@@ -8,6 +8,8 @@ CXXFLAGS=-Wall \
 LDFLAGS= \
 		`pkg-config --libs sdl` -lSDL_ttf \
 		-lboost_signals \
+		-lboost_system \
+		-lboost_filesystem \
 		-g -ggdb
 
 SRCS= \
@@ -29,10 +31,13 @@ SRCS= \
 	  style.cpp \
 	  \
 	  surface.cpp \
+	  text_surface.cpp \
+	  font.cpp \
 	  \
 	  event.cpp \
 	  gui.cpp \
 	  gui_layout.cpp \
+	  font_manager.cpp \
 	  \
 	  interface.cpp \
 	  engine.cpp \
@@ -50,8 +55,8 @@ quest: quest.o $(OBJS)
 dotests: dotests.o test_screen.o $(OBJS)
 	$(CXX) -o $@ dotests.o test_screen.o $(OBJS) $(LDFLAGS)
 
-test_layout: test_gui_layout.o grid.o surface.o gui_layout.o api.o style.o color.o videomode.o
-	$(CXX) -o $@ test_gui_layout.o grid.o surface.o gui_layout.o api.o style.o color.o videomode.o $(LDFLAGS)
+test_layout: test_gui_layout.o grid.o surface.o font.o text_surface.o font_manager.o gui_layout.o api.o style.o color.o videomode.o
+	$(CXX) -o $@ test_gui_layout.o grid.o surface.o font.o text_surface.o font_manager.o gui_layout.o api.o style.o color.o videomode.o $(LDFLAGS)
 
 test_tree: test_tree.o node.o parent.o visitor.o
 	$(CXX) -o $@  test_tree.o node.o parent.o visitor.o $(LDFLAGS)

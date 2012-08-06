@@ -15,6 +15,7 @@ class Style ;
 
 class GuiLayout ;
 class EventLoop ;
+class FontManager ;
 
 class Gui
 	: boost::noncopyable
