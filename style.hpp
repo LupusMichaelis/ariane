@@ -15,12 +15,10 @@ class Font
 	public:
 		Font(Font const & copied) ;
 		Font & operator =(Font const & copied) ;
-		Font(std::string const & name, unsigned const size) ;
+		Font(std::string const & name) ;
 		virtual
 		~Font() ;
 
-		virtual
-		unsigned const size() const ;
 		virtual
 		std::string const & name() const ;
 

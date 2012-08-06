@@ -169,7 +169,7 @@ void test_write()
 		style.color(create_color(0x0)) ;
 
 		Pen pen = style.pen() ;
-		pen.font(Font {"Comic_Sans_MS", 16u}) ;
+		pen.font(Font {"Comic_Sans_MS"}) ;
 		pen.color(create_color(0xffffff)) ;
 		pen.size(16u) ;
 		style.pen(pen) ;
@@ -187,12 +187,16 @@ void test_write()
 
 		style.color(create_color(0xff00)) ;
 		style.position(Size {50, 200}) ;
+		pen.size(10u) ;
+		style.pen(pen) ;
 		p_tb = gui.text_box(gui.screen(), style) ;
 		p_tb->text("Rock'n'roll!") ;
 		adopt(*p_box, *p_tb) ;
 
 		style.color(create_color(0xff0000)) ;
 		style.position(Size {50, 350}) ;
+		pen.size(30u) ;
+		style.pen(pen) ;
 		p_tb = gui.text_box(gui.screen(), style) ;
 		p_tb->text("Rock'n'roll!") ;
 		adopt(*p_box, *p_tb) ;
@@ -224,7 +228,7 @@ void test_widget()
 	box_style.color(create_color(0x0)) ;
 
 	Pen pen = box_style.pen() ;
-	pen.font(Font {"Comic_Sans_MS", 16u}) ;
+	pen.font(Font {"Comic_Sans_MS"}) ;
 	pen.color(create_color(0xffffff)) ;
 	pen.size(16u) ;
 	box_style.pen(pen) ;

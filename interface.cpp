@@ -34,7 +34,7 @@ Style Interface::title_style() const
 
 	Pen pen = style.pen() ;
 	pen.color(create_color(0x660000)) ;
-	pen.font(Font {"Comic_Sans_MS", 16}) ;
+	pen.font(Font {"Comic_Sans_MS"}) ;
 	pen.size(16) ;
 	style.pen(pen) ;
 

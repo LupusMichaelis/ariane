@@ -10,6 +10,7 @@
 class Pen ;
 class GuiLayout ;
 class _TTF_Font ;
+class SDL_RWops ;
 
 class FontSDL
 	: public Font
@@ -18,15 +19,14 @@ class FontSDL
 		typedef std::shared_ptr<FontSDL> SharedPtr ;
 
 	public:
-		FontSDL(GuiLayout & gui_layout, std::string const & name, unsigned const size) ;
+		FontSDL(GuiLayout & gui_layout, std::string const & name, SDL_RWops * p_stream) ;
 		virtual
 		~FontSDL() ;
 
 		static
-		SharedPtr make_from_file(GuiLayout & gui_layout, std::string const & name, unsigned const size
-				, boost::filesystem::path const & filepath) ;
+		SharedPtr make_from_file(GuiLayout & gui_layout, std::string const & name, boost::filesystem::path const & filepath) ;
 
-		_TTF_Font * get_raw() const ;
+		_TTF_Font * get_raw(unsigned const size) const ;
 
 	private:
 		class Impl ;

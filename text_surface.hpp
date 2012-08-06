@@ -13,8 +13,7 @@ class TextSurfaceSDL
 		TextSurfaceSDL(GuiLayout & set_gui_layout
 				, VideoMode set_videomode
 				, std::string const & set_text
-				, FontSDL::SharedPtr set_p_font
-				, RGBColor const & set_color) ;
+				, Pen const & set_pen) ;
 		virtual
 		~TextSurfaceSDL() ;
 
@@ -23,9 +22,7 @@ class TextSurfaceSDL
 		virtual
 		std::string const & text() const ;
 		virtual
-		RGBColor const & color() const ;
-		virtual
-		Font const & font() const ;
+		Pen const & pen() const ;
 
 	private:
 

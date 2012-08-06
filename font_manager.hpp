@@ -16,10 +16,10 @@ class FontManager
 		virtual
 		~FontManager() ;
 
-		Font::SharedPtr get(std::string const & name, unsigned const size) ;
+		Font::SharedPtr get(std::string const & name) ;
 
 	protected:
-		Font::SharedPtr make(std::string const & name, unsigned const size) ;
+		Font::SharedPtr make(std::string const & name) ;
 		GuiLayout & gui_layout() ;
 
 	private:

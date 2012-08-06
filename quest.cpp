@@ -252,7 +252,7 @@ void MenuInterface::display()
 	Style entry_style = screen.style() ;
 	entry_style.color(create_color(0xaaaaaa)) ;
 	{
-		Pen pen { Font {"Verdana", 11}, create_color(0x00aa), 11 };
+		Pen pen { Font {"Verdana"}, create_color(0x00aa), 11 };
 		entry_style.pen(pen) ;
 	}
 

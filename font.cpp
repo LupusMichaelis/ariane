@@ -10,29 +10,34 @@
 ////////////////////////////////////////////////////////////////////////////////
 struct FontSDL::Impl
 {
-	Impl(GuiLayout & gui_layout)
+	Impl(GuiLayout & gui_layout, SDL_RWops * p_stream)
 		: m_gui_layout(gui_layout)
-		, mp_handle(nullptr)
+		, mp_stream(p_stream, [] (SDL_RWops * s) { SDL_RWclose(s) ; })
+		, m_handles()
 	{ }
 
 	GuiLayout & m_gui_layout ;
-	TTF_Font * mp_handle ;
+
+	std::unique_ptr<SDL_RWops, void (*) (SDL_RWops *)>
+		mp_stream ;
+	std::map<unsigned, std::shared_ptr<TTF_Font>>
+		m_handles ;
 
 } /* struct Font::Impl */ ;
 
-FontSDL::FontSDL(GuiLayout & gui_layout, std::string const & name, unsigned const size)
-	: Font {name, size}
-	, mp_impl { std::make_unique<Impl>(gui_layout) }
+#include <SDL/SDL.h>
+
+FontSDL::FontSDL(GuiLayout & gui_layout, std::string const & name, SDL_RWops * p_stream)
+	: Font {name}
+	, mp_impl { std::make_unique<Impl>(gui_layout, p_stream) }
 {
 }
 
 FontSDL::~FontSDL()
 {
-	TTF_CloseFont(mp_impl->mp_handle) ;
 }
 
-FontSDL::SharedPtr FontSDL::make_from_file(GuiLayout & gui_layout, std::string const & name, unsigned const size
-		, boost::filesystem::path const & filepath)
+FontSDL::SharedPtr FontSDL::make_from_file(GuiLayout & gui_layout, std::string const & name, boost::filesystem::path const & filepath)
 {
 	if(!boost::filesystem::exists(filepath) or !boost::filesystem::is_regular(filepath))
 	{
@@ -40,19 +45,28 @@ FontSDL::SharedPtr FontSDL::make_from_file(GuiLayout & gui_layout, std::string c
 		throw std::logic_error(msg);
 	}
 
-	TTF_Font * font_handle = NULL ;
-	font_handle = TTF_OpenFont(filepath.c_str(), size) ;
-	if(!font_handle)
+	auto p_stream = SDL_RWFromFile(filepath.c_str(), "rb") ;
+	if(!p_stream)
 		throw SDL_GetError() ;
 
-	std::shared_ptr<FontSDL> p_font = std::make_shared<FontSDL>(gui_layout, name, size) ;
-	p_font->mp_impl->mp_handle = font_handle ;
+	std::shared_ptr<FontSDL> p_font = std::make_shared<FontSDL>(gui_layout, name, p_stream) ;
 
 	return p_font ;
 }
 
-TTF_Font * FontSDL::get_raw() const
+TTF_Font * FontSDL::get_raw(unsigned const size) const
 {
-	return mp_impl->mp_handle ;
+	if(mp_impl->m_handles.find(size) == mp_impl->m_handles.end())
+	{
+		// If we don't rewind the stream, opening font will fail silently
+		SDL_RWseek(mp_impl->mp_stream.get(), SEEK_SET, 0) ;
+
+		mp_impl->m_handles[size] = std::shared_ptr<TTF_Font>
+			( TTF_OpenFontRW(mp_impl->mp_stream.get(), 0, size), &TTF_CloseFont) ;
+		if(!mp_impl->m_handles[size])
+			throw SDL_GetError() ;
+	}
+
+	return mp_impl->m_handles[size].get() ;
 }
 

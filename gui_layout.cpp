@@ -76,12 +76,9 @@ FontManager & GuiLayout::fonts()
 
 std::unique_ptr<TextSurface> GuiLayout::text(std::string const & content, Pen const & pen, Size const & size)
 {
-	auto p_font = fonts().get(pen.font().name(), pen.size()) ;
 	return std::make_unique<TextSurfaceSDL>(*this
 			, create_videomode(size, videomode().depth())
 			, content
-			, std::static_pointer_cast<FontSDL>(p_font)
-			, pen.color()
+			, pen
 		) ;
-
 }

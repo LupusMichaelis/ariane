@@ -64,7 +64,7 @@ void Engine::run()
 
 void Engine::game_over()
 {
-	Pen pen(Font {"Verdana", 30}, create_color(0x00bbbb), 30) ;
+	Pen pen(Font {"Verdana"}, create_color(0x00bbbb), 30) ;
 	Style style {pen, create_color(0), {10, 10}, {1, 1}, {100, 50} } ;
 
 	TextBox::SharedPtr p_b = gui().text_box(gui().screen(), style) ;

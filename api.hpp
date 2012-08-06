@@ -42,9 +42,7 @@ class TextSurface
 {
 	public:
 		virtual std::string const & text() const = 0 ;
-		virtual Font const & font() const = 0 ;
-		virtual
-		RGBColor const & color() const = 0 ;
+		virtual Pen const & pen() const = 0 ;
 
 		virtual ~TextSurface() = 0 ;
 

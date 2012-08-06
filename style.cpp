@@ -4,19 +4,18 @@
 struct Font::Impl
 {
 	std::string		m_name ;
-	unsigned		m_size ;
 
-	Impl(std::string const & name, unsigned const size)
-		: m_name(name), m_size(size) { }
+	Impl(std::string const & name)
+		: m_name(name) { }
 
 } /* struct Font::Impl */ ;
 
-Font::Font(std::string const & name, unsigned const size)
-	: mp_impl { std::make_unique<Impl>(name, size) }
+Font::Font(std::string const & name)
+	: mp_impl { std::make_unique<Impl>(name) }
 { }
 
 Font::Font(Font const & copied)
-	: Font {copied.name(), copied.size()}
+	: Font {copied.name()}
 { }
 
 Font & Font::operator =(Font const & copied)
@@ -30,11 +29,6 @@ Font::~Font()
 {
 }
 
-unsigned const Font::size() const
-{
-	return mp_impl->m_size ;
-}
-
 std::string const & Font::name() const
 {
 	return mp_impl->m_name ;
@@ -42,7 +36,7 @@ std::string const & Font::name() const
 
 bool const operator ==(Font const & lhs, Font const & rhs)
 {
-	return lhs.name() == rhs.name() && lhs.size() == rhs.size() ;
+	return lhs.name() == rhs.name() ;
 }
 
 bool const operator !=(Font const & lhs, Font const & rhs)
