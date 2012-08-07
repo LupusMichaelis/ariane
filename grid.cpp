@@ -75,6 +75,10 @@ VideoMode const Grid::videomode() const
 }
 
 
+void Grid::border(Border const & /*border*/)
+{
+}
+
 void Grid::draw(Surface const & motif)
 {
 	mp_impl->m_ref->draw(motif) ;

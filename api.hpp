@@ -10,6 +10,7 @@ class RGBColor ;
 class VideoMode ;
 class Size ;
 class Style ;
+class Border ;
 class Pen ;
 class Font ;
 
@@ -19,6 +20,7 @@ class Surface
 	public:
 		virtual VideoMode const videomode() const = 0 ;
 
+		virtual void border(Border const & border) = 0 ;
 		virtual void draw(Surface const & motif) = 0 ;
 		virtual void draw(Surface const & motif, Size const & at) = 0 ;
 		virtual void update() const = 0 ;

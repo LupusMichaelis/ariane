@@ -114,6 +114,48 @@ VideoMode const SurfaceSDL::videomode() const
 	return create_videomode(get_raw()->w, get_raw()->h, get_raw()->format->BitsPerPixel) ;
 }
 
+void SurfaceSDL::border(Border const & border)
+{
+	Uint32 mapped_color = SDL_MapRGB(get_raw()->format
+			, border.color().red()
+			, border.color().green()
+			, border.color().blue()
+			) ;
+
+	Uint16 const s = border.size() ;
+	Uint16 const h = get_raw()->h ;
+	Uint16 const w = get_raw()->w ;
+
+	SDL_Rect border_part {0, 0, s, h} ;
+	int ret = SDL_FillRect(get_raw(), &border_part, mapped_color) ;
+	if(ret == -1)
+		throw SDL_GetError() ;
+
+	border_part.x = w - s ;
+	border_part.y = 0 ;
+	border_part.w = w ;
+	border_part.h = h ;
+	ret = SDL_FillRect(get_raw(), &border_part, mapped_color) ;
+	if(ret == -1)
+		throw SDL_GetError() ;
+
+	border_part.x = s ;
+	border_part.y = 0 ;
+	border_part.w = w - s ;
+	border_part.h = s ;
+	ret = SDL_FillRect(get_raw(), &border_part, mapped_color) ;
+	if(ret == -1)
+		throw SDL_GetError() ;
+
+	border_part.x = s ;
+	border_part.y = h - s ;
+	border_part.w = w - s ;
+	border_part.h = h ;
+	ret = SDL_FillRect(get_raw(), &border_part, mapped_color) ;
+	if(ret == -1)
+		throw SDL_GetError() ;
+}
+
 void SurfaceSDL::fill(RGBColor const & color)
 {
 	Uint32 mapped_color = SDL_MapRGB(get_raw()->format, color.red(), color.green(), color.blue()) ;

@@ -18,6 +18,7 @@ class Grid
 
 		virtual VideoMode const videomode() const ;
 
+		virtual void border(Border const & border) ;
 		virtual void draw(Surface const & motif) ;
 		virtual void draw(Surface const & motif, Size const & at) ;
 		virtual void update() const ;

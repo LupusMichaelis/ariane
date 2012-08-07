@@ -87,7 +87,11 @@ Style const Gui::style() const
 {
 	return Style(Pen {Font {"Arial"}, create_color(0xffffff), 12}
 			, create_color(0x0)
-			, Size {0, 0}, Size {10, 10}, Size{100, 100}) ;
+			, Size {0, 0}
+			, Size {10, 10}
+			, Size {100, 100}
+			, Border {create_color(0x444444), 1}
+			) ;
 }
 
 GuiLayout const & Gui::layout() const

@@ -111,6 +111,58 @@ unsigned const Pen::size() const
 }
 
 ////////////////////////////////////////////////////////////////////////
+struct Border::Impl
+{
+	Impl(RGBColor const & set_color, unsigned const set_size)
+		: m_color(set_color), m_size(set_size) { }
+
+	RGBColor m_color ;
+	unsigned m_size ;
+} /* struct Border::Impl */ ;
+
+Border::Border(RGBColor const & set_color, unsigned const set_size)
+	: mp_impl(std::make_unique<Impl>(set_color, set_size))
+{
+}
+
+Border::Border(Border const & copied)
+	: Border {copied.color(), copied.size()}
+{
+}
+
+Border & Border::operator =(Border const & copied)
+{
+	Border copy { copied } ;
+	std::swap(this->mp_impl, copy.mp_impl) ;
+	return *this ;
+}
+
+Border::~Border()
+{
+}
+
+void Border::color(RGBColor const & new_color)
+{
+	mp_impl->m_color = new_color ;
+}
+
+RGBColor const & Border::color() const
+{
+	return mp_impl->m_color ;
+}
+
+void Border::size(unsigned const new_size)
+{
+	mp_impl->m_size = new_size ;
+}
+
+unsigned const Border::size() const
+{
+	return mp_impl->m_size ;
+}
+
+
+////////////////////////////////////////////////////////////////////////
 struct Style::Impl
 {
 	Impl(Pen const & set_pen
@@ -118,12 +170,14 @@ struct Style::Impl
 		, Size const & set_position
 		, Size const & set_padding
 		, Size const & set_size
+		, Border const & set_border
 		)
 		: m_pen(set_pen)
 		, m_color(set_color)
 		, m_padding(set_padding)
 		, m_position(set_position)
 		, m_size(set_size)
+		, m_border(set_border)
 	{}
 
 	Pen			m_pen ;
@@ -131,6 +185,8 @@ struct Style::Impl
 	Size		m_padding ;
 	Size		m_position ;
 	Size		m_size ;
+	Border		m_border ;
+
 } /* struct Style::Impl */ ;
 
 Style::Style(Pen const & set_pen
@@ -138,8 +194,9 @@ Style::Style(Pen const & set_pen
 		, Size const & set_position
 		, Size const & set_padding
 		, Size const & set_size
+		, Border const & set_border
 		)
-	: mp_impl {std::make_unique<Impl>(set_pen, set_color, set_position, set_padding, set_size) }
+	: mp_impl {std::make_unique<Impl>(set_pen, set_color, set_position, set_padding, set_size, set_border) }
 {
 }
 
@@ -148,7 +205,7 @@ Style::~Style()
 }
 
 Style::Style(Style const & copied)
-	: Style {copied.pen(), copied.color(), copied.position(), copied.padding(), copied.size() }
+	: Style {copied.pen(), copied.color(), copied.position(), copied.padding(), copied.size(), copied.border() }
 {
 }
 
@@ -207,6 +264,16 @@ void Style::size(Size const & new_size)
 Size const & Style::size() const
 {
 	return mp_impl->m_size ;
+}
+
+void Style::border(Border const & new_border)
+{
+	mp_impl->m_border = new_border ;
+}
+
+Border const & Style::border() const
+{
+	return mp_impl->m_border ;
 }
 
 ////////////////////////////////////////////////////////////////////////

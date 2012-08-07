@@ -4,6 +4,11 @@
 
 #include <algorithm>
 
+#ifndef NDEBUG
+#	include <iostream>
+#	include <boost/format.hpp>
+#endif // NDEBUG
+
 struct Parent::Impl
 {
 	Impl()
@@ -39,6 +44,12 @@ bool const Parent::has_child() const
 
 Parent::List const & Parent::children() const
 {
+#ifndef NDEBUG
+	std::cout << boost::format("'%s' has % 2d children\n")
+		% typeid(*this).name()
+		% mp_impl->m_children.size() ;
+#endif // NDEBUG
+
 	return mp_impl->m_children ;
 }
 

@@ -31,6 +31,7 @@ class SurfaceSDL
 		 */
 		VideoMode const videomode() const ;
 
+		void border(Border const & border) ;
 		void draw(Surface const & motif) ;
 		void draw(Surface const & motif, Size const & at) ;
 		void draw(Surface const & motif, Size const & at, Size const & by) ;

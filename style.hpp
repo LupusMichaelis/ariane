@@ -10,10 +10,10 @@ class Pen ;
 class Font
 {
 	public:
-		typedef std::shared_ptr<Font>		SharedPtr ;
+		typedef std::shared_ptr<Font> SharedPtr ;
 
 	public:
-		Font(Font const & copied) ;
+		explicit Font(Font const & copied) ;
 		Font & operator =(Font const & copied) ;
 		Font(std::string const & name) ;
 		virtual
@@ -34,9 +34,9 @@ bool const operator !=(Font const & lhs, Font const & rhs) ;
 class Pen
 {
 	public:
+		Pen(Font const & set_font, RGBColor const & set_color, unsigned const set_size) ;
 		Pen(Pen const & copied) ;
 		Pen & operator =(Pen const & copied) ;
-		Pen(Font const & set_font, RGBColor const & set_color, unsigned const set_size) ;
 
 		void color(RGBColor const & new_color) ;
 		RGBColor const & color() const ;
@@ -55,6 +55,28 @@ class Pen
 
 } /* class Pen */ ;
 
+
+class Border
+{
+	public:
+		Border(RGBColor const & set_color, unsigned const set_size) ;
+		Border(Border const & copied) ;
+		Border & operator =(Border const & copied) ;
+
+		~Border() ;
+
+		void color(RGBColor const & new_color) ;
+		RGBColor const & color() const ;
+
+		void size(unsigned const new_size) ;
+		unsigned const size() const ;
+
+	private:
+		class Impl ;
+		std::unique_ptr<Impl>	mp_impl ;
+
+} /* class Border */ ;
+
 class Style
 {
 	public:
@@ -63,6 +85,7 @@ class Style
 				, Size const & set_position
 				, Size const & set_padding
 				, Size const & set_size
+				, Border const & set_border
 			) ;
 
 		Style(Style const & copied) ;
@@ -83,7 +106,10 @@ class Style
 		void color(RGBColor const & new_color) ;
 		RGBColor const & color() const ;
 
-		virtual ~Style() ;
+		void border(Border const & new_border) ;
+		Border const & border() const ;
+
+		~Style() ;
 
 	private:
 		class Impl ;
