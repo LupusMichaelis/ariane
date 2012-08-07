@@ -7,13 +7,13 @@
 void test_layout() ;
 void test_resize() ;
 void test_load_sprite() ;
-void test_grid() ;
+void test_grid_surface() ;
 
 struct test { char const * name ; void (*fn)() ; } ;
 test const tests[] = {
 	{"test_layout", test_layout},
 	{"test_resize", test_resize},
-	{"test_grid", test_grid},
+	{"test_grid_surface", test_grid_surface},
 	{"test_load_sprite", test_load_sprite},
 } ;
 int const tests_size = sizeof tests / sizeof (test) ;
@@ -77,7 +77,7 @@ void test_resize()
 	sleep(1) ;
 }
 
-#include "grid.hpp"
+#include "grid_surface.hpp"
 
 void test_load_sprite()
 {
@@ -85,11 +85,11 @@ void test_load_sprite()
 	auto s = gl.screen() ;
 
 	std::string filename("gfx/kraland_shapes.bmp") ;
-	//Style grid_style = screen.style() ;
+	//Style grid_surface_style = screen.style() ;
 
 	auto p_image = gl.surface(filename) ;
 	assert(p_image) ;
-	auto p_patchwork = gl.grid(*p_image, Size {32, 32}) ;
+	auto p_patchwork = gl.grid_surface(*p_image, Size {32, 32}) ;
 	assert(p_patchwork) ;
 
 	for(int i=0 ; i < 300 ; ++i)
@@ -106,7 +106,7 @@ void test_load_sprite()
 	wait() ;
 }
 
-void test_grid()
+void test_grid_surface()
 {
 	GuiLayout gl(create_videomode(480, 240, 24)) ;
 	auto s = gl.screen() ;
@@ -114,7 +114,7 @@ void test_grid()
 	std::string filename("gfx/kraland_shapes.bmp") ;
 	auto p_patchwork = gl.surface(filename) ;
 
-	auto p_sprites = gl.grid(*p_patchwork, { 32, 32 }) ;
+	auto p_sprites = gl.grid_surface(*p_patchwork, { 32, 32 }) ;
 
 	int sprite_per_row = 672 / 32 ;
 	//int sprite_per_col = 480 / 32 ;

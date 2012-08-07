@@ -1,5 +1,5 @@
 
-#include "grid.hpp"
+#include "grid_surface.hpp"
 #include "surface.hpp"
 #include "gui_layout.hpp"
 
@@ -7,7 +7,7 @@
 
 #include <cassert>
 
-struct Grid::Impl
+struct GridSurface::Impl
 {
 	Impl(Surface const & surface, Size const & sprite_size)
 		: m_sprite_size(sprite_size)
@@ -17,24 +17,24 @@ struct Grid::Impl
 	Size						m_sprite_size ;
 	std::unique_ptr<Surface>	m_ref ;
 
-} /* class Grid::Impl */ ;
+} /* class GridSurface::Impl */ ;
 
-Grid::~Grid()
+GridSurface::~GridSurface()
 {
 }
 
-Grid::Grid(Surface const & surface, Size const & sprite_size)
+GridSurface::GridSurface(Surface const & surface, Size const & sprite_size)
 	: Surface {surface}
 	, mp_impl { std::make_unique<Impl>(surface, sprite_size) }
 {
 }
 
-Size const & Grid::sprite_size() const
+Size const & GridSurface::sprite_size() const
 {
 	return mp_impl->m_sprite_size ;
 }
 
-std::unique_ptr<Surface> Grid::extract(int const index)
+std::unique_ptr<Surface> GridSurface::extract(int const index)
 {
 	auto p_target = gui_layout().surface(sprite_size()) ;
 
@@ -44,17 +44,17 @@ std::unique_ptr<Surface> Grid::extract(int const index)
 	return std::move(p_target) ;
 }
 
-int const Grid::box_per_row() const
+int const GridSurface::box_per_row() const
 {
 	return videomode().size().width() / sprite_size().width() ;
 }
 
-int const Grid::box_per_col() const
+int const GridSurface::box_per_col() const
 {
 	return videomode().size().height() / sprite_size().height() ;
 }
 
-Size const Grid::compute_position(int index) const
+Size const GridSurface::compute_position(int index) const
 {
 	int current_row = index / box_per_row() ;
 	int current_col = index - current_row * box_per_row() ;
@@ -69,69 +69,69 @@ Size const Grid::compute_position(int index) const
 	return position ;
 }
 
-VideoMode const Grid::videomode() const
+VideoMode const GridSurface::videomode() const
 {
 	return mp_impl->m_ref->videomode() ;
 }
 
 
-void Grid::border(Border const & /*border*/)
+void GridSurface::border(Border const & /*border*/)
 {
 }
 
-void Grid::draw(Surface const & motif)
+void GridSurface::draw(Surface const & motif)
 {
 	mp_impl->m_ref->draw(motif) ;
 }
 
-void Grid::draw(Surface const & motif, Size const & at)
+void GridSurface::draw(Surface const & motif, Size const & at)
 {
 	mp_impl->m_ref->draw(motif, at) ;
 }
 
-void Grid::update() const
+void GridSurface::update() const
 {
 	mp_impl->m_ref->update() ;
 }
 
-void Grid::fill(RGBColor const & color)
+void GridSurface::fill(RGBColor const & color)
 {
 	mp_impl->m_ref->fill(color) ;
 }
 
-void Grid::fill(Surface const & pattern, Size const & from, Size const & to)
+void GridSurface::fill(Surface const & pattern, Size const & from, Size const & to)
 {
 	mp_impl->m_ref->fill(pattern, from, to) ;
 }
 
-void Grid::resize(Size const & new_size)
+void GridSurface::resize(Size const & new_size)
 {
 	mp_impl->m_ref->resize(new_size) ;
 }
 
-void Grid::dump(std::string const & filename)
+void GridSurface::dump(std::string const & filename)
 {
 	mp_impl->m_ref->dump(filename) ;
 }
 
-void Grid::crop(Surface & target, Size const & origin, Size const & size) const
+void GridSurface::crop(Surface & target, Size const & origin, Size const & size) const
 {
 	mp_impl->m_ref->crop(target, origin, size) ;
 }
 
 
-void Grid::write(std::string const & message, Style const & style)
+void GridSurface::write(std::string const & message, Style const & style)
 {
 	mp_impl->m_ref->write(message, style) ;
 }
 
 
-const GuiLayout & Grid::gui_layout() const
+const GuiLayout & GridSurface::gui_layout() const
 {
 	return mp_impl->m_ref->gui_layout() ;
 }
 
-GuiLayout & Grid::gui_layout()
+GuiLayout & GridSurface::gui_layout()
 {
 	return mp_impl->m_ref->gui_layout() ;
 }

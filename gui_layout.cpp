@@ -1,7 +1,7 @@
 
 #include "gui_layout.hpp"
 #include "surface.hpp"
-#include "grid.hpp"
+#include "grid_surface.hpp"
 #include "font_manager.hpp"
 #include "text_surface.hpp"
 #include "gui.hpp"
@@ -59,9 +59,9 @@ std::unique_ptr<Surface> GuiLayout::surface(Surface const & source) const
 	return std::make_unique<SurfaceSDL>(sdl_source) ;
 }
 
-std::unique_ptr<Grid> GuiLayout::grid(Surface & reference, Size const & sprite_size) const
+std::unique_ptr<GridSurface> GuiLayout::grid_surface(Surface & reference, Size const & sprite_size) const
 {
-	return std::make_unique<Grid>(reference, sprite_size) ;
+	return std::make_unique<GridSurface>(reference, sprite_size) ;
 }
 
 FontManager const & GuiLayout::fonts() const

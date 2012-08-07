@@ -8,7 +8,7 @@
 class Size ;
 class Surface ;
 class TextSurface ;
-class Grid ;
+class GridSurface ;
 class Font ;
 
 class Pen ;
@@ -28,7 +28,7 @@ class GuiLayout
 		std::unique_ptr<Surface>		surface(Surface const & source) const ;
 		std::unique_ptr<TextSurface>	text(std::string const & content, Pen const & pen, Size const & size) ;
 
-		std::unique_ptr<Grid> grid(Surface & reference, Size const & sprite_size) const ;
+		std::unique_ptr<GridSurface> grid_surface(Surface & reference, Size const & sprite_size) const ;
 
 		FontManager const & fonts() const ;
 		FontManager & fonts() ;

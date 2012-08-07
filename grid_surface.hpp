@@ -1,20 +1,20 @@
-#ifndef HPP_GRID_SDL_QUEST
-#	define HPP_GRID_SDL_QUEST
+#ifndef HPP_GRID_SURFACE_SDL_QUEST
+#	define HPP_GRID_SURFACE_SDL_QUEST
 
 #	include <memory>
 
 #	include "surface.hpp"
 #	include "videomode.hpp"
 
-class Grid
+class GridSurface
 	: public Surface
 {
 	public:
-		Grid(Surface const & surface, Size const & sprite_size) ;
+		GridSurface(Surface const & surface, Size const & sprite_size) ;
 		std::unique_ptr<Surface> extract(int const index) ;
 
 		virtual
-		~Grid() ;
+		~GridSurface() ;
 
 		virtual VideoMode const videomode() const ;
 
@@ -45,4 +45,4 @@ class Grid
 } ;
 
 
-#endif // define HPP_GRID_SDL_QUEST
+#endif // define HPP_GRID_SURFACE_SDL_QUEST
