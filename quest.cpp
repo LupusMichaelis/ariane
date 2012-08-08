@@ -31,7 +31,7 @@ class QuestEngine
 {
 	public:
 		void menu() ;
-		//void quest(std::string const & quest_name) ;
+		void map_editor() ;
 		void tortoise() ;
 
 		virtual
@@ -132,6 +132,58 @@ class MenuInterface
 
 } /* class MenuInterface */ ;
 
+#include "grid.hpp"
+#include "gui_layout.hpp"
+
+class MapEditorInterface
+	: public QuestInterface
+{
+	public: 
+		explicit MapEditorInterface(QuestEngine & set_engine)
+			: QuestInterface { set_engine }
+			, mp_canvas_model { std::make_shared<GridModel>(210, 10, 10) }
+			, mp_palette_model { std::make_shared<GridModel>(210, 10, 5) }
+			, mp_image { std::move(set_engine.gui().layout().surface("gfx/building.bmp")) }
+			, mp_reference { set_engine.gui().layout().grid_surface(*mp_image , Size {32, 32}) }
+			, mp_canvas_view { std::make_shared<Grid>(set_engine.gui(), mp_canvas_model, mp_reference) }
+			, mp_palette_view { std::make_shared<Grid>(set_engine.gui(), mp_palette_model, mp_reference) }
+		{
+
+			mp_canvas_model->set(225, 0, 1) ;
+
+			mp_canvas_model->set(227, 1, 0) ;
+			mp_canvas_model->set(226, 1, 1) ;
+			mp_canvas_model->set(227, 1, 2) ;
+
+			mp_canvas_model->set(225, 2, 1) ;
+		}
+
+		virtual
+		void move(EventLoop &, KeyEvent const & ke) ;
+		virtual
+		void move(EventLoop &, MouseEvent const & me) ;
+		virtual
+		void move(EventLoop &, MouseButtonEvent const & mbe) ;
+
+		virtual
+		void display() ;
+
+	protected:
+		GridModel & palette_model()	{ return *mp_palette_model ; }
+		GridModel & canvas_model()	{ return *mp_canvas_model ; }
+		Grid & palette_view()		{ return static_cast<Grid&>(*mp_palette_view) ; }
+		Grid & canvas_view()		{ return static_cast<Grid&>(*mp_canvas_view) ; }
+
+	private:
+		GridModel::SharedPtr			mp_canvas_model ;
+		GridModel::SharedPtr			mp_palette_model ;
+		std::unique_ptr<Surface>		mp_image ;
+		GridSurface::SharedPtr			mp_reference ;
+		Grid::SharedPtr					mp_canvas_view ;
+		Grid::SharedPtr					mp_palette_view ;
+
+} /* class MapEditorInterface */ ;
+
 void QuestEngine::tortoise()
 {
 	Engine::set_interface<TortoiseInterface, QuestEngine>() ;
@@ -141,6 +193,11 @@ void QuestEngine::tortoise()
 void QuestEngine::menu()
 {
 	Engine::set_interface<MenuInterface, QuestEngine>() ;
+}
+
+void QuestEngine::map_editor()
+{
+	Engine::set_interface<MapEditorInterface, QuestEngine>() ;
 }
 
 void TortoiseInterface::display()
@@ -239,8 +296,8 @@ void MenuInterface::display()
 	Screen & screen = engine().gui().screen() ;
 
 	Style containter_style { screen.style() } ;
-	containter_style.position({10, 10}) ;
-	containter_style.size(containter_style.size() - Size {20, 20}) ;
+	containter_style.position({10, 0}) ;
+	containter_style.size(containter_style.size() - 2 * containter_style.position() - 2 * containter_style.padding()) ;
 	containter_style.color(create_color(0x660000)) ;
 	auto p_container = screen.gui().box(screen, containter_style) ;
 
@@ -346,13 +403,52 @@ void MenuInterface::select()
 		engine().tortoise() ;
 	else if(2 == m_current)
 		engine().menu() ;
-	/*
 	else if(0 == m_current)
-		engine().map_builder()
-		*/
+		engine().map_editor() ;
 	else
 		engine().game_over() ;
 }
+
+void MapEditorInterface::display()
+{
+	auto s = canvas_view().style() ;
+	s.border({create_color(0), 0u}) ;
+	s.padding({5, 5}) ;
+
+	/////
+	s.size({int(32u * canvas_model().columns()), int(32u * canvas_model().rows())}) ;
+	canvas_view().style(s) ;
+
+	/////
+	s.size({int(32u * palette_model().columns()), int(32u * palette_model().rows())}) ;
+	s.position( {32 + canvas_view().style().size().width(), canvas_view().style().position().height() } ) ;
+	palette_view().style(s) ;
+
+	Style bg_style = engine().gui().style() ;
+	bg_style.position({0, 0}) ;
+	bg_style.size(engine().gui().screen().style().size() - Size {20, 20}) ;
+	bg_style.color(create_color(0xaaaaaa)) ;
+
+	auto p_container = engine().gui().box(engine().gui().screen(), bg_style) ;
+	adopt(*p_container, canvas_view()) ;
+	adopt(*p_container, palette_view()) ;
+
+	set_container(p_container) ;
+}
+
+void MapEditorInterface::move(EventLoop &, MouseButtonEvent const & )
+{
+}
+
+void MapEditorInterface::move(EventLoop &, MouseEvent const & )
+{
+}
+
+void MapEditorInterface::move(EventLoop &, KeyEvent const & )
+{
+	mp_canvas_model->set(234, 5, 5) ;
+}
+
 
 int main(int argc, char **argv)
 {

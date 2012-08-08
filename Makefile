@@ -26,6 +26,7 @@ SRCS= \
 	  text_box.cpp \
 	  \
 	  grid_surface.cpp \
+	  grid.cpp \
 	  \
 	  color.cpp \
 	  style.cpp \
@@ -55,8 +56,8 @@ quest: quest.o $(OBJS)
 dotests: dotests.o test_screen.o $(OBJS)
 	$(CXX) -o $@ dotests.o test_screen.o $(OBJS) $(LDFLAGS)
 
-test_layout: test_gui_layout.o grid_surface.o surface.o font.o text_surface.o font_manager.o gui_layout.o api.o style.o color.o videomode.o
-	$(CXX) -o $@ test_gui_layout.o grid_surface.o surface.o font.o text_surface.o font_manager.o gui_layout.o api.o style.o color.o videomode.o $(LDFLAGS)
+test_layout: test_gui_layout.o $(OBJS)
+	$(CXX) -o $@ test_gui_layout.o $(OBJS) $(LDFLAGS)
 
 test_tree: test_tree.o node.o parent.o visitor.o
 	$(CXX) -o $@  test_tree.o node.o parent.o visitor.o $(LDFLAGS)

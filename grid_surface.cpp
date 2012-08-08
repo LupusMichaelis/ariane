@@ -34,7 +34,7 @@ Size const & GridSurface::sprite_size() const
 	return mp_impl->m_sprite_size ;
 }
 
-std::unique_ptr<Surface> GridSurface::extract(int const index)
+std::unique_ptr<Surface> GridSurface::extract(unsigned const index)
 {
 	auto p_target = gui_layout().surface(sprite_size()) ;
 
@@ -44,20 +44,20 @@ std::unique_ptr<Surface> GridSurface::extract(int const index)
 	return std::move(p_target) ;
 }
 
-int const GridSurface::box_per_row() const
+unsigned const GridSurface::box_per_row() const
 {
 	return videomode().size().width() / sprite_size().width() ;
 }
 
-int const GridSurface::box_per_col() const
+unsigned const GridSurface::box_per_col() const
 {
 	return videomode().size().height() / sprite_size().height() ;
 }
 
-Size const GridSurface::compute_position(int index) const
+Size const GridSurface::compute_position(unsigned const index) const
 {
-	int current_row = index / box_per_row() ;
-	int current_col = index - current_row * box_per_row() ;
+	unsigned const current_row = index / box_per_row() ;
+	unsigned const current_col = index - current_row * box_per_row() ;
 
 	assert(current_col < box_per_row()) ;
 	assert(current_row < box_per_col()) ;

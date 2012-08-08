@@ -40,13 +40,16 @@ void Box::draw()
 		auto * child_widget = dynamic_cast<Drawable *>(child.get()) ;
 
 		child_widget->draw() ;
-		Size draw_at {std::max(child_widget->style().position(), style().padding() + style().border().size() * Size {1, 1} )} ;
+		Size draw_at { style().padding() + std::max(child_widget->style().position(), style().border().size() * Size {1, 1} )} ;
 		surface().draw(child_widget->surface(), draw_at) ;
 
 #ifndef NDEBUG
-		std::cout << boost::format("'%s' was drawn on '%s'\n")
+		std::cout << boost::format("'%s' was drawn on '%s' at {w:%d,h:%d}\n")
 			% typeid(*child_widget).name()
-			% typeid(*this).name() ;
+			% typeid(*this).name()
+			% draw_at.width()
+			% draw_at.height()
+			;
 #endif // NDEBUG
 
 	}

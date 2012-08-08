@@ -10,8 +10,11 @@ class GridSurface
 	: public Surface
 {
 	public:
+		typedef std::shared_ptr<GridSurface> SharedPtr ;
+
+	public:
 		GridSurface(Surface const & surface, Size const & sprite_size) ;
-		std::unique_ptr<Surface> extract(int const index) ;
+		std::unique_ptr<Surface> extract(unsigned const index) ;
 
 		virtual
 		~GridSurface() ;
@@ -34,9 +37,9 @@ class GridSurface
 		virtual GuiLayout & gui_layout() ;
 
 	private:
-		Size const compute_position(int index) const ;
-		int const box_per_col() const ;
-		int const box_per_row() const ;
+		Size const compute_position(int unsigned) const ;
+		unsigned const box_per_col() const ;
+		unsigned const box_per_row() const ;
 
 		Size const & sprite_size() const ;
 
