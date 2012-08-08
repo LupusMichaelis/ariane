@@ -1,7 +1,7 @@
 
 #include "widget.hpp"
 #include "style.hpp"
-#include "tools.hpp"
+#include "memory.hpp"
 #include "gui.hpp"
 
 struct Widget::Impl

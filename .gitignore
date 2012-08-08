@@ -1,8 +1,11 @@
 tortoise
 quest
 dotests
-test_*
+test_layout
+test_tree
+test_widget
 
 *.vim
 .*.swp
 *.o
+.*

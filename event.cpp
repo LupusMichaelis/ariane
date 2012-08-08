@@ -1,6 +1,6 @@
 
 #include "event.hpp"
-#include "tools.hpp"
+#include "memory.hpp"
 
 #include <SDL/SDL.h>
 #include <cstring>

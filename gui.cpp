@@ -17,7 +17,7 @@
 #include "font_manager.hpp"
 #include "style.hpp"
 
-#include "tools.hpp"
+#include "memory.hpp"
 
 struct Gui::Impl
 {

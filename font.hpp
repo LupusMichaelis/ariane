@@ -2,7 +2,7 @@
 #	define HPP_FONT_QUEST
 
 #	include "style.hpp"
-#	include "tools.hpp"
+#	include "memory.hpp"
 
 #	include <string>
 #	include <boost/filesystem.hpp>

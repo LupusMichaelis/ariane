@@ -1,7 +1,7 @@
 #ifndef HPP_ENGINE_QUEST
 #	define HPP_ENGINE_QUEST
 
-#	include "tools.hpp"
+#	include "memory.hpp"
 
 #	include <string>
 

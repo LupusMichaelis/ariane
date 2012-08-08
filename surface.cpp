@@ -4,7 +4,7 @@
 #include "style.hpp"
 #include "gui_layout.hpp"
 
-#include "tools.hpp"
+#include "memory.hpp"
 
 
 #include <algorithm>

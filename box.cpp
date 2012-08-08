@@ -3,7 +3,7 @@
 #include "widget.hpp"
 #include "gui.hpp"
 #include "gui_layout.hpp"
-#include "tools.hpp"
+#include "memory.hpp"
 
 #ifndef NDEBUG
 #	include <iostream>

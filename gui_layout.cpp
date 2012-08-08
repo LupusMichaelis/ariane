@@ -6,7 +6,7 @@
 #include "text_surface.hpp"
 #include "gui.hpp"
 
-#include "tools.hpp"
+#include "memory.hpp"
 
 struct GuiLayout::Impl
 {

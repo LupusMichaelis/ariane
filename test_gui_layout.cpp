@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
 #include "surface.hpp"
 #include "gui_layout.hpp"
-#include "tools.hpp"
+#include "memory.hpp"
 #include <memory>
 
 void test_layout()

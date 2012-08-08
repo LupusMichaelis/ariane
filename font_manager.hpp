@@ -1,7 +1,7 @@
 #ifndef HPP_FONT_MANAGER_QUEST
 #	define HPP_FONT_MANAGER_QUEST
 
-#	include "tools.hpp"
+#	include "memory.hpp"
 #	include "font.hpp"
 
 #	include <list>
