@@ -22,6 +22,8 @@ class KeyBoard
 		KeyBoard(KeyBoard const &) = delete ;
 		KeyBoard const & operator =(KeyBoard const &) = delete ;
 
+		~KeyBoard() ;
+
 		Key const & enter() const ;
 		Key const & right_ctrl() const ;
 		Key const & left_ctrl() const ;

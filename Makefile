@@ -42,6 +42,9 @@ SRCS= \
 	  \
 	  interface.cpp \
 	  engine.cpp \
+	  menu.cpp \
+	  tortoise.cpp \
+	  map_editor.cpp \
 
 
 OBJS=$(SRCS:.cpp=.o)

@@ -187,6 +187,7 @@ struct KeyBoard::Impl
 {
 	std::map<unsigned, Key> const & m_keys ;
 	Impl() : m_keys(keys()) { }
+	~Impl() { }
 
 	Key const & get(unsigned sdl_id) const
 	{
@@ -197,6 +198,10 @@ struct KeyBoard::Impl
 
 KeyBoard::KeyBoard()
 	: mp_impl(std::make_unique<Impl>())
+{
+}
+
+KeyBoard::~KeyBoard()
 {
 }
 
@@ -361,6 +366,8 @@ struct EventLoop::Impl
 	time_event_type			m_onheartbeat ;
 
 	unsigned				m_heart_pace ;
+
+	~Impl() { }
 } /* struct EventLoop::Impl */ ;
 
 EventLoop::EventLoop()
