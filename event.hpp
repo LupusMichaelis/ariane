@@ -5,6 +5,7 @@
 #	include <boost/signals2.hpp>
 
 #	include "videomode.hpp"
+#	include "memory.hpp"
 
 class Event
 {
@@ -16,18 +17,10 @@ class Key ;
 
 class KeyBoard
 {
-		class KBImpl ;
-		std::auto_ptr<KBImpl> mp_impl ;
-
 	public:
 		KeyBoard() ;
 		KeyBoard(KeyBoard const &) = delete ;
 		KeyBoard const & operator =(KeyBoard const &) = delete ;
-
-		Key const & up() const ;
-		Key const & down() const ;
-		Key const & right() const ;
-		Key const & left() const ;
 
 		Key const & enter() const ;
 		Key const & right_ctrl() const ;
@@ -36,19 +29,155 @@ class KeyBoard
 		Key const & left_alt() const ;
 		Key const & right_shift() const ;
 		Key const & left_shift() const ;
-
+		Key const & right_meta() const ;
+		Key const & left_meta() const ;
+		Key const & tab() const ;
+		Key const & clear() const ;
+		Key const & _return() const ;
+		Key const & pause() const ;
+		Key const & escape() const ;
+		Key const & space() const ;
+		Key const & exclaim() const ;
+		Key const & quotedbl() const ;
+		Key const & hash() const ;
+		Key const & dollar() const ;
+		Key const & ampersand() const ;
+		Key const & quote() const ;
+		Key const & leftparen() const ;
+		Key const & rightparen() const ;
+		Key const & asterisk() const ;
+		Key const & plus() const ;
+		Key const & comma() const ;
+		Key const & minus() const ;
+		Key const & period() const ;
+		Key const & slash() const ;
+		Key const & _0() const ;
+		Key const & _1() const ;
+		Key const & _2() const ;
+		Key const & _3() const ;
+		Key const & _4() const ;
+		Key const & _5() const ;
+		Key const & _6() const ;
+		Key const & _7() const ;
+		Key const & _8() const ;
+		Key const & _9() const ;
+		Key const & colon() const ;
+		Key const & semicolon() const ;
+		Key const & less() const ;
+		Key const & equals() const ;
+		Key const & greater() const ;
+		Key const & question() const ;
+		Key const & at() const ;
+		Key const & leftbracket() const ;
+		Key const & backslash() const ;
+		Key const & rightbracket() const ;
+		Key const & caret() const ;
+		Key const & underscore() const ;
+		Key const & backquote() const ;
+		Key const & a() const ;
+		Key const & b() const ;
+		Key const & c() const ;
+		Key const & d() const ;
+		Key const & e() const ;
+		Key const & f() const ;
+		Key const & g() const ;
+		Key const & h() const ;
+		Key const & i() const ;
+		Key const & j() const ;
+		Key const & k() const ;
+		Key const & l() const ;
+		Key const & m() const ;
+		Key const & n() const ;
+		Key const & o() const ;
+		Key const & p() const ;
 		Key const & q() const ;
+		Key const & r() const ;
+		Key const & s() const ;
+		Key const & t() const ;
+		Key const & u() const ;
+		Key const & v() const ;
+		Key const & w() const ;
+		Key const & x() const ;
+		Key const & y() const ;
+		Key const & z() const ;
+		Key const & _delete() const ;
+		Key const & kp0() const ;
+		Key const & kp1() const ;
+		Key const & kp2() const ;
+		Key const & kp3() const ;
+		Key const & kp4() const ;
+		Key const & kp5() const ;
+		Key const & kp6() const ;
+		Key const & kp7() const ;
+		Key const & kp8() const ;
+		Key const & kp9() const ;
+		Key const & kp_period() const ;
+		Key const & kp_divide() const ;
+		Key const & kp_multiply() const ;
+		Key const & kp_minus() const ;
+		Key const & kp_plus() const ;
+		Key const & kp_enter() const ;
+		Key const & kp_equals() const ;
+		Key const & up() const ;
+		Key const & down() const ;
+		Key const & right() const ;
+		Key const & left() const ;
+		Key const & insert() const ;
+		Key const & home() const ;
+		Key const & end() const ;
+		Key const & pageup() const ;
+		Key const & pagedown() const ;
+		Key const & f1() const ;
+		Key const & f2() const ;
+		Key const & f3() const ;
+		Key const & f4() const ;
+		Key const & f5() const ;
+		Key const & f6() const ;
+		Key const & f7() const ;
+		Key const & f8() const ;
+		Key const & f9() const ;
+		Key const & f10() const ;
+		Key const & f11() const ;
+		Key const & f12() const ;
+		Key const & f13() const ;
+		Key const & f14() const ;
+		Key const & f15() const ;
+		Key const & numlock() const ;
+		Key const & capslock() const ;
+		Key const & scrollock() const ;
+		Key const & rshift() const ;
+		Key const & lshift() const ;
+		Key const & rctrl() const ;
+		Key const & lctrl() const ;
+		Key const & ralt() const ;
+		Key const & lalt() const ;
+		Key const & rmeta() const ;
+		Key const & lmeta() const ;
+		Key const & lsuper() const ;
+		Key const & rsuper() const ;
+		Key const & mode() const ;
+		Key const & help() const ;
+		Key const & print() const ;
+		Key const & sysreq() const ;
+		Key const & _break() const ;
+		Key const & menu() const ;
+		Key const & power() const ;
+		Key const & euro() const ;
+
+	private:
+		class Impl ;
+		std::unique_ptr<Impl> mp_impl ;
 
 } /* class KeyBoard */ ;
 
 class Key
 {
-	friend class KeyBoard ;
-	private:
+	public:
 		explicit
 		Key(unsigned const new_value)
 			: m_value(new_value) { }
 
+	private:
 		char m_value ;
 
 	public:
