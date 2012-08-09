@@ -12,7 +12,7 @@
 
 struct Engine::Impl
 {
-	Impl() : m_gui(create_videomode(640, 480, 16)) { }
+	Impl() : m_gui(create_videomode(1024, 680, 16)) { }
 
 	std::unique_ptr<Interface>	mp_interface ;
 	KeyBoard					m_kb ;

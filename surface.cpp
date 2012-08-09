@@ -251,7 +251,7 @@ void SurfaceSDL::update() const
 	SDL_UpdateRect(get_raw(), 0, 0, 0, 0) ;
 }
 
-void SurfaceSDL::dump(std::string const & filename)
+void SurfaceSDL::dump(std::string const & filename) const
 {
 	int r = SDL_SaveBMP(get_raw(), filename.c_str()) ;
 	if(r < 0)

@@ -28,7 +28,7 @@ class GridSurface
 		virtual void fill(RGBColor const & color) ;
 		virtual void fill(Surface const & pattern, Size const & from, Size const & to) ;
 		virtual void resize(Size const & new_size) ;
-		virtual void dump(std::string const & filename) ;
+		virtual void dump(std::string const & filename) const ;
 		virtual void crop(Surface & target, Size const & origin, Size const & size) const;
 
 		virtual void write(std::string const & message, Style const & style) ;

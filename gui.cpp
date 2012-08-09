@@ -73,6 +73,11 @@ std::shared_ptr<TextBox> Gui::text_box(Box & parent, Style const & set_style) co
 	return p_tb ;
 }
 
+void Gui::save(Box const & to_save, boost::filesystem::path const & path) const
+{
+	layout().save(const_cast<Box&>(to_save).surface(), path) ;
+}
+
 EventLoop const & Gui::event_loop() const
 {
 	return const_cast<EventLoop &>(const_cast<Gui &>(*this).event_loop()) ;

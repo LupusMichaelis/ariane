@@ -42,7 +42,7 @@ class SurfaceSDL
 		void resize(Size const & new_size) ;
 		void write(std::string const & message, Style const & style) ;
 
-		void dump(std::string const & filename) ;
+		void dump(std::string const & filename) const ;
 
 		void update() const ;
 

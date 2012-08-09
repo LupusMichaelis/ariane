@@ -109,7 +109,7 @@ void GridSurface::resize(Size const & new_size)
 	mp_impl->m_ref->resize(new_size) ;
 }
 
-void GridSurface::dump(std::string const & filename)
+void GridSurface::dump(std::string const & filename) const
 {
 	mp_impl->m_ref->dump(filename) ;
 }

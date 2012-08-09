@@ -24,7 +24,7 @@ GuiLayout::GuiLayout(VideoMode const & set_videomode)
 {
 	if(SDL_Init(SDL_INIT_VIDEO) == -1)
 		throw SDL_GetError() ;
-	SDL_ShowCursor(SDL_DISABLE) ;
+	//SDL_ShowCursor(SDL_DISABLE) ;
 }
 
 std::unique_ptr<Surface> GuiLayout::screen() const
@@ -62,6 +62,12 @@ std::unique_ptr<Surface> GuiLayout::surface(Surface const & source) const
 std::unique_ptr<GridSurface> GuiLayout::grid_surface(Surface & reference, Size const & sprite_size) const
 {
 	return std::make_unique<GridSurface>(reference, sprite_size) ;
+}
+
+void GuiLayout::save(Surface const & to_save, boost::filesystem::path const & path) const
+{
+	auto & sdl_source = dynamic_cast<SurfaceSDL const &>(to_save) ;
+	sdl_source.dump(path.c_str()) ;
 }
 
 FontManager const & GuiLayout::fonts() const

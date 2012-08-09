@@ -4,6 +4,7 @@
 #	include "videomode.hpp"
 
 #	include <memory>
+#	include <boost/filesystem.hpp>
 
 class Size ;
 class Surface ;
@@ -29,6 +30,8 @@ class GuiLayout
 		std::unique_ptr<TextSurface>	text(std::string const & content, Pen const & pen, Size const & size) ;
 
 		std::unique_ptr<GridSurface> grid_surface(Surface & reference, Size const & sprite_size) const ;
+
+		void save(Surface const & to_save, boost::filesystem::path const & path) const ;
 
 		FontManager const & fonts() const ;
 		FontManager & fonts() ;

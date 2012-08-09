@@ -4,6 +4,7 @@
 
 #	include <memory>
 #	include <boost/utility.hpp>
+#	include <boost/filesystem.hpp>
 
 class VideoMode ;
 
@@ -29,6 +30,8 @@ class Gui
 
 		std::shared_ptr<Box> box(Box & parent, Style const & set_style) const ;
 		std::shared_ptr<TextBox> text_box(Box & parent, Style const & set_style) const ;
+
+		void save(Box const & to_save, boost::filesystem::path const & path) const ;
 
 		Style const style() const ;
 

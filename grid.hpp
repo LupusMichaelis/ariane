@@ -16,7 +16,10 @@ class GridModel
 		unsigned const rows() const ;
 		unsigned const columns() const ;
 
-		unsigned const get(unsigned const rows, unsigned const columns) ;
+		unsigned const get(unsigned const rows, unsigned const columns) const ;
+
+		enum Direction {LEFT, RIGHT, UP, DOWN} ;
+		void set(unsigned const id, unsigned const rows, unsigned const columns, enum Direction direction) ;
 		void set(unsigned const id, unsigned const rows, unsigned const columns) ;
 
 		virtual

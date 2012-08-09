@@ -24,10 +24,21 @@ class MapEditorInterface
 		void display() ;
 
 	protected:
-		GridModel & palette_model() ;
-		GridModel & canvas_model() ;
+		TextBox & save_button() const ;
+		boost::filesystem::path & filesave() const ;
+
 		Grid & palette_view() ;
+		GridModel & palette_model() ;
+
 		Grid & canvas_view() ;
+		GridModel & canvas_model() ;
+
+		Grid & last_brushes_view() ;
+		GridModel & last_brushes_model() ;
+		GridModel const & last_brushes_model() const ;
+
+		unsigned const brush() const ;
+		void brush(unsigned const set_brush) ;
 
 	private:
 		class Impl ;

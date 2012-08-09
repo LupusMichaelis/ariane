@@ -102,13 +102,8 @@ unsigned const GridModel::rows() const
 	return mp_impl->m_rows ;
 }
 
-unsigned const GridModel::get(unsigned const rows, unsigned const columns)
+unsigned const GridModel::get(unsigned const rows, unsigned const columns) const
 {
-	unsigned s = mp_impl->m_data.size() ;
-	s = mp_impl->m_data.at(rows).size() ;
-
-	(void) s ;
-
 	return mp_impl->m_data.at(rows).at(columns) ;
 }
 
@@ -117,5 +112,32 @@ void GridModel::set(unsigned const id, unsigned const rows, unsigned const colum
 	mp_impl->m_data[rows][columns] = id ;
 }
 
+
+void GridModel::set(unsigned const id, unsigned const row, unsigned const column, enum Direction direction)
+{
+	if(direction == UP)
+	{
+		throw "Todo" ;
+	}
+	else if(direction == DOWN)
+	{
+		unsigned previous = id ;
+		for(unsigned i = row ; i < mp_impl->m_data.size() ; ++i)
+		{
+			unsigned buffer = mp_impl->m_data[i][column] ;
+			mp_impl->m_data[i][column] = previous ;
+			previous = buffer ;
+		}
+
+	}
+	else if(direction == RIGHT)
+	{
+		throw "Todo" ;
+	}
+	else if(direction == LEFT)
+	{
+		throw "Todo" ;
+	}
+}
 
 

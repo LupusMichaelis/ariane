@@ -27,7 +27,7 @@ class Surface
 		virtual void fill(RGBColor const & color) = 0 ;
 		virtual void fill(Surface const & pattern, Size const & from, Size const & to) = 0 ;
 		virtual void resize(Size const & new_size) = 0 ;
-		virtual void dump(std::string const & filename) = 0 ;
+		virtual void dump(std::string const & filename) const = 0 ;
 		virtual void crop(Surface & target, Size const & origin, Size const & size) const = 0;
 
 		virtual void write(std::string const & message, Style const & style) = 0 ;
