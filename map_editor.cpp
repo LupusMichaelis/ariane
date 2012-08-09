@@ -33,13 +33,19 @@ MapEditorInterface::MapEditorInterface(QuestEngine & set_engine)
 	: QuestInterface { set_engine }
 	, mp_impl(std::make_unique<Impl>(set_engine))
 {
-	canvas_model().set(225, 0, 1) ;
+	unsigned middle_width = canvas_model().columns() / 2 ;
+	unsigned middle_height = canvas_model().rows() / 2 ;
 
-	canvas_model().set(227, 1, 0) ;
-	canvas_model().set(226, 1, 1) ;
-	canvas_model().set(227, 1, 2) ;
+	for(unsigned row = 0 ; row < canvas_model().rows() ; ++row)
+		canvas_model().set(225, row, middle_width) ;
+	for(unsigned col = 0 ; col < canvas_model().columns() ; ++col)
+		canvas_model().set(227, middle_height, col) ;
 
-	canvas_model().set(225, 2, 1) ;
+	canvas_model().set(226, middle_width, middle_height) ;
+
+	for(unsigned row = 0 ; row < palette_model().rows() ; ++row)
+		for(unsigned col = 0 ; col < palette_model().columns() ; ++col)
+			palette_model().set(col + row * palette_model().columns(), row, col) ;
 }
 
 MapEditorInterface::~MapEditorInterface()
@@ -93,8 +99,14 @@ void MapEditorInterface::display()
 	set_container(p_container) ;
 }
 
-void MapEditorInterface::move(EventLoop &, MouseButtonEvent const & )
+void MapEditorInterface::move(EventLoop &, MouseButtonEvent const & mbe)
 {
+	Size relative = mbe.position() - absolute_position(canvas_view()) ;
+	unsigned row = relative.height() / 32 ;
+	unsigned col = relative.width() / 32 ;
+
+	if(row < canvas_model().rows() && col < canvas_model().columns())
+		canvas_model().set(234, row, col) ;
 }
 
 void MapEditorInterface::move(EventLoop &, MouseEvent const & )
@@ -103,7 +115,6 @@ void MapEditorInterface::move(EventLoop &, MouseEvent const & )
 
 void MapEditorInterface::move(EventLoop &, KeyEvent const & )
 {
-	canvas_model().set(234, 5, 5) ;
 }
 
 

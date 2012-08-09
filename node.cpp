@@ -41,7 +41,7 @@ void Node::parent(Parent::WeakPtr new_parent)
 	mp_impl->mp_parent = new_parent ;
 }
 
-Parent::SharedPtr Node::parent()
+Parent::SharedPtr Node::parent() const
 {
 	if(!has_parent())
 		throw std::logic_error("This node has no parent") ;

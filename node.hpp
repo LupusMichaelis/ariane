@@ -48,7 +48,7 @@ class Node
 		virtual
 		bool const has_parent() const ;
 		virtual
-		std::shared_ptr<Parent> parent() ;
+		std::shared_ptr<Parent> parent() const ;
 		virtual
 		void parent(std::weak_ptr<Parent> new_parent) ;
 

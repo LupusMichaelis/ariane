@@ -84,7 +84,7 @@ void adopt(Node & parent, Node & child)
 	impl {parent, child } () ;
 }
 
-bool has_parent(Node & w)
+bool has_parent(Node const & w)
 {
 	return w.has_parent() ;
 }

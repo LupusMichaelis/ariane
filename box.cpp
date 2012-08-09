@@ -54,3 +54,35 @@ void Box::draw()
 
 	}
 }
+
+#include "visitor.hpp"
+
+Size const absolute_position(Box const & w)
+{
+	class impl
+		: public Box::Visitor
+	{
+			Size m_computed ;
+
+		public:
+			impl(Box const & w)
+				: Box::Visitor(w)
+			{ }
+
+			using Box::Visitor::operator() ;
+
+			virtual
+			void operator() (Box const & w)
+			{
+				m_computed += w.style().position() + w.style().padding() ;
+				if(has_parent(w))
+					m_computed += absolute_position(static_cast<Box&>(*w.parent())) ;
+			}
+
+			operator Size() { (*this)() ; return m_computed ; }
+
+	} /* class impl */ ;
+
+	return impl(w) ;
+}
+

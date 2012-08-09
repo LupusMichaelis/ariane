@@ -51,7 +51,6 @@ int main(int argc, char **argv)
 #include "node.hpp"
 #include "parent.hpp"
 #include "visitor.hpp"
-#include <memory>
 
 void test_visitor()
 {

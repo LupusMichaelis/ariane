@@ -47,6 +47,7 @@ class Size
 		Size const operator*(unsigned const rhs) const ;
 		Size const operator+(Size const & rhs) const ;
 		Size const operator-(Size const & rhs) const ;
+		Size & operator+= (Size const & rhs) ;
 		Size & operator-= (Size const & rhs) ;
 
 	private:

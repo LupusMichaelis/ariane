@@ -61,3 +61,4 @@ void Widget::surface(std::unique_ptr<Surface> p_surface)
 {
 	std::swap(p_surface, mp_impl->mp_surface) ;
 }
+

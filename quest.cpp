@@ -19,12 +19,8 @@
 #include <boost/format.hpp>
 #include <boost/bind.hpp>
 
-class Surface ;
-class Interface ;
-
-#include "interface.hpp"
 #include "engine.hpp"
-#include "visitor.hpp"
+#include "interface.hpp"
 
 int main(int argc, char **argv)
 {

@@ -42,6 +42,13 @@ Size const Size::operator-(Size const & rhs) const
 	return new_value ;
 }
 
+Size & Size::operator+= (Size const & rhs)
+{
+	m_width += rhs.width() ;
+	m_height += rhs.height() ;
+	return *this ;
+}
+
 Size & Size::operator-= (Size const & rhs)
 {
 	m_width -= rhs.width() ;
