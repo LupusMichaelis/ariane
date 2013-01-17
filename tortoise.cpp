@@ -22,7 +22,7 @@ void TortoiseInterface::display()
 	sprite_style.color(create_color(0x00aa)) ;
 
 	sprite_style.color(create_color(0x00)) ;
-	mp_turtle = screen.gui().box(*p_container, sprite_style) ;
+	mp_tortoise = screen.gui().box(*p_container, sprite_style) ;
 
 	set_container(p_container) ;
 
@@ -31,24 +31,24 @@ void TortoiseInterface::display()
 
 void TortoiseInterface::move(EventLoop &, MouseButtonEvent const & me)
 {
-	Style turtle_style = mp_turtle->style() ;
+	Style tortoise_style = mp_tortoise->style() ;
 	Style bg_style = engine().gui().screen().style() ;
 
-	RGBColor turtle_color = turtle_style.color() ;
+	RGBColor tortoise_color = tortoise_style.color() ;
 	RGBColor bg_color = bg_style.color() ;
 
-	turtle_style.color(bg_color) ;
-	mp_turtle->style(turtle_style) ;
+	tortoise_style.color(bg_color) ;
+	mp_tortoise->style(tortoise_style) ;
 
-	bg_style.color(turtle_color) ;
+	bg_style.color(tortoise_color) ;
 	engine().gui().screen().style(bg_style) ;
 }
 
 void TortoiseInterface::move(EventLoop &, MouseEvent const & me)
 {
-	Style turtle_style = mp_turtle->style() ;
-	turtle_style.position(me.position()) ;
-	mp_turtle->style(turtle_style) ;
+	Style tortoise_style = mp_tortoise->style() ;
+	tortoise_style.position(me.position()) ;
+	mp_tortoise->style(tortoise_style) ;
 }
 
 void TortoiseInterface::move(EventLoop &, KeyEvent const & ke)
@@ -70,33 +70,53 @@ void TortoiseInterface::move(EventLoop &, KeyEvent const & ke)
 
 void TortoiseInterface::move_left()
 {
-	Style turtle_style = mp_turtle->style() ;
-	Size new_position = turtle_style.position() - Size(10, 0) ;
-	turtle_style.position(new_position) ;
-	mp_turtle->style(turtle_style) ;
+	Style tortoise_style = mp_tortoise->style() ;
+	Size new_position = tortoise_style.position() - Size(10, 0) ;
+	tortoise_style.position(new_position) ;
+	mp_tortoise->style(tortoise_style) ;
 }
 
 void TortoiseInterface::move_right()
 {
-	Style turtle_style = mp_turtle->style() ;
-	Size new_position = turtle_style.position() + Size(10, 0) ;
-	turtle_style.position(new_position) ;
-	mp_turtle->style(turtle_style) ;
+	Style tortoise_style = mp_tortoise->style() ;
+	Size new_position = tortoise_style.position() + Size(10, 0) ;
+	tortoise_style.position(new_position) ;
+	mp_tortoise->style(tortoise_style) ;
 }
 
 void TortoiseInterface::move_up()
 {
-	Style turtle_style = mp_turtle->style() ;
-	Size new_position = turtle_style.position() - Size(0, 10) ;
-	turtle_style.position(new_position) ;
-	mp_turtle->style(turtle_style) ;
+	Style tortoise_style = mp_tortoise->style() ;
+	Size new_position = tortoise_style.position() - Size(0, 10) ;
+	tortoise_style.position(new_position) ;
+	mp_tortoise->style(tortoise_style) ;
 }
 
 void TortoiseInterface::move_down()
 {
-	Style turtle_style = mp_turtle->style() ;
-	Size new_position = turtle_style.position() + Size(0, 10) ;
-	turtle_style.position(new_position) ;
-	mp_turtle->style(turtle_style) ;
+	Style tortoise_style = mp_tortoise->style() ;
+	Size new_position = tortoise_style.position() + Size(0, 10) ;
+	tortoise_style.position(new_position) ;
+	mp_tortoise->style(tortoise_style) ;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+struct TortoiseModel::Impl
+{
+	Size m_position ;
+} /* struct TortoiseModel */ ;
+
+TortoiseModel::TortoiseModel()
+	: mp_impl(std::make_unique<Impl>())
+{
+}
+
+TortoiseModel::~TortoiseModel()
+{
+}
+
+Size const & TortoiseModel::position() const
+{
+	return mp_impl->m_position ;
+}

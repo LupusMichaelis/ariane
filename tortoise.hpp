@@ -4,6 +4,9 @@
 #include "interface.hpp"
 #include "box.hpp"
 
+class Canvas;
+class TortoiseModel;
+
 class TortoiseInterface
 	: public QuestInterface
 {
@@ -30,10 +33,29 @@ class TortoiseInterface
 		virtual
 		void display() ;
 
+	protected:
+		Canvas & tortoise_view() ;
+		TortoiseModel & tortoise_model() ;
+		TortoiseModel const & tortoise_model() const ;
+
 	private:
-		Box::SharedPtr				mp_turtle ;
+		Box::SharedPtr				mp_tortoise ;
 
 } /* class TortoiseInterface */ ;
+
+class TortoiseModel
+{
+	public:
+		TortoiseModel() ;
+		~TortoiseModel() ;
+
+		Size const & position() const ;
+		
+	private:
+		struct Impl ;
+		std::unique_ptr<Impl>	mp_impl ;
+
+} /* class TortoiseModel */ ;
 
 #endif // HPP_TORTOISE_QUEST
 

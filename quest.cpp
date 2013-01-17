@@ -1,26 +1,8 @@
-#include "color.hpp"
-#include "style.hpp"
-#include "event.hpp"
-#include "gui.hpp"
-#include "widget.hpp"
-#include "api.hpp"
-#include "memory.hpp"
-#include "box.hpp"
-#include "text_box.hpp"
-#include "screen.hpp"
-
-#include <cassert>
-#include <cstring>
-#include <unistd.h>
-
-#include <memory>
-#include <iostream>
-
-#include <boost/format.hpp>
-#include <boost/bind.hpp>
-
 #include "engine.hpp"
 #include "interface.hpp"
+
+#include <iostream>
+#include <boost/format.hpp>
 
 int main(int argc, char **argv)
 {
