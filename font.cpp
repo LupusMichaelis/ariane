@@ -7,12 +7,17 @@
 #include <string>
 #include <boost/format.hpp>
 
+#include <SDL/SDL.h>
+
+
+void font_release (SDL_RWops * s) { SDL_RWclose(s) ; }
+
 ////////////////////////////////////////////////////////////////////////////////
 struct FontSDL::Impl
 {
 	Impl(GuiLayout & gui_layout, SDL_RWops * p_stream)
 		: m_gui_layout(gui_layout)
-		, mp_stream(p_stream, [] (SDL_RWops * s) { SDL_RWclose(s) ; })
+		, mp_stream(p_stream, &font_release)
 		, m_handles()
 	{ }
 
@@ -24,8 +29,6 @@ struct FontSDL::Impl
 		m_handles ;
 
 } /* struct Font::Impl */ ;
-
-#include <SDL/SDL.h>
 
 FontSDL::FontSDL(GuiLayout & gui_layout, std::string const & name, SDL_RWops * p_stream)
 	: Font {name}

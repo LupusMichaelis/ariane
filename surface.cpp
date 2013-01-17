@@ -11,6 +11,8 @@
 
 #include <boost/format.hpp>
 
+void surface_release (SDL_Surface *) { /* SDL_Quit() ; */ }
+
 class SurfaceSDL::Impl
 {
 	private:
@@ -44,7 +46,7 @@ class SurfaceSDL::Impl
 							, 0, 0, 0, 0) 
 				, is_screen
 					? &SDL_FreeSurface
-					: [] (SDL_Surface *) { /* SDL_Quit() ; */ }
+					: &surface_release
 				, gui_layout
 				, is_screen
 			}
