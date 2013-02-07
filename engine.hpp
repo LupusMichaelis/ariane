@@ -44,18 +44,4 @@ class Engine
 
 } /* class Engine */ ;
 
-class QuestEngine
-	: public Engine
-{
-	public:
-		void menu() ;
-		void map_editor() ;
-		void tortoise() ;
-
-		virtual
-		void first_interface() { menu() ; }
-
-} /* class QuestEngine */ ;
-
-
 #endif // HPP_ENGINE_QUEST

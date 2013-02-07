@@ -41,7 +41,9 @@ SRCS= \
 	  font_manager.cpp \
 	  \
 	  interface.cpp \
+	  quest_interface.cpp \
 	  engine.cpp \
+	  quest_engine.cpp \
 	  menu.cpp \
 	  tortoise.cpp \
 	  map_editor.cpp \

@@ -1,7 +1,7 @@
 #ifndef HPP_TORTOISE_QUEST
 #	define HPP_TORTOISE_QUEST
 
-#include "interface.hpp"
+#include "quest_interface.hpp"
 #include "box.hpp"
 
 class Canvas;

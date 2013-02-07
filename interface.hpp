@@ -43,26 +43,4 @@ class Interface
 
 } /* class Interface */ ;
 
-#include "box.hpp"
-class QuestEngine ;
-
-class QuestInterface
-	: public Interface
-{
-	public:
-		explicit QuestInterface(QuestEngine & engine) ;
-
-		QuestEngine & engine() ;
-
-		virtual ~QuestInterface() ;
-
-	protected:
-		void set_container(Box::SharedPtr p_container) ;
-
-	private:
-		class Impl ;
-		std::unique_ptr<Impl>	mp_impl ;
-
-} /* QuestInterface */ ;
-
-#endif // HPP_INTERFACE_QUEST
+#endif // HPP_QUEST_INTERFACE_QUEST
