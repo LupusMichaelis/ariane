@@ -2,6 +2,7 @@
 #	define HPP_MAP_EDITOR_QUEST
 
 #	include "interface.hpp"
+#	include "quest_interface.hpp"
 
 class Grid ;
 class GridModel ;

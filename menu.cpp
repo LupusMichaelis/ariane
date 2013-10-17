@@ -4,6 +4,8 @@
 #include "screen.hpp"
 #include "gui.hpp"
 
+#include "quest_engine.hpp"
+
 void MenuInterface::display()
 {
 	Screen & screen = engine().gui().screen() ;

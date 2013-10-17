@@ -2,6 +2,7 @@
 #	define HPP_MENU_QUEST
 
 #	include "interface.hpp"
+#	include "quest_interface.hpp"
 #	include "text_box.hpp"
 
 class MenuInterface

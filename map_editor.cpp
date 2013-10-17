@@ -2,6 +2,7 @@
 #include "map_editor.hpp"
 
 #include "engine.hpp"
+#include "quest_engine.hpp"
 #include "grid.hpp"
 #include "gui_layout.hpp"
 #include "style.hpp"

@@ -5,6 +5,8 @@
 #include "screen.hpp"
 #include "gui.hpp"
 
+#include "quest_engine.hpp"
+
 #include "SDL/SDL.h"
 
 void TortoiseInterface::display()

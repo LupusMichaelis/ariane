@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "interface.hpp"
+#include "quest_engine.hpp"
 
 #include <iostream>
 #include <boost/format.hpp>
