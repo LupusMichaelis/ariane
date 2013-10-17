@@ -58,6 +58,7 @@ void Engine::run()
 	auto wrapped_oks = boost::bind(oks, this, _1) ;
 	auto con = ev_loop.attach_event(EventLoop::time_event_type::slot_function_type(wrapped_oks)) ;
 
+	gui().refresh() ;
 	ev_loop() ;
 	con.disconnect() ;
 }

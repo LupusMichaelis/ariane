@@ -16,9 +16,6 @@ static Uint32 _heart_beat (Uint32 time, void * )
 	ue.type = SDL_USEREVENT ;
 	ue.code = EventLoop::c_time_tick_event ;
 
-	//TimeEvent * te = new TimeEvent ;
-	//ue.data1 = te ;
-
 	SDL_Event e ;
 	std::memset(&e, 0, sizeof e) ;
 	e.user = ue ;
@@ -352,7 +349,7 @@ static
 KeyEvent const KeyEvent_from_sdl(SDL_KeyboardEvent const & kev)
 {
 	Key const & k = key_from_SDL(kev.keysym.sym) ;
-	return KeyEvent (k, kev.type == SDL_KEYDOWN ? true : false) ;
+	return KeyEvent(k, kev.type == SDL_KEYDOWN ? true : false) ;
 }
 
 struct EventLoop::Impl
@@ -384,12 +381,16 @@ void EventLoop::operator() ()
 	SDL_Event ev ;
 	std::memset(&ev, 0, sizeof ev) ;
 
-	init_heart(100) ;
+	init_heart(54) ;
 
 	mp_impl->m_running = true ;
 	do
 	{
-		SDL_WaitEvent(&ev) ;
+		if(!SDL_WaitEvent(&ev))
+		{
+			throw "Oops";
+		}
+
 		if(ev.type == SDL_KEYDOWN or ev.type == SDL_KEYUP)
 		{
 			KeyEvent ke(KeyEvent_from_sdl(ev.key)) ;
@@ -462,12 +463,11 @@ void EventLoop::init_heart(unsigned pace)
 
 void EventLoop::heart_pace()
 {
-	unsigned interval = 1000 /* ms */ / mp_impl->m_heart_pace ;
+	unsigned interval = 1000 /* ms */ / mp_impl->m_heart_pace;
 
-	if(-1 ==SDL_InitSubSystem(SDL_INIT_TIMER))
-		throw SDL_GetError() ;
-	// XXX 10 : system time granularity
-	/* int timer_id = */ SDL_AddTimer((interval / 10 )* 10, _heart_beat, NULL) ;
+	if(-1 == SDL_InitSubSystem(SDL_INIT_TIMER))
+		throw SDL_GetError();
+	SDL_AddTimer((interval / 10 ) * 10, _heart_beat, NULL);
 }
 
 void EventLoop::stop()
