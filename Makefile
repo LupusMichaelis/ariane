@@ -13,6 +13,8 @@ LDFLAGS= \
 		-g -ggdb
 
 SRCS= \
+	  map.cpp \
+	  \
 	  api.cpp \
 	  videomode.cpp \
 	  \
@@ -47,11 +49,12 @@ SRCS= \
 	  menu.cpp \
 	  tortoise.cpp \
 	  map_editor.cpp \
+	  game.cpp \
 
 
 OBJS=$(SRCS:.cpp=.o)
 
-TARGET=test_tree test_widget test_layout dotests quest
+TARGET=test_map test_tree test_widget test_layout dotests quest
 
 target: $(TARGET)
 
@@ -65,13 +68,13 @@ test_layout: test_gui_layout.o $(OBJS)
 	$(CXX) -o $@ test_gui_layout.o $(OBJS) $(LDFLAGS)
 
 test_tree: test_tree.o node.o parent.o visitor.o
-	$(CXX) -o $@  test_tree.o node.o parent.o visitor.o $(LDFLAGS)
+	$(CXX) -o $@ test_tree.o node.o parent.o visitor.o $(LDFLAGS)
+
+test_map: test_map.o map.o
+	$(CXX) -o $@ test_map.o map.o $(LDFLAGS)
 
 test_widget: test_widget.o $(OBJS)
-	$(CXX) -o $@  test_widget.o $(OBJS) $(LDFLAGS)
-
-%.o: %.cpp
-	$(CXX) -c $< $(CXXFLAGS)
+	$(CXX) -o $@ test_widget.o $(OBJS) $(LDFLAGS)
 
 clean:
 	-rm -rf $(OBJS) $(TARGET) $(TARGET:=.o) test_screen.o test_gui_layout.o
