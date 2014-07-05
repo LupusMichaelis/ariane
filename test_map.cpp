@@ -59,6 +59,19 @@ void test_map()
 	Map map;
 	std::ifstream in { "game/town0" };
 	map.load(in);
+
+	std::cout << boost::format("Size {%d,%d,%d}\n")
+		% map.dimensions().width()
+		% map.dimensions().height()
+		% map.dimensions().depth();
+
+	for(auto element: map.elements())
+		std::cout << boost::format("%s {%d,%d}\n")
+			% element.m_name
+			% element.m_position.width()
+			% element.m_position.height()
+			;
+
 }
 
 
