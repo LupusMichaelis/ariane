@@ -61,6 +61,10 @@ Size const operator*(unsigned const lhs, Size const & rhs) ;
 class VideoMode
 {
 	public:
+		VideoMode()
+			: VideoMode {Size{0, 0}, 0 }
+		{ }
+
 		VideoMode(Size size, int depth)
 			: m_size(size)
 			, m_depth(depth)
