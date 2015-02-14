@@ -23,7 +23,7 @@ class FontManager
 		GuiLayout & gui_layout() ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class FontManager */ ;

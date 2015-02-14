@@ -43,7 +43,7 @@ class GridSurface
 
 		Size const & sprite_size() const ;
 
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 } ;
 

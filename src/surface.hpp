@@ -57,7 +57,7 @@ class SurfaceSDL
 		void draw_static(Surface const & motif, Size const * at, Size const * by) ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 } ;
 

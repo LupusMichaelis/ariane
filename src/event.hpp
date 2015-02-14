@@ -167,7 +167,7 @@ class KeyBoard
 		Key const & euro() const ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 
 } /* class KeyBoard */ ;
@@ -358,7 +358,7 @@ class EventLoop
 		void heart_pace() ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 
 } /* class EventLoop */ ;

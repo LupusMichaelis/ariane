@@ -42,7 +42,7 @@ class MapEditorInterface
 		void brush(unsigned const set_brush) ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>			mp_impl ;
 
 } /* class MapEditorInterface */ ;

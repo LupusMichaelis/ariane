@@ -43,7 +43,7 @@ class Gui
 		void refresh() ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 
 } /* class Gui */ ;

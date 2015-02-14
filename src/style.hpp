@@ -23,7 +23,7 @@ class Font
 		std::string const & name() const ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class Font */ ;
@@ -50,7 +50,7 @@ class Pen
 		~Pen() ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class Pen */ ;
@@ -72,7 +72,7 @@ class Border
 		unsigned const size() const ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class Border */ ;
@@ -112,7 +112,7 @@ class Style
 		~Style() ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class Style */ ;

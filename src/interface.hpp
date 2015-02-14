@@ -38,7 +38,7 @@ class Interface
 		void unlisten_events() ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 
 } /* class Interface */ ;

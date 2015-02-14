@@ -39,7 +39,7 @@ class GuiLayout
 		VideoMode const videomode() const ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 
 } /* class GuiLayout */ ;

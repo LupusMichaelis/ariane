@@ -13,58 +13,56 @@
 
 void surface_release (SDL_Surface *) { /* SDL_Quit() ; */ }
 
-class SurfaceSDL::Impl
+struct SurfaceSDL::Impl
 {
-	private:
-		typedef std::unique_ptr<SDL_Surface, void (*) (SDL_Surface *)> unique_ptr ;
+	typedef std::unique_ptr<SDL_Surface, void (*) (SDL_Surface *)> unique_ptr ;
 
-		void ensure()
+	void ensure()
+	{
+		if(!mp_surface)
+			throw SDL_GetError() ;
+	}
+
+	Impl(SDL_Surface * p_raw
+		, unique_ptr::deleter_type deleter
+		, GuiLayout & gui_layout
+		, bool is_screen = false
+		)
+		: mp_surface {p_raw, deleter}
+		, m_gui_layout(gui_layout)
+		, m_is_screen(is_screen)
+	{
+	}
+
+	Impl(GuiLayout & gui_layout, VideoMode const & videomode, bool is_screen = false)
+		: Impl
 		{
-			if(!mp_surface)
-				throw SDL_GetError() ;
+			is_screen
+				  ? SDL_SetVideoMode(videomode.width(), videomode.height(), videomode.depth(), SDL_DOUBLEBUF)
+				  : SDL_CreateRGBSurface(SDL_SWSURFACE, videomode.width(), videomode.height(), videomode.depth()
+						//, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000) ;
+						, 0, 0, 0, 0)
+			, is_screen
+				? &SDL_FreeSurface
+				: &surface_release
+			, gui_layout
+			, is_screen
 		}
+	{
+		ensure() ;
+	}
 
-	public:
-		Impl(SDL_Surface * p_raw
-			, unique_ptr::deleter_type deleter
-			, GuiLayout & gui_layout
-			, bool is_screen = false
-			)
-			: mp_surface {p_raw, deleter}
-			, m_gui_layout(gui_layout)
-			, m_is_screen(is_screen)
-		{
-		}
+	explicit Impl(GuiLayout & gui_layout, std::string const & filename)
+		: mp_surface { SDL_LoadBMP(filename.c_str()), &SDL_FreeSurface }
+		, m_gui_layout(gui_layout)
+		, m_is_screen(false)
+	{
+		ensure() ;
+	}
 
-		Impl(GuiLayout & gui_layout, VideoMode const & videomode, bool is_screen = false)
-			: Impl
-			{
-				is_screen
-					  ? SDL_SetVideoMode(videomode.width(), videomode.height(), videomode.depth(), SDL_DOUBLEBUF)
-					  : SDL_CreateRGBSurface(SDL_SWSURFACE, videomode.width(), videomode.height(), videomode.depth()
-							//, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000) ;
-							, 0, 0, 0, 0) 
-				, is_screen
-					? &SDL_FreeSurface
-					: &surface_release
-				, gui_layout
-				, is_screen
-			}
-		{
-			ensure() ;
-		}
-
-		explicit Impl(GuiLayout & gui_layout, std::string const & filename)
-			: mp_surface { SDL_LoadBMP(filename.c_str()), &SDL_FreeSurface }
-			, m_gui_layout(gui_layout)
-			, m_is_screen(false)
-		{
-			ensure() ;
-		}
-
-		unique_ptr			mp_surface ;
-		GuiLayout &			m_gui_layout ;
-		bool				m_is_screen ;
+	unique_ptr			mp_surface ;
+	GuiLayout &			m_gui_layout ;
+	bool				m_is_screen ;
 
 } /* SurfaceSDL::Impl */ ;
 
@@ -221,11 +219,11 @@ void SurfaceSDL::draw_static(Surface const & motif, Size const * at, Size const 
 	}
 
 	SurfaceSDL const & sdl_motif = dynamic_cast<SurfaceSDL const &>(motif) ;
-	
+
 	SDL_Surface * p_from = sdl_motif.get_raw() ;
 	SDL_Surface * p_to = get_raw() ;
 	int ret = SDL_BlitSurface(p_from, boundary.get(), p_to, position.get()) ;
-	
+
 	if(ret == -1)
 		throw SDL_GetError() ;
 	else if(ret == -2)

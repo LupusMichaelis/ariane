@@ -26,7 +26,7 @@ class GridModel
 		~GridModel() ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 
 } /* class GridModel */ ;
@@ -54,7 +54,7 @@ class Grid
 		virtual ~Grid() ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 
 } /* class Grid */ ;

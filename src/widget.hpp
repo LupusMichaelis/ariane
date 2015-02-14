@@ -27,7 +27,7 @@ class Widget
 		virtual Style style() ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl> mp_impl ;
 
 } /* class Widget */ ;

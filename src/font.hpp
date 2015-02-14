@@ -10,7 +10,7 @@
 class Pen ;
 class GuiLayout ;
 class _TTF_Font ;
-class SDL_RWops ;
+struct SDL_RWops ;
 
 class FontSDL
 	: public Font
@@ -29,7 +29,7 @@ class FontSDL
 		_TTF_Font * get_raw(unsigned const size) const ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class FontSDL */ ;

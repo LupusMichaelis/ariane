@@ -40,7 +40,7 @@ class Map
 		void load_element_word_doublet(std::string word, pair_string_const_it specification);
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>			mp_impl ;
 
 } /* class Map */ ;

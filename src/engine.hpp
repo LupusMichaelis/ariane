@@ -39,7 +39,7 @@ class Engine
 		void set_interface(std::unique_ptr<Interface> p_interface) ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class Engine */ ;

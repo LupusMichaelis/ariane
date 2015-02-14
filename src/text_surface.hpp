@@ -28,7 +28,7 @@ class TextSurfaceSDL
 
 		void init() ;
 
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>	mp_impl ;
 
 } /* class TextSurfaceSDL */ ;

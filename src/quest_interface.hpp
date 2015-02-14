@@ -21,7 +21,7 @@ class QuestInterface
 		void set_container(Box::SharedPtr p_container) ;
 
 	private:
-		class Impl ;
+		struct Impl ;
 		std::unique_ptr<Impl>	mp_impl ;
 
 } /* QuestInterface */ ;
