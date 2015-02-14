@@ -7,11 +7,11 @@ class Parent
 	: public Node
 {
 	protected:
-		Parent() ;
+		Parent();
 
 	public:
-		typedef std::shared_ptr<Parent>			SharedPtr ;
-		typedef std::weak_ptr<Parent>			WeakPtr ;
+		typedef std::shared_ptr<Parent>			SharedPtr;
+		typedef std::weak_ptr<Parent>			WeakPtr;
 
 	public:
 		class Visitor
@@ -19,35 +19,35 @@ class Parent
 		{
 			public:
 				Visitor(Node & w)
-					: Node::Visitor {w} { } ;
+					: Node::Visitor {w} { };
 
-				using Node::Visitor::operator() ;
+				using Node::Visitor::operator();
 				virtual
-				void operator() (Parent & w) = 0 ;
+				void operator() (Parent & w) = 0;
 
-		} /* class Visitor */ ;
+		} /* class Visitor */;
 
 		static
-		SharedPtr make() ;
+		SharedPtr make();
 
-		void adopt(Node::SharedPtr new_child) ;
+		void adopt(Node::SharedPtr new_child);
 		virtual
-		Node::SharedPtr abandon(Node::SharedPtr abandoned_child) ;
-		bool const has_child() const ;
+		Node::SharedPtr abandon(Node::SharedPtr abandoned_child);
+		bool const has_child() const;
 
-		List const & children() const ;
-		List children() ;
+		List const & children() const;
+		List children();
 
-		virtual ~Parent() ;
+		virtual ~Parent();
 
 	private:
 		virtual
-		void visit(Node::Visitor & v) ;
+		void visit(Node::Visitor & v);
 
 	private:
-		struct Impl ;
-		std::unique_ptr<Impl> mp_impl ;
+		struct Impl;
+		std::unique_ptr<Impl> mp_impl;
 
-} /* class Parent */ ;
+} /* class Parent */;
 
 #endif // HPP_PARENT_QUEST

@@ -6,41 +6,41 @@
 
 #	include <vector>
 
-class Engine ;
+class Engine;
 
 class Interface
 {
 	public:
-		explicit Interface(Engine & engine) ;
+		explicit Interface(Engine & engine);
 
-		Engine & engine() ;
-		Engine const & engine() const ;
-		Style title_style() const ;
-
-		virtual
-		void display() = 0 ;
+		Engine & engine();
+		Engine const & engine() const;
+		Style title_style() const;
 
 		virtual
-		~Interface() ;
+		void display() = 0;
 
 		virtual
-		void move(EventLoop &, KeyEvent const & ke) = 0 ;
+		~Interface();
+
 		virtual
-		void move(EventLoop &, MouseEvent const & me) = 0 ;
+		void move(EventLoop &, KeyEvent const & ke) = 0;
 		virtual
-		void move(EventLoop &, MouseButtonEvent const & me) = 0 ;
+		void move(EventLoop &, MouseEvent const & me) = 0;
+		virtual
+		void move(EventLoop &, MouseButtonEvent const & me) = 0;
 
 	protected:
-		std::vector<EventLoop::con_type> & cons() ;
+		std::vector<EventLoop::con_type> & cons();
 
 	private:
-		void listen_events() ;
-		void unlisten_events() ;
+		void listen_events();
+		void unlisten_events();
 
 	private:
-		struct Impl ;
-		std::unique_ptr<Impl> mp_impl ;
+		struct Impl;
+		std::unique_ptr<Impl> mp_impl;
 
-} /* class Interface */ ;
+} /* class Interface */;
 
 #endif // HPP_QUEST_INTERFACE_QUEST

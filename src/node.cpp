@@ -11,9 +11,9 @@ struct Node::Impl
 		: mp_parent { p_parent }
 	{}
 
-	Parent::WeakPtr mp_parent ;
+	Parent::WeakPtr mp_parent;
 
-} /* struct Node::Impl */ ;
+} /* struct Node::Impl */;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -32,24 +32,24 @@ Node::~Node()
 bool const Node::has_parent() const
 {
 	return mp_impl->mp_parent.use_count()
-		&& bool(Node::SharedPtr(mp_impl->mp_parent)) ;
+		&& bool(Node::SharedPtr(mp_impl->mp_parent));
 }
 
 void Node::parent(Parent::WeakPtr new_parent)
 {
 	// XXX must notify parent ?
-	mp_impl->mp_parent = new_parent ;
+	mp_impl->mp_parent = new_parent;
 }
 
 Parent::SharedPtr Node::parent() const
 {
 	if(!has_parent())
-		throw std::logic_error("This node has no parent") ;
+		throw std::logic_error("This node has no parent");
 
-	return mp_impl->mp_parent.lock() ;
+	return mp_impl->mp_parent.lock();
 }
 
 Node::SharedPtr Node::self()
 {
-	return shared_from_this() ;
+	return shared_from_this();
 }

@@ -5,77 +5,77 @@
 #	include "color.hpp"
 #	include "videomode.hpp"
 
-class Pen ;
+class Pen;
 
 class Font
 {
 	public:
-		typedef std::shared_ptr<Font> SharedPtr ;
+		typedef std::shared_ptr<Font> SharedPtr;
 
 	public:
-		explicit Font(Font const & copied) ;
-		Font & operator =(Font const & copied) ;
-		Font(std::string const & name) ;
+		explicit Font(Font const & copied);
+		Font & operator =(Font const & copied);
+		Font(std::string const & name);
 		virtual
-		~Font() ;
+		~Font();
 
 		virtual
-		std::string const & name() const ;
+		std::string const & name() const;
 
 	private:
-		struct Impl ;
-		std::unique_ptr<Impl>	mp_impl ;
+		struct Impl;
+		std::unique_ptr<Impl>	mp_impl;
 
-} /* class Font */ ;
+} /* class Font */;
 
-bool const operator ==(Font const & lhs, Font const & rhs) ;
-bool const operator !=(Font const & lhs, Font const & rhs) ;
+bool const operator ==(Font const & lhs, Font const & rhs);
+bool const operator !=(Font const & lhs, Font const & rhs);
 
 class Pen
 {
 	public:
-		Pen(Font const & set_font, RGBColor const & set_color, unsigned const set_size) ;
-		Pen(Pen const & copied) ;
-		Pen & operator =(Pen const & copied) ;
+		Pen(Font const & set_font, RGBColor const & set_color, unsigned const set_size);
+		Pen(Pen const & copied);
+		Pen & operator =(Pen const & copied);
 
-		void color(RGBColor const & new_color) ;
-		RGBColor const & color() const ;
+		void color(RGBColor const & new_color);
+		RGBColor const & color() const;
 
-		void font(Font const & new_font) ;
-		Font const & font() const ;
+		void font(Font const & new_font);
+		Font const & font() const;
 
-		void size(unsigned const new_size) ;
-		unsigned const size() const ;
+		void size(unsigned const new_size);
+		unsigned const size() const;
 
-		~Pen() ;
+		~Pen();
 
 	private:
-		struct Impl ;
-		std::unique_ptr<Impl>	mp_impl ;
+		struct Impl;
+		std::unique_ptr<Impl>	mp_impl;
 
-} /* class Pen */ ;
+} /* class Pen */;
 
 
 class Border
 {
 	public:
-		Border(RGBColor const & set_color, unsigned const set_size) ;
-		Border(Border const & copied) ;
-		Border & operator =(Border const & copied) ;
+		Border(RGBColor const & set_color, unsigned const set_size);
+		Border(Border const & copied);
+		Border & operator =(Border const & copied);
 
-		~Border() ;
+		~Border();
 
-		void color(RGBColor const & new_color) ;
-		RGBColor const & color() const ;
+		void color(RGBColor const & new_color);
+		RGBColor const & color() const;
 
-		void size(unsigned const new_size) ;
-		unsigned const size() const ;
+		void size(unsigned const new_size);
+		unsigned const size() const;
 
 	private:
-		struct Impl ;
-		std::unique_ptr<Impl>	mp_impl ;
+		struct Impl;
+		std::unique_ptr<Impl>	mp_impl;
 
-} /* class Border */ ;
+} /* class Border */;
 
 class Style
 {
@@ -86,41 +86,41 @@ class Style
 				, Size const & set_padding
 				, Size const & set_size
 				, Border const & set_border
-			) ;
+			);
 
-		Style(Style const & copied) ;
-		Style & operator =(Style const & copied) ;
+		Style(Style const & copied);
+		Style & operator =(Style const & copied);
 
-		void pen(Pen const & new_pen) ;
-		Pen const & pen() const ;
+		void pen(Pen const & new_pen);
+		Pen const & pen() const;
 
-		void padding(Size const & new_padding) ;
-		Size const & padding() const ;
+		void padding(Size const & new_padding);
+		Size const & padding() const;
 
-		void position(Size const & new_size) ;
-		Size const & position() const ;
+		void position(Size const & new_size);
+		Size const & position() const;
 
-		void size(Size const & new_size) ;
-		Size const & size() const ;
+		void size(Size const & new_size);
+		Size const & size() const;
 
-		void color(RGBColor const & new_color) ;
-		RGBColor const & color() const ;
+		void color(RGBColor const & new_color);
+		RGBColor const & color() const;
 
-		void border(Border const & new_border) ;
-		Border const & border() const ;
+		void border(Border const & new_border);
+		Border const & border() const;
 
-		~Style() ;
+		~Style();
 
 	private:
-		struct Impl ;
-		std::unique_ptr<Impl>	mp_impl ;
+		struct Impl;
+		std::unique_ptr<Impl>	mp_impl;
 
-} /* class Style */ ;
+} /* class Style */;
 
-bool const operator ==(Pen const & lhs, Pen const & rhs) ;
-bool const operator !=(Pen const & lhs, Pen const & rhs) ;
+bool const operator ==(Pen const & lhs, Pen const & rhs);
+bool const operator !=(Pen const & lhs, Pen const & rhs);
 
-bool const operator ==(Style const & lhs, Style const & rhs) ;
-bool const operator !=(Style const & lhs, Style const & rhs) ;
+bool const operator ==(Style const & lhs, Style const & rhs);
+bool const operator !=(Style const & lhs, Style const & rhs);
 
 #	endif // HPP_STYLE_SDL_QUEST

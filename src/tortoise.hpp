@@ -18,44 +18,44 @@ class TortoiseInterface
 		virtual ~TortoiseInterface() { }
 
 	private:
-		void move_left() ;
-		void move_right() ;
-		void move_up() ;
-		void move_down() ;
+		void move_left();
+		void move_right();
+		void move_up();
+		void move_down();
 
 		virtual
-		void move(EventLoop &, KeyEvent const & ke) ;
+		void move(EventLoop &, KeyEvent const & ke);
 		virtual
-		void move(EventLoop &, MouseEvent const & me) ;
+		void move(EventLoop &, MouseEvent const & me);
 		virtual
-		void move(EventLoop &, MouseButtonEvent const & me) ;
+		void move(EventLoop &, MouseButtonEvent const & me);
 
 		virtual
-		void display() ;
+		void display();
 
 	protected:
-		Canvas & tortoise_view() ;
-		TortoiseModel & tortoise_model() ;
-		TortoiseModel const & tortoise_model() const ;
+		Canvas & tortoise_view();
+		TortoiseModel & tortoise_model();
+		TortoiseModel const & tortoise_model() const;
 
 	private:
-		Box::SharedPtr				mp_tortoise ;
+		Box::SharedPtr				mp_tortoise;
 
-} /* class TortoiseInterface */ ;
+} /* class TortoiseInterface */;
 
 class TortoiseModel
 {
 	public:
-		TortoiseModel() ;
-		~TortoiseModel() ;
+		TortoiseModel();
+		~TortoiseModel();
 
-		Size const & position() const ;
+		Size const & position() const;
 		
 	private:
-		struct Impl ;
-		std::unique_ptr<Impl>	mp_impl ;
+		struct Impl;
+		std::unique_ptr<Impl>	mp_impl;
 
-} /* class TortoiseModel */ ;
+} /* class TortoiseModel */;
 
 #endif // HPP_TORTOISE_QUEST
 

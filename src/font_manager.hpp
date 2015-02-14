@@ -7,26 +7,26 @@
 #	include <list>
 #	include <boost/filesystem.hpp>
 
-class Gui ;
+class Gui;
 
 class FontManager
 {
 	public:
-		FontManager(GuiLayout & gui_layout, std::list<boost::filesystem::path> const & font_paths) ;
+		FontManager(GuiLayout & gui_layout, std::list<boost::filesystem::path> const & font_paths);
 		virtual
-		~FontManager() ;
+		~FontManager();
 
-		Font::SharedPtr get(std::string const & name) ;
+		Font::SharedPtr get(std::string const & name);
 
 	protected:
-		Font::SharedPtr make(std::string const & name) ;
-		GuiLayout & gui_layout() ;
+		Font::SharedPtr make(std::string const & name);
+		GuiLayout & gui_layout();
 
 	private:
-		struct Impl ;
-		std::unique_ptr<Impl>	mp_impl ;
+		struct Impl;
+		std::unique_ptr<Impl>	mp_impl;
 
-} /* class FontManager */ ;
+} /* class FontManager */;
 
 #endif // HPP_FONT_MANAGER_QUEST
 

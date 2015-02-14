@@ -17,7 +17,7 @@ Box::Box(Gui & gui)
 
 Box::SharedPtr Box::make(Gui & gui)
 {
-	return Box::SharedPtr(new Box(gui)) ;
+	return Box::SharedPtr(new Box(gui));
 }
 
 Box::~Box()
@@ -26,22 +26,22 @@ Box::~Box()
 
 void Box::init()
 {
-	auto p_s = gui().layout().surface(style().size()) ;
-	surface(std::move(p_s)) ;
+	auto p_s = gui().layout().surface(style().size());
+	surface(std::move(p_s));
 }
 
 void Box::draw()
 {
-	surface().fill(style().color()) ;
-	surface().border(style().border()) ;
+	surface().fill(style().color());
+	surface().border(style().border());
 
 	for(auto child: children())
 	{
-		auto * child_widget = dynamic_cast<Drawable *>(child.get()) ;
+		auto * child_widget = dynamic_cast<Drawable *>(child.get());
 
-		child_widget->draw() ;
-		Size draw_at { style().padding() + std::max(child_widget->style().position(), style().border().size() * Size {1, 1} )} ;
-		surface().draw(child_widget->surface(), draw_at) ;
+		child_widget->draw();
+		Size draw_at { style().padding() + std::max(child_widget->style().position(), style().border().size() * Size {1, 1} )};
+		surface().draw(child_widget->surface(), draw_at);
 
 #ifndef NDEBUG
 		std::cout << boost::format("'%s' was drawn on '%s' at {w:%d,h:%d}\n")
@@ -49,7 +49,7 @@ void Box::draw()
 			% typeid(*this).name()
 			% draw_at.width()
 			% draw_at.height()
-			;
+;
 #endif // NDEBUG
 
 	}
@@ -62,27 +62,27 @@ Size const absolute_position(Box const & w)
 	class impl
 		: public Box::Visitor
 	{
-			Size m_computed ;
+			Size m_computed;
 
 		public:
 			impl(Box const & w)
 				: Box::Visitor(w)
 			{ }
 
-			using Box::Visitor::operator() ;
+			using Box::Visitor::operator();
 
 			virtual
 			void operator() (Box const & w)
 			{
-				m_computed += w.style().position() + w.style().padding() ;
+				m_computed += w.style().position() + w.style().padding();
 				if(has_parent(w))
-					m_computed += absolute_position(static_cast<Box&>(*w.parent())) ;
+					m_computed += absolute_position(static_cast<Box&>(*w.parent()));
 			}
 
-			operator Size() { (*this)() ; return m_computed ; }
+			operator Size() { (*this)(); return m_computed ; }
 
-	} /* class impl */ ;
+	} /* class impl */;
 
-	return impl(w) ;
+	return impl(w);
 }
 

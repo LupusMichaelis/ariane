@@ -13,24 +13,24 @@ class TextSurfaceSDL
 		TextSurfaceSDL(GuiLayout & set_gui_layout
 				, VideoMode set_videomode
 				, std::string const & set_text
-				, Pen const & set_pen) ;
+				, Pen const & set_pen);
 		virtual
-		~TextSurfaceSDL() ;
+		~TextSurfaceSDL();
 
-		using SurfaceSDL::gui_layout ;
+		using SurfaceSDL::gui_layout;
 
 		virtual
-		std::string const & text() const ;
+		std::string const & text() const;
 		virtual
-		Pen const & pen() const ;
+		Pen const & pen() const;
 
 	private:
 
-		void init() ;
+		void init();
 
-		struct Impl ;
-		std::unique_ptr<Impl>	mp_impl ;
+		struct Impl;
+		std::unique_ptr<Impl>	mp_impl;
 
-} /* class TextSurfaceSDL */ ;
+} /* class TextSurfaceSDL */;
 
 #endif // HPP_TEXT_SURFACE_QUEST

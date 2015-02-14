@@ -16,26 +16,26 @@ class MenuInterface
 		{
 		}
 
-		void entry_next() ;
-		void entry_previous() ;
-		void select() ;
+		void entry_next();
+		void entry_previous();
+		void select();
 
 	private:
 		virtual
-		void move(EventLoop &, KeyEvent const & ke) ;
+		void move(EventLoop &, KeyEvent const & ke);
 		virtual
-		void move(EventLoop &, MouseEvent const & ) { } ;
+		void move(EventLoop &, MouseEvent const & ) { };
 		virtual
-		void move(EventLoop &, MouseButtonEvent const & ) { } ;
+		void move(EventLoop &, MouseButtonEvent const & ) { };
 
 		virtual
-		void display() ;
+		void display();
 
-		unsigned					m_current ;
+		unsigned					m_current;
 		std::vector<TextBox::SharedPtr>
-									m_widgets ;
+									m_widgets;
 
-} /* class MenuInterface */ ;
+} /* class MenuInterface */;
 
 
 #endif // HPP_MENU_QUEST

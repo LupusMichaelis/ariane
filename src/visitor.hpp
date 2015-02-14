@@ -3,10 +3,10 @@
 
 #	include "node.hpp"
 
-bool has_child(Node & w) ;
-Node::List children(Node & w) ;
-void adopt(Node & parent, Node & child) ;
-bool has_parent(Node const & w) ;
-void abandon(Node & child) ; 
+bool has_child(Node & w);
+Node::List children(Node & w);
+void adopt(Node & parent, Node & child);
+bool has_parent(Node const & w);
+void abandon(Node & child); 
 
 #endif // HPP_VISITOR_QUEST

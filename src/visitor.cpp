@@ -9,7 +9,7 @@ bool has_child(Node & w)
 	class impl
 		: public Parent::Visitor
 	{
-			bool yes ;
+			bool yes;
 
 		public:
 			impl(Node & w)
@@ -17,19 +17,19 @@ bool has_child(Node & w)
 				, yes(false)
 			{ }
 
-			using Node::Visitor::operator() ;
+			using Node::Visitor::operator();
 
 			virtual
 			void operator() (Parent & w)
 			{
-				yes = w.has_child() ;
+				yes = w.has_child();
 			}
 
-			operator bool() { (*this)() ; return yes ; }
+			operator bool() { (*this)(); return yes ; }
 
-	} /* class impl */ ;
+	} /* class impl */;
 
-	return impl(w) ;
+	return impl(w);
 }
 
 Node::List children(Node & w)
@@ -37,7 +37,7 @@ Node::List children(Node & w)
 	class impl
 		: public Parent::Visitor
 	{
-		Node::List list ;
+		Node::List list;
 
 		public:
 			impl(Node & w)
@@ -45,18 +45,18 @@ Node::List children(Node & w)
 				, list()
 			{ }
 
-			using Node::Visitor::operator() ;
+			using Node::Visitor::operator();
 
 			virtual
 			void operator() (Parent & w)
 			{
-				list = w.children() ;
+				list = w.children();
 			}
 
-			operator Node::List() { (*this)() ; return list ; }
-	} /* class impl */ ;
+			operator Node::List() { (*this)(); return list ; }
+	} /* class impl */;
 
-	return impl(w) ;
+	return impl(w);
 }
 
 void adopt(Node & parent, Node & child)
@@ -64,29 +64,29 @@ void adopt(Node & parent, Node & child)
 	class impl
 		: public Parent::Visitor
 	{
-			Node & m_child ;
+			Node & m_child;
 		public:
 			impl(Node & parent, Node & child)
 				: Parent::Visitor { parent }
 				, m_child(child)
 			{ }
 
-			using Node::Visitor::operator() ;
+			using Node::Visitor::operator();
 
 			virtual
 			void operator() (Parent & w)
 			{
-				w.adopt(m_child.self()) ;
+				w.adopt(m_child.self());
 			}
 
-	} /* class impl */ ;
+	} /* class impl */;
 
-	impl {parent, child } () ;
+	impl {parent, child } ();
 }
 
 bool has_parent(Node const & w)
 {
-	return w.has_parent() ;
+	return w.has_parent();
 }
 
 void abandon(Node & child)
@@ -99,19 +99,19 @@ void abandon(Node & child)
 				: Parent::Visitor { w }
 			{ }
 
-			using Parent::Visitor::operator() ;
+			using Parent::Visitor::operator();
 
 			virtual
 			void operator() (Parent & w)
 			{
 				if(!has_parent(w))
-					throw std::logic_error("Orphan can't be abandonned again") ;
+					throw std::logic_error("Orphan can't be abandonned again");
 
-				w.parent()->abandon(w.self()) ;
+				w.parent()->abandon(w.self());
 			}
 
-	} /* class impl */ ;
+	} /* class impl */;
 
-	impl {child} () ;
+	impl {child} ();
 }
 

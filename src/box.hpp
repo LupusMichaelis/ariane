@@ -11,44 +11,44 @@ class Box
 	, public Parent
 {
 	protected:
-		Box() = delete ;
-		Box(Gui & gui) ;
+		Box() = delete;
+		Box(Gui & gui);
 
 		virtual
-		void init() ;
+		void init();
 
 	public:
-		typedef std::shared_ptr<Box>		SharedPtr ;
-		typedef std::weak_ptr<Box>			WeakPtr ;
+		typedef std::shared_ptr<Box>		SharedPtr;
+		typedef std::weak_ptr<Box>			WeakPtr;
 
 		class Visitor
 		{
-				Box const & m_box ;
+				Box const & m_box;
 			public:
 				Visitor(Box const & w)
-					: m_box(w) { } ;
+					: m_box(w) { };
 
 				virtual
-				void operator() () { m_box.visit(*this) ; }
+				void operator() () { m_box.visit(*this); }
 
 				virtual
-				void operator() (Box const & w) = 0 ;
+				void operator() (Box const & w) = 0;
 
-		} /* class Visitor */ ;
+		} /* class Visitor */;
 
-		static SharedPtr make(Gui & gui) ;
+		static SharedPtr make(Gui & gui);
 
 		virtual
-		void draw() ;
+		void draw();
 
-		virtual ~Box() ;
+		virtual ~Box();
 
 	private:
 		virtual
-		void visit(Visitor & v) const { v(*this) ; }
+		void visit(Visitor & v) const { v(*this); }
 
-} /* class Box */ ;
+} /* class Box */;
 
-Size const absolute_position(Box const & b) ;
+Size const absolute_position(Box const & b);
 
 #endif // HPP_BOX_QUEST

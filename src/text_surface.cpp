@@ -12,10 +12,10 @@ struct TextSurfaceSDL::Impl
 		, m_pen(set_pen)
 	{ }
 
-	std::string				m_text ;
-	Pen						m_pen ;
+	std::string				m_text;
+	Pen						m_pen;
 
-} /* struct TextSurfaceSDL::Impl */ ;
+} /* struct TextSurfaceSDL::Impl */;
 
 TextSurfaceSDL::TextSurfaceSDL(GuiLayout & set_gui_layout
 		, VideoMode set_videomode
@@ -25,7 +25,7 @@ TextSurfaceSDL::TextSurfaceSDL(GuiLayout & set_gui_layout
 	, mp_impl { std::make_unique<Impl>(set_text, set_pen) }
 {
 	// XXX call virtual functions /!\ //
-	init() ;
+	init();
 }
 
 TextSurfaceSDL::~TextSurfaceSDL()
@@ -34,25 +34,25 @@ TextSurfaceSDL::~TextSurfaceSDL()
 
 void TextSurfaceSDL::init()
 {
-	auto p_font = gui_layout().fonts().get(pen().font().name()) ;
-	TTF_Font * p_handle = std::static_pointer_cast<FontSDL>(p_font)->get_raw(pen().size()) ;
+	auto p_font = gui_layout().fonts().get(pen().font().name());
+	TTF_Font * p_handle = std::static_pointer_cast<FontSDL>(p_font)->get_raw(pen().size());
 	if(!p_handle)
-		throw TTF_GetError() ;
+		throw TTF_GetError();
 
 	SDL_Surface * p_text = TTF_RenderText_Solid(p_handle, text().c_str()
-			, {pen().color().red(), pen().color().green(), pen().color().blue(), 0, }) ;
+			, {pen().color().red(), pen().color().green(), pen().color().blue(), 0, });
 	if(!p_text)
-		throw TTF_GetError() ;
+		throw TTF_GetError();
 
-	set_raw(p_text) ;
+	set_raw(p_text);
 }
 
 std::string const & TextSurfaceSDL::text() const
 {
-	return mp_impl->m_text ;
+	return mp_impl->m_text;
 }
 
 Pen const & TextSurfaceSDL::pen() const
 {
-	return mp_impl->m_pen ;
+	return mp_impl->m_pen;
 }

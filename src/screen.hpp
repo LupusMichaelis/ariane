@@ -7,22 +7,22 @@ class Screen
 	: public Box
 {
 	protected:
-		Screen() = delete ;
-		explicit Screen(Gui & gui) ;
+		Screen() = delete;
+		explicit Screen(Gui & gui);
 
 	public:
-		typedef std::shared_ptr<Screen>		SharedPtr ;
-		typedef std::weak_ptr<Screen>		WeakPtr ;
+		typedef std::shared_ptr<Screen>		SharedPtr;
+		typedef std::weak_ptr<Screen>		WeakPtr;
 
-		static SharedPtr make(Gui & gui) ;
+		static SharedPtr make(Gui & gui);
 
 	public:
-		virtual ~Screen() ;
+		virtual ~Screen();
 
 	protected:
 		virtual
-		void init() ;
+		void init();
 
-} /* class Screen */ ;
+} /* class Screen */;
 
 #endif // HPP_SCREEN_WIDGET_QUEST

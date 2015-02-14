@@ -7,27 +7,27 @@ class TextBox
 	: public Box
 {
 	protected:
-		TextBox() = delete ;
-		TextBox(Gui & gui) ;
+		TextBox() = delete;
+		TextBox(Gui & gui);
 
 	public:
-		typedef std::shared_ptr<TextBox>		SharedPtr ;
-		typedef std::weak_ptr<TextBox>			WeakPtr ;
+		typedef std::shared_ptr<TextBox>		SharedPtr;
+		typedef std::weak_ptr<TextBox>			WeakPtr;
 
-		static SharedPtr make(Gui & gui) ;
-		virtual ~TextBox() ;
+		static SharedPtr make(Gui & gui);
+		virtual ~TextBox();
 
-		void text(std::string const & new_text) ;
-		std::string const & text() const ;
+		void text(std::string const & new_text);
+		std::string const & text() const;
 
 	protected:
 		virtual
-		void draw() ;
+		void draw();
 
 	private:
-		std::string m_text ;
+		std::string m_text;
 
-} /* class TextBox */ ;
+} /* class TextBox */;
 
 
 #endif // HPP_BOX_TEXT_WIDGET_QUEST

@@ -7,16 +7,16 @@
 
 Screen::SharedPtr Screen::make(Gui & gui)
 {
-	return Screen::SharedPtr(new Screen(gui)) ;
+	return Screen::SharedPtr(new Screen(gui));
 }
 
 Screen::Screen(Gui & gui)
 	: Box {gui}
 {
-	Style s = style() ;
-	s.size(gui.layout().videomode().size()) ;
-	assert(s.size().width() != 0) ;
-	style(s) ;
+	Style s = style();
+	s.size(gui.layout().videomode().size());
+	assert(s.size().width() != 0);
+	style(s);
 }
 
 Screen::~Screen()
@@ -25,11 +25,11 @@ Screen::~Screen()
 
 void Screen::init()
 {
-	auto p_s = gui().layout().screen() ;
-	Style s = style() ;
-	s.size(p_s->videomode().size()) ;
-	assert(s.size().width() != 0) ;
-	style(s) ;
-	surface(std::move(p_s)) ;
+	auto p_s = gui().layout().screen();
+	Style s = style();
+	s.size(p_s->videomode().size());
+	assert(s.size().width() != 0);
+	style(s);
+	surface(std::move(p_s));
 }
 
