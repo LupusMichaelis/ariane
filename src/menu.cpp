@@ -50,7 +50,7 @@ void MenuInterface::display()
 		++pos;
 	}
 
-	set_container(p_container);
+	container(p_container);
 }
 
 void MenuInterface::move(EventLoop &, KeyEvent const & ke)

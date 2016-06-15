@@ -20,7 +20,7 @@ QuestInterface::QuestInterface(QuestEngine & engine)
 
 QuestInterface::~QuestInterface()
 {
-	set_container(Box::SharedPtr());
+	container(Box::SharedPtr());
 }
 
 QuestEngine & QuestInterface::engine()
@@ -28,10 +28,15 @@ QuestEngine & QuestInterface::engine()
 	return static_cast<QuestEngine &>(Interface::engine());
 }
 
-void QuestInterface::set_container(Box::SharedPtr p_container)
+void QuestInterface::container(Box::SharedPtr p_container)
 {
 	if(mp_impl->mp_container && has_parent(*mp_impl->mp_container))
 		abandon(*mp_impl->mp_container);
 
 	std::swap(mp_impl->mp_container, p_container);
+}
+
+Box & QuestInterface::container()
+{
+	return *mp_impl->mp_container;
 }

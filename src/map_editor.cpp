@@ -152,7 +152,7 @@ void MapEditorInterface::display()
 	adopt(*p_container, last_brushes_view());
 	adopt(*p_container, palette_view());
 
-	set_container(p_container);
+	container(p_container);
 }
 
 void MapEditorInterface::move(EventLoop &, MouseButtonEvent const & mbe)

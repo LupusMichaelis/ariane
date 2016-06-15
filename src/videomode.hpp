@@ -45,6 +45,7 @@ class Size
 		int const height() const { return m_height; }
 
 		Size const operator*(unsigned const rhs) const;
+		Size const operator/(unsigned const rhs) const;
 		Size const operator+(Size const & rhs) const;
 		Size const operator-(Size const & rhs) const;
 		Size & operator+= (Size const & rhs);

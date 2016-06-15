@@ -14,19 +14,20 @@ void TortoiseInterface::display()
 	Screen & screen = engine().gui().screen();
 
 	Style bg_style = screen.style();
-	bg_style.position({10, 10});
-	bg_style.size(bg_style.size() - Size {20, 20});
-	bg_style.color(create_color(0xaaaa00));
+	Size padding {30, 20};
+	bg_style.position(padding);
+	bg_style.size(bg_style.size() - 3 * padding);
+	bg_style.color(create_color(0xaaaaff));
 	auto p_container = screen.gui().box(screen, bg_style);
 
 	Style sprite_style = screen.style();
 	sprite_style.size(Size {20, 20});
 	sprite_style.color(create_color(0x00aa));
 
-	sprite_style.color(create_color(0x00));
+	sprite_style.color(create_color(0x00aa11));
 	mp_tortoise = screen.gui().box(*p_container, sprite_style);
 
-	set_container(p_container);
+	container(p_container);
 
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 }
@@ -49,7 +50,7 @@ void TortoiseInterface::move(EventLoop &, MouseButtonEvent const & me)
 void TortoiseInterface::move(EventLoop &, MouseEvent const & me)
 {
 	Style tortoise_style = mp_tortoise->style();
-	tortoise_style.position(me.position());
+	tortoise_style.position(me.position() - container().style().position() - 3 * tortoise_style.size() / 2);
 	mp_tortoise->style(tortoise_style);
 }
 

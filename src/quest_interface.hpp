@@ -18,7 +18,8 @@ class QuestInterface
 		virtual ~QuestInterface();
 
 	protected:
-		void set_container(Box::SharedPtr p_container);
+		void container(Box::SharedPtr p_container);
+		Box & container();
 
 	private:
 		struct Impl;

@@ -26,6 +26,14 @@ Size const Size::operator*(unsigned const rhs) const
 	return new_value;
 }
 
+Size const Size::operator/(unsigned const rhs) const
+{
+	Size new_value(*this);
+	new_value.m_width /= rhs;
+	new_value.m_height /= rhs;
+	return new_value;
+}
+
 Size const Size::operator+(Size const & rhs) const
 {
 	Size new_value(*this);
