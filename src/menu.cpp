@@ -40,6 +40,9 @@ void MenuInterface::display()
 	m_widgets[2] = screen.gui().text_box(*p_container, entry_style);
 	m_widgets[2]->text("Get me");
 
+	m_widgets[3] = screen.gui().text_box(*p_container, entry_style);
+	m_widgets[3]->text("Adventure");
+
 	int pos = 0;
 	for(auto w: m_widgets)
 	{
@@ -114,12 +117,14 @@ void MenuInterface::entry_previous()
 
 void MenuInterface::select()
 {
-	if(1 == m_current)
+	if(0 == m_current)
+		engine().map_editor();
+	else if(1 == m_current)
 		engine().tortoise();
 	else if(2 == m_current)
 		engine().menu();
-	else if(0 == m_current)
-		engine().map_editor();
+	else if(3 == m_current)
+		engine().adventure();
 	else
 		engine().game_over();
 }

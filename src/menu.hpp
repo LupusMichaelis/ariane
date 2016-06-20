@@ -12,7 +12,7 @@ class MenuInterface
 		explicit MenuInterface(QuestEngine & engine)
 			: QuestInterface {engine}
 			, m_current(0)
-			, m_widgets(3)
+			, m_widgets(4)
 		{
 		}
 

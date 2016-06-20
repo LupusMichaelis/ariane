@@ -10,6 +10,7 @@ class QuestEngine
 		void menu();
 		void map_editor();
 		void tortoise();
+		void adventure();
 
 		virtual
 		void first_interface() { menu(); }

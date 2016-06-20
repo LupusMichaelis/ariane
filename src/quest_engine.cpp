@@ -21,3 +21,8 @@ void QuestEngine::map_editor()
 	Engine::set_interface<MapEditorInterface, QuestEngine>();
 }
 
+#include "adventure.hpp"
+void QuestEngine::adventure()
+{
+	Engine::set_interface<AdventureInterface, QuestEngine>();
+}
