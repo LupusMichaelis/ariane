@@ -36,6 +36,7 @@ class Map
 		void load_house(pair_string_const_it specification);
 		void load_townhall(pair_string_const_it specification);
 		void load_inn(pair_string_const_it specification);
+		void load_door(pair_string_const_it specification);
 
 		void load_element_word_doublet(std::string word, pair_string_const_it specification);
 

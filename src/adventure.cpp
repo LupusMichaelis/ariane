@@ -39,6 +39,13 @@ AdventureInterface::AdventureInterface(QuestEngine & engine)
 		p_assets->crop(*p_image, tl, sprite_size);
 		mp_motif_library->add("wall", p_image);
 	}
+
+	tl += Size {0, sprite_size.height()};
+	{
+		auto p_image = engine.gui().layout().surface(sprite_size);
+		p_assets->crop(*p_image, tl, sprite_size);
+		mp_motif_library->add("door", p_image);
+	}
 }
 
 AdventureInterface::~AdventureInterface()
@@ -70,6 +77,7 @@ void AdventureInterface::display()
 		auto const & motif = motif_library().fetch(element.m_name);
 		auto p_image = ImageBox::make(screen.gui(), motif);
 		auto image_style = screen.gui().style();
+		image_style.color(create_color(0x89ff3a));
 		image_style.padding({0,0});
 		image_style.size({32,32});
 		image_style.position((element.m_position - Size{1, 1}) * 32);

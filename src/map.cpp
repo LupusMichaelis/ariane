@@ -109,6 +109,7 @@ void Map::load(std::istream & in)
 			, { std::string("well"),		&Map::load_well }
 			, { std::string("townhall"),	&Map::load_townhall }
 			, { std::string("inn"),			&Map::load_inn }
+			, { std::string("door"),		&Map::load_door }
 			};
 
 	std::string buffer;
@@ -295,4 +296,9 @@ void Map::load_townhall(pair_string_const_it specification)
 void Map::load_inn(pair_string_const_it specification)
 {
 	load_element_word_doublet("inn", specification);
+}
+
+void Map::load_door(pair_string_const_it specification)
+{
+	load_element_word_doublet("door", specification);
 }
