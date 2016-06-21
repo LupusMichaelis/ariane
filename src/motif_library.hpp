@@ -13,7 +13,7 @@ class MotifLibrary
 		MotifLibrary();
 		~MotifLibrary();
 		Surface const & fetch(std::string reference) const;
-		void add(std::string name, std::unique_ptr<Surface> &);
+		void add(std::string name, std::unique_ptr<Surface> & p_motif);
 
 	private:
 		class Impl;

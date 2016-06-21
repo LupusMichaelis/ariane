@@ -1,4 +1,5 @@
 
+#include "style.hpp"
 #include "grid_surface.hpp"
 #include "surface.hpp"
 #include "gui_layout.hpp"
@@ -9,7 +10,7 @@
 
 struct GridSurface::Impl
 {
-	Impl(Surface const & surface, Size const & sprite_size)
+	Impl(Surface const & surface, Size const sprite_size)
 		: m_sprite_size(sprite_size)
 		, m_ref(surface.gui_layout().surface(surface))
 	{ }
@@ -23,7 +24,7 @@ GridSurface::~GridSurface()
 {
 }
 
-GridSurface::GridSurface(Surface const & surface, Size const & sprite_size)
+GridSurface::GridSurface(Surface const & surface, Size const sprite_size)
 	: Surface {surface}
 	, mp_impl { std::make_unique<Impl>(surface, sprite_size) }
 {
@@ -75,7 +76,7 @@ VideoMode const GridSurface::videomode() const
 }
 
 
-void GridSurface::border(Border const & /*border*/)
+void GridSurface::border(Border const /*border*/)
 {
 }
 
@@ -84,7 +85,7 @@ void GridSurface::draw(Surface const & motif)
 	mp_impl->m_ref->draw(motif);
 }
 
-void GridSurface::draw(Surface const & motif, Size const & at)
+void GridSurface::draw(Surface const & motif, Size const at)
 {
 	mp_impl->m_ref->draw(motif, at);
 }
@@ -94,33 +95,33 @@ void GridSurface::update() const
 	mp_impl->m_ref->update();
 }
 
-void GridSurface::fill(RGBColor const & color)
+void GridSurface::fill(RGBColor const color)
 {
 	mp_impl->m_ref->fill(color);
 }
 
-void GridSurface::fill(Surface const & pattern, Size const & from, Size const & to)
+void GridSurface::fill(Surface const & pattern, Size const from, Size const to)
 {
 	mp_impl->m_ref->fill(pattern, from, to);
 }
 
-void GridSurface::resize(Size const & new_size)
+void GridSurface::resize(Size const new_size)
 {
 	mp_impl->m_ref->resize(new_size);
 }
 
-void GridSurface::dump(std::string const & filename) const
+void GridSurface::dump(std::string const filename) const
 {
 	mp_impl->m_ref->dump(filename);
 }
 
-void GridSurface::crop(Surface & target, Size const & origin, Size const & size) const
+void GridSurface::crop(Surface & target, Size const origin, Size const size) const
 {
 	mp_impl->m_ref->crop(target, origin, size);
 }
 
 
-void GridSurface::write(std::string const & message, Style const & style)
+void GridSurface::write(std::string const message, Style const style)
 {
 	mp_impl->m_ref->write(message, style);
 }

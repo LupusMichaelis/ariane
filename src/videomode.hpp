@@ -74,9 +74,9 @@ class VideoMode
 		int const width() const { return m_size.width(); }
 		int const height() const { return m_size.height(); }
 		int const depth() const { return m_depth; }
-		Size const & size() const { return m_size; }
+		Size const size() const { return m_size; }
 
-		void size(Size const & new_size) { m_size = new_size; }
+		void size(Size const new_size) { m_size = new_size; }
 
 	private:
 		Size m_size;
@@ -86,7 +86,7 @@ class VideoMode
 inline Size const create_size(int width, int height)
 { return Size(width, height); }
 
-inline VideoMode const create_videomode(Size const & size, int depth)
+inline VideoMode const create_videomode(Size const size, int depth)
 { return VideoMode(size, depth); }
 
 inline VideoMode const create_videomode(int width, int height, int depth)

@@ -40,7 +40,6 @@ struct SurfaceSDL::Impl
 			is_screen
 				  ? SDL_SetVideoMode(videomode.width(), videomode.height(), videomode.depth(), SDL_DOUBLEBUF)
 				  : SDL_CreateRGBSurface(SDL_SWSURFACE, videomode.width(), videomode.height(), videomode.depth()
-						//, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 						, 0, 0, 0, 0)
 			, is_screen
 				? &SDL_FreeSurface
@@ -114,7 +113,7 @@ VideoMode const SurfaceSDL::videomode() const
 	return create_videomode(get_raw()->w, get_raw()->h, get_raw()->format->BitsPerPixel);
 }
 
-void SurfaceSDL::border(Border const & border)
+void SurfaceSDL::border(Border const border)
 {
 	Uint32 mapped_color = SDL_MapRGB(get_raw()->format
 			, border.color().red()
@@ -156,7 +155,7 @@ void SurfaceSDL::border(Border const & border)
 		throw SDL_GetError();
 }
 
-void SurfaceSDL::fill(RGBColor const & color)
+void SurfaceSDL::fill(RGBColor const color)
 {
 	Uint32 mapped_color = SDL_MapRGB(get_raw()->format, color.red(), color.green(), color.blue());
 	int ret = SDL_FillRect(get_raw(), 0, mapped_color);
@@ -164,7 +163,7 @@ void SurfaceSDL::fill(RGBColor const & color)
 		throw SDL_GetError();
 }
 
-void SurfaceSDL::fill(Surface const & pattern, Size const & from, Size const & to)
+void SurfaceSDL::fill(Surface const & pattern, Size const from, Size const to)
 {
 	Size size(to);
 	auto p_buffer = gui_layout().surface(to - from);
@@ -190,12 +189,12 @@ void SurfaceSDL::draw(Surface const & motif)
 	draw_static(motif, nullptr, nullptr);
 }
 
-void SurfaceSDL::draw(Surface const & motif, Size const & at)
+void SurfaceSDL::draw(Surface const & motif, Size const at)
 {
 	draw_static(motif, &at, nullptr);
 }
 
-void SurfaceSDL::draw(Surface const & motif, Size const & at, Size const & by)
+void SurfaceSDL::draw(Surface const & motif, Size const at, Size const by)
 {
 	draw_static(motif, &at, &by);
 }
@@ -235,7 +234,7 @@ void SurfaceSDL::draw_static(Surface const & motif, Size const * at, Size const 
 // screen. This means if we can't recover, the object is in inconsistent state.
 // XXX I copy the surface structure before I destroy it. My guess is its undefined
 // behaviour. Should look if they are a better (and efficient) way to copy the content of the surface.
-void SurfaceSDL::resize(Size const & new_size)
+void SurfaceSDL::resize(Size const new_size)
 {
 	auto new_videomode = create_videomode(new_size, videomode().depth());
 	auto p_copy = gui_layout().surface(*this);
@@ -251,14 +250,14 @@ void SurfaceSDL::update() const
 	SDL_UpdateRect(get_raw(), 0, 0, 0, 0);
 }
 
-void SurfaceSDL::dump(std::string const & filename) const
+void SurfaceSDL::dump(std::string const filename) const
 {
 	int r = SDL_SaveBMP(get_raw(), filename.c_str());
 	if(r < 0)
 		throw SDL_GetError();
 }
 
-void SurfaceSDL::crop(Surface & target, Size const & origin, Size const & size) const
+void SurfaceSDL::crop(Surface & target, Size const origin, Size const size) const
 {
 	SDL_Rect orig;
 
@@ -279,7 +278,7 @@ void SurfaceSDL::crop(Surface & target, Size const & origin, Size const & size) 
 		throw "Must reload resources";
 }
 
-void SurfaceSDL::write(std::string const & message, Style const & style)
+void SurfaceSDL::write(std::string const message, Style const style)
 {
 	Size const & at = style.padding();
 	Size const & by = style.size();

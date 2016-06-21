@@ -31,18 +31,18 @@ class SurfaceSDL
 		 */
 		VideoMode const videomode() const;
 
-		void border(Border const & border);
+		void border(Border const border);
 		void draw(Surface const & motif);
-		void draw(Surface const & motif, Size const & at);
-		void draw(Surface const & motif, Size const & at, Size const & by);
-		void fill(RGBColor const & color);
+		void draw(Surface const & motif, Size const at);
+		void draw(Surface const & motif, Size const at, Size const by);
+		void fill(RGBColor const color);
 		void fill(Surface const & pattern);
-		void fill(Surface const & pattern, Size const & from, Size const & by);
-		void crop(Surface & target, Size const & origin, Size const & size) const;
-		void resize(Size const & new_size);
-		void write(std::string const & message, Style const & style);
+		void fill(Surface const & pattern, Size const from, Size const by);
+		void crop(Surface & target, Size const origin, Size const size) const;
+		void resize(Size const new_size);
+		void write(std::string const message, Style const style);
 
-		void dump(std::string const & filename) const;
+		void dump(std::string const filename) const;
 
 		void update() const;
 

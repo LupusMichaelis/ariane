@@ -10,7 +10,7 @@ struct Font::Impl
 
 } /* struct Font::Impl */;
 
-Font::Font(std::string const & name)
+Font::Font(std::string const name)
 	: mp_impl { std::make_unique<Impl>(name) }
 { }
 
@@ -75,12 +75,12 @@ Pen & Pen::operator =(Pen const & copied)
 	return *this;
 }
 
-Pen::Pen(Font const & set_font, RGBColor const & set_color, unsigned const set_size)
+Pen::Pen(Font const set_font, RGBColor const set_color, unsigned const set_size)
 	: mp_impl {std::make_unique<Impl>(set_font, set_color, set_size) }
 {
 }
 
-void Pen::color(RGBColor const & color)
+void Pen::color(RGBColor const color)
 {
 	mp_impl->m_color = color;
 }
@@ -90,7 +90,7 @@ RGBColor const & Pen::color() const
 	return mp_impl->m_color;
 }
 
-void Pen::font(Font const & new_font)
+void Pen::font(Font const new_font)
 {
 	mp_impl->m_font = new_font;
 }
@@ -120,7 +120,7 @@ struct Border::Impl
 	unsigned m_size;
 } /* struct Border::Impl */;
 
-Border::Border(RGBColor const & set_color, unsigned const set_size)
+Border::Border(RGBColor const set_color, unsigned const set_size)
 	: mp_impl(std::make_unique<Impl>(set_color, set_size))
 {
 }
@@ -141,7 +141,7 @@ Border::~Border()
 {
 }
 
-void Border::color(RGBColor const & new_color)
+void Border::color(RGBColor const new_color)
 {
 	mp_impl->m_color = new_color;
 }
@@ -189,12 +189,12 @@ struct Style::Impl
 
 } /* struct Style::Impl */;
 
-Style::Style(Pen const & set_pen
-		, RGBColor const & set_color
-		, Size const & set_position
-		, Size const & set_padding
-		, Size const & set_size
-		, Border const & set_border
+Style::Style(Pen const set_pen
+		, RGBColor const set_color
+		, Size const set_position
+		, Size const set_padding
+		, Size const set_size
+		, Border const set_border
 		)
 	: mp_impl {std::make_unique<Impl>(set_pen, set_color, set_position, set_padding, set_size, set_border) }
 {
@@ -216,7 +216,7 @@ Style & Style::operator =(Style const & copied)
 	return *this;
 }
 
-void Style::position(Size const & new_position)
+void Style::position(Size const new_position)
 {
 	mp_impl->m_position = new_position;
 }
@@ -226,7 +226,7 @@ Size const & Style::position() const
 	return mp_impl->m_position;
 }
 
-void Style::padding(Size const & new_padding)
+void Style::padding(Size const new_padding)
 {
 	mp_impl->m_padding = new_padding;
 }
@@ -236,7 +236,7 @@ Size const & Style::padding() const
 	return mp_impl->m_padding;
 }
 
-void Style::color(RGBColor const & color)
+void Style::color(RGBColor const color)
 {
 	mp_impl->m_color = color;
 }
@@ -246,7 +246,7 @@ RGBColor const & Style::color() const
 	return mp_impl->m_color;
 }
 
-void Style::pen(Pen const & new_pen)
+void Style::pen(Pen const new_pen)
 {
 	mp_impl->m_pen = new_pen;
 }
@@ -256,7 +256,7 @@ Pen const & Style::pen() const
 	return mp_impl->m_pen;
 }
 
-void Style::size(Size const & new_size)
+void Style::size(Size const new_size)
 {
 	mp_impl->m_size = new_size;
 }
@@ -266,7 +266,7 @@ Size const & Style::size() const
 	return mp_impl->m_size;
 }
 
-void Style::border(Border const & new_border)
+void Style::border(Border const new_border)
 {
 	mp_impl->m_border = new_border;
 }

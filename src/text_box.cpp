@@ -12,7 +12,7 @@ TextBox::~TextBox()
 {
 }
 
-void TextBox::text(std::string const & new_text)
+void TextBox::text(std::string const new_text)
 {
 	m_text = new_text;
 }

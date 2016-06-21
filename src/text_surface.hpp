@@ -12,17 +12,17 @@ class TextSurfaceSDL
 	public:
 		TextSurfaceSDL(GuiLayout & set_gui_layout
 				, VideoMode set_videomode
-				, std::string const & set_text
-				, Pen const & set_pen);
+				, std::string const set_text
+				, Pen const set_pen);
 		virtual
 		~TextSurfaceSDL();
 
 		using SurfaceSDL::gui_layout;
 
 		virtual
-		std::string const & text() const;
+		std::string const text() const;
 		virtual
-		Pen const & pen() const;
+		Pen const pen() const;
 
 	private:
 

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 struct TextSurfaceSDL::Impl
 {
-	Impl(std::string const & set_text, Pen const & set_pen)
+	Impl(std::string const set_text, Pen const set_pen)
 		: m_text(set_text)
 		, m_pen(set_pen)
 	{ }
@@ -19,8 +19,8 @@ struct TextSurfaceSDL::Impl
 
 TextSurfaceSDL::TextSurfaceSDL(GuiLayout & set_gui_layout
 		, VideoMode set_videomode
-		, std::string const & set_text
-		, Pen const & set_pen)
+		, std::string const set_text
+		, Pen const set_pen)
 	: SurfaceSDL {set_gui_layout, set_videomode}
 	, mp_impl { std::make_unique<Impl>(set_text, set_pen) }
 {
@@ -47,12 +47,12 @@ void TextSurfaceSDL::init()
 	set_raw(p_text);
 }
 
-std::string const & TextSurfaceSDL::text() const
+std::string const TextSurfaceSDL::text() const
 {
 	return mp_impl->m_text;
 }
 
-Pen const & TextSurfaceSDL::pen() const
+Pen const TextSurfaceSDL::pen() const
 {
 	return mp_impl->m_pen;
 }

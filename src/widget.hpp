@@ -17,14 +17,13 @@ class Widget
 	public:
 		virtual ~Widget();
 
-		virtual Surface /*const*/ & surface();
+		virtual Surface & surface();
 		virtual void draw() = 0;
 
 		virtual Gui & gui();
 
-		virtual void style(Style const & new_style);
+		virtual void style(Style const new_style);
 		virtual Style const & style() const;
-		virtual Style style();
 
 	private:
 		struct Impl;

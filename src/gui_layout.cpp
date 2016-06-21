@@ -42,13 +42,13 @@ VideoMode const GuiLayout::videomode() const
 	return mp_impl->m_videomode;
 }
 
-std::unique_ptr<Surface> GuiLayout::surface(Size const & size) const
+std::unique_ptr<Surface> GuiLayout::surface(Size const size) const
 {
 	VideoMode v { size, videomode().depth() };
 	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), v);
 }
 
-std::unique_ptr<Surface> GuiLayout::surface(std::string const & file_name) const
+std::unique_ptr<Surface> GuiLayout::surface(std::string const file_name) const
 {
 	return std::make_unique<SurfaceSDL>(const_cast<GuiLayout &>(*this), file_name);
 }
@@ -59,12 +59,12 @@ std::unique_ptr<Surface> GuiLayout::surface(Surface const & source) const
 	return std::make_unique<SurfaceSDL>(sdl_source);
 }
 
-std::unique_ptr<GridSurface> GuiLayout::grid_surface(Surface & reference, Size const & sprite_size) const
+std::unique_ptr<GridSurface> GuiLayout::grid_surface(Surface & reference, Size const sprite_size) const
 {
 	return std::make_unique<GridSurface>(reference, sprite_size);
 }
 
-void GuiLayout::save(Surface const & to_save, boost::filesystem::path const & path) const
+void GuiLayout::save(Surface const & to_save, boost::filesystem::path const path) const
 {
 	auto & sdl_source = dynamic_cast<SurfaceSDL const &>(to_save);
 	sdl_source.dump(path.c_str());
@@ -80,7 +80,7 @@ FontManager & GuiLayout::fonts()
 	return mp_impl->m_font_manager;
 }
 
-std::unique_ptr<TextSurface> GuiLayout::text(std::string const & content, Pen const & pen, Size const & size)
+std::unique_ptr<TextSurface> GuiLayout::text(std::string const content, Pen const pen, Size const size)
 {
 	return std::make_unique<TextSurfaceSDL>(*this
 			, create_videomode(size, videomode().depth())

@@ -46,6 +46,7 @@ ImageBox::SharedPtr ImageBox::make(Gui & gui, Surface const & surface, Size from
 
 void ImageBox::draw()
 {
+	Box::draw();
 	surface().draw(*mp_impl->mp_image);
 }
 

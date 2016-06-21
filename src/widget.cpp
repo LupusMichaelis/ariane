@@ -30,7 +30,7 @@ Gui & Widget::gui()
 	return mp_impl->m_gui;
 }
 
-void Widget::style(Style const & new_style)
+void Widget::style(Style const new_style)
 {
 	mp_impl->m_style = new_style;
 }
@@ -40,16 +40,11 @@ Style const & Widget::style() const
 	return mp_impl->m_style;
 }
 
-Style Widget::style()
-{
-	return const_cast<Style &>(const_cast<Widget const &>(*this).style());
-}
-
 Widget::~Widget()
 {
 }
 
-Surface /* const */ & Widget::surface()
+Surface & Widget::surface()
 {
 	if(!mp_impl->mp_surface)
 		init();

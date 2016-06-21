@@ -13,9 +13,9 @@ class Font
 		typedef std::shared_ptr<Font> SharedPtr;
 
 	public:
-		explicit Font(Font const & copied);
+		Font(Font const & copied);
 		Font & operator =(Font const & copied);
-		Font(std::string const & name);
+		explicit Font(std::string const name);
 		virtual
 		~Font();
 
@@ -34,14 +34,14 @@ bool const operator !=(Font const & lhs, Font const & rhs);
 class Pen
 {
 	public:
-		Pen(Font const & set_font, RGBColor const & set_color, unsigned const set_size);
+		Pen(Font const set_font, RGBColor const set_color, unsigned const set_size);
 		Pen(Pen const & copied);
 		Pen & operator =(Pen const & copied);
 
-		void color(RGBColor const & new_color);
+		void color(RGBColor const new_color);
 		RGBColor const & color() const;
 
-		void font(Font const & new_font);
+		void font(Font const new_font);
 		Font const & font() const;
 
 		void size(unsigned const new_size);
@@ -59,13 +59,13 @@ class Pen
 class Border
 {
 	public:
-		Border(RGBColor const & set_color, unsigned const set_size);
+		Border(RGBColor const set_color, unsigned const set_size);
 		Border(Border const & copied);
 		Border & operator =(Border const & copied);
 
 		~Border();
 
-		void color(RGBColor const & new_color);
+		void color(RGBColor const new_color);
 		RGBColor const & color() const;
 
 		void size(unsigned const new_size);
@@ -80,33 +80,33 @@ class Border
 class Style
 {
 	public:
-		Style(Pen const & set_pen
-				, RGBColor const & set_color
-				, Size const & set_position
-				, Size const & set_padding
-				, Size const & set_size
-				, Border const & set_border
+		Style(Pen const set_pen
+				, RGBColor const set_color
+				, Size const set_position
+				, Size const set_padding
+				, Size const set_size
+				, Border const set_border
 			);
 
 		Style(Style const & copied);
 		Style & operator =(Style const & copied);
 
-		void pen(Pen const & new_pen);
+		void pen(Pen const new_pen);
 		Pen const & pen() const;
 
-		void padding(Size const & new_padding);
+		void padding(Size const new_padding);
 		Size const & padding() const;
 
-		void position(Size const & new_size);
+		void position(Size const new_size);
 		Size const & position() const;
 
-		void size(Size const & new_size);
+		void size(Size const new_size);
 		Size const & size() const;
 
-		void color(RGBColor const & new_color);
+		void color(RGBColor const new_color);
 		RGBColor const & color() const;
 
-		void border(Border const & new_border);
+		void border(Border const new_border);
 		Border const & border() const;
 
 		~Style();

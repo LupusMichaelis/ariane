@@ -17,7 +17,7 @@ class TextBox
 		static SharedPtr make(Gui & gui);
 		virtual ~TextBox();
 
-		void text(std::string const & new_text);
+		void text(std::string const new_text);
 		std::string const & text() const;
 
 	protected:
