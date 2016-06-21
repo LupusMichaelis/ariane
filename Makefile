@@ -27,6 +27,7 @@ SRCS= \
 	  src/screen.cpp \
 	  src/box.cpp \
 	  src/text_box.cpp \
+	  src/image_box.cpp \
 	  \
 	  src/grid_surface.cpp \
 	  src/grid.cpp \
@@ -42,6 +43,7 @@ SRCS= \
 	  src/gui.cpp \
 	  src/gui_layout.cpp \
 	  src/font_manager.cpp \
+	  src/motif_library.cpp \
 	  \
 	  src/interface.cpp \
 	  src/quest_interface.cpp \
@@ -49,6 +51,7 @@ SRCS= \
 	  src/quest_engine.cpp \
 	  src/menu.cpp \
 	  src/tortoise.cpp \
+	  src/adventure.cpp \
 	  src/map_editor.cpp \
 
 
