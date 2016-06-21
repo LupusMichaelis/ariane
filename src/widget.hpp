@@ -20,7 +20,7 @@ class Widget
 		virtual Surface /*const*/ & surface();
 		virtual void draw() = 0;
 
-		virtual Gui const & gui();
+		virtual Gui & gui();
 
 		virtual void style(Style const & new_style);
 		virtual Style const & style() const;

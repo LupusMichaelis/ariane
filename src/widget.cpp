@@ -25,7 +25,7 @@ Widget::Widget(Gui & gui)
 {
 }
 
-Gui const & Widget::gui()
+Gui & Widget::gui()
 {
 	return mp_impl->m_gui;
 }

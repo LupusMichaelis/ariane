@@ -16,7 +16,7 @@ void TortoiseInterface::display()
 	Style bg_style = screen.style();
 	Size padding {30, 20};
 	bg_style.position(padding);
-	bg_style.size(bg_style.size() - 3 * padding);
+	bg_style.size(bg_style.size() - 2 * padding);
 	bg_style.color(create_color(0xaaaaff));
 	auto p_container = screen.gui().box(screen, bg_style);
 
@@ -50,7 +50,7 @@ void TortoiseInterface::move(EventLoop &, MouseButtonEvent const & me)
 void TortoiseInterface::move(EventLoop &, MouseEvent const & me)
 {
 	Style tortoise_style = mp_tortoise->style();
-	tortoise_style.position(me.position() - container().style().position() - 3 * tortoise_style.size() / 2);
+	tortoise_style.position(me.position() - container().style().position() - tortoise_style.size() / 2);
 	mp_tortoise->style(tortoise_style);
 }
 
