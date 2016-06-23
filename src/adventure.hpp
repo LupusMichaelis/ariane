@@ -3,6 +3,7 @@
 
 #include "quest_interface.hpp"
 #include "box.hpp"
+#include "image_box.hpp"
 #include "map.hpp"
 
 class Canvas;
@@ -41,10 +42,12 @@ class AdventureInterface
 	private:
 		std::unique_ptr<AdventureModel>			mp_adventure_model;
 		std::unique_ptr<MotifLibrary>			mp_motif_library;
+		std::shared_ptr<ImageBox>				mp_hodor;
 
 } /* class AdventureInterface */;
 
 ////////////////////////////////////////////////////////////////////////////////
+class ImageBox;
 class AdventureModel
 {
 	public:
@@ -61,5 +64,3 @@ class AdventureModel
 } /* class AdventureModel */;
 
 #endif // HPP_ADVENTURE_QUEST
-
-

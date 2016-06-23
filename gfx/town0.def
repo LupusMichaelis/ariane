@@ -1,4 +1,4 @@
 image format: bmp
 layout: vertical
 size: 32x32
-names: house,wall,door
+names: player,house,wall,door

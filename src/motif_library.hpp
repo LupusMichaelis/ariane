@@ -5,6 +5,9 @@
 
 #	include <string>
 
+class Gui;
+class Box;
+class ImageBox;
 class Surface;
 
 class MotifLibrary
@@ -12,7 +15,7 @@ class MotifLibrary
 	public:
 		MotifLibrary();
 		~MotifLibrary();
-		Surface const & fetch(std::string reference) const;
+		std::shared_ptr<ImageBox> image_box(Gui & gui, std::string reference) const;
 		void add(std::string name, std::unique_ptr<Surface> & p_motif);
 
 	private:

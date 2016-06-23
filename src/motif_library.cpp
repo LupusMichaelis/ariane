@@ -1,6 +1,7 @@
 
 #include "motif_library.hpp"
 #include "surface.hpp"
+#include "image_box.hpp"
 
 #include <map>
 #include <string>
@@ -25,7 +26,10 @@ void MotifLibrary::add(std::string name, std::unique_ptr<Surface> & p_new)
 	mp_impl->m_motifs.insert(std::make_pair(name, std::move(p_new)));
 }
 
-Surface const & MotifLibrary::fetch(std::string reference) const
+std::shared_ptr<ImageBox> MotifLibrary::image_box(Gui & gui, std::string reference) const
 {
-	return *mp_impl->m_motifs.at(reference);
+	auto & motif = *mp_impl->m_motifs.at(reference);
+	auto p_image = ImageBox::make(gui, motif);
+
+	return p_image;
 }

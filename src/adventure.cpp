@@ -51,8 +51,7 @@ void AdventureInterface::display()
 
 	for(auto & element: adventure_model().map().elements())
 	{
-		auto const & motif = motif_library().fetch(element.m_name);
-		auto p_image = ImageBox::make(screen.gui(), motif);
+		auto p_image = motif_library().image_box(screen.gui(), element.m_name);
 		auto image_style = screen.gui().style();
 		image_style.color(create_color(0x89ff3a));
 		image_style.padding({0,0});
@@ -81,8 +80,9 @@ void AdventureInterface::display()
 		image_style.position((doors.front().m_position - Size{1,0})* 32);
 	}
 
-	auto p_hodor = screen.gui().box(*p_container, image_style);
-	p_hodor->style(image_style);
+	mp_hodor = motif_library().image_box(screen.gui(), "player");
+	mp_hodor->style(image_style);
+	p_container->adopt(mp_hodor);
 
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 }
@@ -114,18 +114,34 @@ void AdventureInterface::move(EventLoop &, KeyEvent const & ke)
 
 void AdventureInterface::move_left()
 {
+	Style hodor_style = mp_hodor->style();
+	Size new_position = hodor_style.position() - Size(32, 0);
+	hodor_style.position(new_position);
+	mp_hodor->style(hodor_style);
 }
 
 void AdventureInterface::move_right()
 {
+	Style hodor_style = mp_hodor->style();
+	Size new_position = hodor_style.position() + Size(32, 0);
+	hodor_style.position(new_position);
+	mp_hodor->style(hodor_style);
 }
 
 void AdventureInterface::move_up()
 {
+	Style hodor_style = mp_hodor->style();
+	Size new_position = hodor_style.position() - Size(0, 32);
+	hodor_style.position(new_position);
+	mp_hodor->style(hodor_style);
 }
 
 void AdventureInterface::move_down()
 {
+	Style hodor_style = mp_hodor->style();
+	Size new_position = hodor_style.position() + Size(0, 32);
+	hodor_style.position(new_position);
+	mp_hodor->style(hodor_style);
 }
 
 AdventureModel & AdventureInterface::adventure_model()
