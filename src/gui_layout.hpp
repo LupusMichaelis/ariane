@@ -15,6 +15,7 @@ class Font;
 class Pen;
 class Style;
 class FontManager;
+class MotifLibrary;
 
 class GuiLayout
 {
@@ -26,10 +27,12 @@ class GuiLayout
 
 		std::unique_ptr<Surface>		surface(Size const size) const;
 		std::unique_ptr<Surface>		surface(std::string const file_name) const;
+		std::unique_ptr<Surface>		surface(boost::filesystem::path const file_path) const;
 		std::unique_ptr<Surface>		surface(Surface const & source) const;
 		std::unique_ptr<TextSurface>	text(std::string const content, Pen const pen, Size const size);
 
-		std::unique_ptr<GridSurface> grid_surface(Surface & reference, Size const sprite_size) const;
+		std::unique_ptr<GridSurface>	grid_surface(Surface & reference, Size const sprite_size) const;
+		std::unique_ptr<MotifLibrary>	motif_library(boost::filesystem::path const path) const;
 
 		void save(Surface const & to_save, boost::filesystem::path const path) const;
 

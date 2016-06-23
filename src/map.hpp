@@ -17,6 +17,7 @@ class Map
 		void load(std::istream & in);
 
 		std::vector<Element> elements() const;
+		std::vector<Element> find_element_by_name(std::string const name) const;
 		VideoMode dimensions() const;
 
 		~Map();

@@ -32,7 +32,7 @@ struct MapEditorInterface::Impl
 		, mp_canvas_model(std::make_shared<GridModel>(210, 13, 17))
 		, mp_palette_model(std::make_shared<GridModel>(210, 13, 5))
 		, mp_last_brushes_model(std::make_shared<GridModel>(210, 13, 1))
-		, mp_image(std::move(engine.gui().layout().surface("gfx/building.bmp")))
+		, mp_image(engine.gui().layout().surface(boost::filesystem::path("gfx/building.bmp")))
 		, mp_reference(engine.gui().layout().grid_surface(*mp_image , Size {32, 32}))
 		, mp_canvas_view(std::make_shared<Grid>(engine.gui(), mp_canvas_model, mp_reference))
 		, mp_palette_view(std::make_shared<Grid>(engine.gui(), mp_palette_model, mp_reference))

@@ -23,6 +23,17 @@ std::vector<Map::Element> Map::elements() const
 	return mp_impl->m_elements;
 }
 
+std::vector<Map::Element> Map::find_element_by_name(std::string const name) const
+{
+	std::vector<Element> result;
+	std::copy_if(mp_impl->m_elements.cbegin(), mp_impl->m_elements.cend()
+		, std::back_inserter(result)
+		, ([&name] (Map::Element const & e) -> bool { return name == e.m_name; })
+		);
+
+	return result;
+}
+
 VideoMode Map::dimensions() const
 {
 	return mp_impl->m_dimensions;
