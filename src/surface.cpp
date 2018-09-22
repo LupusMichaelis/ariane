@@ -11,7 +11,7 @@
 
 #include <boost/format.hpp>
 
-void surface_release (SDL_Surface *) { /* SDL_Quit(); */ }
+void ignore_screen_release (SDL_Surface *) { }
 
 struct SurfaceSDL::Impl
 {
@@ -42,8 +42,8 @@ struct SurfaceSDL::Impl
 				  : SDL_CreateRGBSurface(SDL_SWSURFACE, videomode.width(), videomode.height(), videomode.depth()
 						, 0, 0, 0, 0)
 			, is_screen
-				? &SDL_FreeSurface
-				: &surface_release
+				? &ignore_screen_release // Subsequent calls to SDL_SetVideoMode manage memory allocation
+				: &SDL_FreeSurface
 			, gui_layout
 			, is_screen
 		}

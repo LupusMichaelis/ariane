@@ -38,11 +38,13 @@ void on_key_stop(EventLoop & ev_loop, KeyEvent const & ev)
 		ev_loop.stop() ;
 }
 
+#include <unistd.h>
+
 void wait()
 {
-	EventLoop ev_loop ;
-	ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(on_key_stop<'q'>)) ;
-	ev_loop() ;
+	EventLoop ev_loop;
+	ev_loop.attach_event(EventLoop::keyboard_event_type::slot_function_type(on_key_stop<'q'>));
+	ev_loop();
 }
 
 #include "color.hpp"
@@ -114,10 +116,10 @@ void test_resize()
 	screen.fill(create_color(0xaaaaaa)) ;
 	screen.update() ;
 
-	wait() ;
+	wait();
 	screen.resize(create_size(480, 320)) ;
 	screen.update() ;
-	wait() ;
+	wait();
 
 	auto p_s1 = gui_layout.surface(Size {20, 20}) ;
 	p_s1->fill(create_color(0xaa)) ;
