@@ -5,6 +5,8 @@ test_layout
 test_tree
 test_widget
 
+doc
+
 *.vim
 .*.swp
 *.o

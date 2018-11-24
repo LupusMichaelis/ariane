@@ -57,6 +57,8 @@ SRCS= \
 
 OBJS=$(SRCS:.cpp=.o)
 
+.PHONY=dotests target clean doc
+
 TARGET=test_map test_tree test_widget test_layout dotests quest
 
 target: $(TARGET)
@@ -81,3 +83,6 @@ test_widget: test_widget.o $(OBJS)
 
 clean:
 	-$(RM) $(OBJS) $(TARGET) $(TARGET:=.o) test_screen.o test_gui_layout.o
+
+doc: doxyfile
+	doxygen doxyfile
